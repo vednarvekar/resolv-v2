@@ -1,26 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
-
-export type Language = "typescript" | "javascript" | "python" | "unknown";
-
-export interface RepoFile {
-  absolutePath: string;
-  relativePath: string;
-  extension: string;
-  language: Language;
-  sizeBytes: number;
-  lineCount: number;
-}
+import type { Language, RepoFile } from "../types.js";
 
 const IGNORE = [
   "node_modules", ".git", "dist", "build", ".next",
-  "__pycache__", ".venv", "venv", "coverage", ".nyc_output"
+  "__pycache__", ".venv", "venv", "coverage", ".nyc_output",
 ];
 
 const EXT_MAP: Record<string, Language> = {
   ".ts": "typescript", ".tsx": "typescript",
-  ".js": "javascript", ".jsx": "javascript",
-  ".py": "python"
+  ".js": "javascript", ".jsx": "javascript", ".mjs": "javascript", ".cjs": "javascript",
+  ".py": "python",
 };
 
 function detectLanguage(ext: string): Language {
@@ -50,7 +40,12 @@ export function scanFiles(repoPath: string): RepoFile[] {
         const lang = detectLanguage(ext);
         if (lang === "unknown") continue;
 
-        const stat = fs.statSync(fullPath);
+        let stat: fs.Stats;
+        try {
+          stat = fs.statSync(fullPath);
+        } catch {
+          continue;
+        }
 
         results.push({
           absolutePath: fullPath,
@@ -58,7 +53,7 @@ export function scanFiles(repoPath: string): RepoFile[] {
           extension: ext,
           language: lang,
           sizeBytes: stat.size,
-          lineCount: countLines(fullPath)
+          lineCount: countLines(fullPath),
         });
       }
     }
@@ -70,10 +65,8 @@ export function scanFiles(repoPath: string): RepoFile[] {
 
 export function getLanguageBreakdown(files: RepoFile[]): Record<Language, number> {
   const breakdown: Record<Language, number> = {
-    typescript: 0, javascript: 0, python: 0, unknown: 0
+    typescript: 0, javascript: 0, python: 0, unknown: 0,
   };
-  for (const file of files) {
-    breakdown[file.language]++;
-  }
+  for (const file of files) breakdown[file.language]++;
   return breakdown;
 }
