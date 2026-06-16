@@ -33,7 +33,7 @@ export async function extractDNA(repoPath: string) {
     files,
     imports,
     exports: exportsData,
-    functionAnalysis,
+    functions: functionAnalysis.functions,
     helpers,
     callGraph,
     architecture
