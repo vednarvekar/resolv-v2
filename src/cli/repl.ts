@@ -1,5 +1,3 @@
-// READ_EVAL_PRINT_LOOP
-
 import readline from "node:readline";
 import chalk from "chalk";
 
@@ -15,7 +13,7 @@ function printBanner(): void {
   console.log(chalk.dim("  Type a command below. Type 'help' to see what's available, 'exit' to quit."));
   console.log("");
   console.log(chalk.dim("  Example:"));
-  console.log(chalk.dim("    solve https://github.com/zulip/zulip/issues/123 --path ./zulip"));
+  console.log(chalk.dim("    solve https://github.com/owner/repo/issues/123 --path ./zulip"));
   console.log("");
 }
 

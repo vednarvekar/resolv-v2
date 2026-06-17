@@ -1,8 +1,10 @@
+#!/usr/bin/env node
+
 import { Command } from "commander";
-import { solve } from "../packages/cli/solve-command.js";
-import { runDnaCommand } from "../packages/cli/dna-command.js";
-import { runConfigCommand } from "../packages/cli/config-command.js";
-import { startRepl } from "../packages/cli/repl.js";
+import { solve } from "../src/cli/solve-command.js";
+import { runDnaCommand } from "../src/cli/dna-command.js";
+import { runConfigCommand } from "../src/cli/config-command.js";
+import { startRepl } from "../src/cli/repl.js";
 
 const program = new Command();
 

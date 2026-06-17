@@ -1,10 +1,13 @@
 import chalk from "chalk";
+import dotenv from "dotenv"
+dotenv.config()
 
 export function runConfigCommand(): void {
   console.log(chalk.bold("resolv configuration check"));
   console.log(chalk.dim("─".repeat(50)));
 
   const nimKey = process.env.NVIDIA_API_KEY;
+
   printCheck("NVIDIA_API_KEY", !!nimKey, "Required. Get a free key at https://build.nvidia.com");
 
   const ghToken = process.env.GITHUB_TOKEN;
