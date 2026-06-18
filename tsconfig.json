@@ -16,6 +16,6 @@
     "moduleDetection": "force",
     "noUncheckedIndexedAccess": true
   },
-"include": ["bin/**/*.ts", "src/**/*.ts", "*.ts"],
+  "include": ["bin/**/*.ts", "src/**/*.ts", "packages/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
