@@ -2,20 +2,21 @@ import path from "node:path";
 import chalk from "chalk";
 import ora from "ora";
 
-import { loadConfig } from "../config.js";
-import { parseIssueUrl } from "../github/parse-issue-url.js";
-import { fetchIssue } from "../github/fetch-issue.js";
-import { extractDNA } from "../dna/extract.js";
-import { mapIssueToDNA } from "../issue/issue-mapper.js";
-import { createPlan } from "../planner/planner.js";
-import { planTargets } from "../planner/planner-agent.js";
-import { buildPrompt } from "../llm/prompt-builder.js";
-import { buildSemanticIndex, semanticSearch } from "../semantic/file-index.js";
-import { createBranch, branchExists, assertCleanWorkingDirectory } from "../git/create-branch.js";
-import { checkoutBranch, getCurrentBranch } from "../git/checkout.js";
-import { commitChanges } from "../git/commit.js";
-import { openPullRequest, getDefaultBranch } from "../git/push-and-pr.js";
-import { runSelfHealLoop } from "../healing/self-heal-loop.js";
+import { loadConfig } from "../../config/config.js";
+import { parseIssueUrl } from "../../packages/context-agent/github/parse-issue-url.js";
+import { fetchIssue } from "../../packages/context-agent/github/fetch-issue.js";
+import { extractDNA } from "../../packages/dna/extract.js";
+import { mapIssueToDNA } from "../../packages/context-agent/issue-mapper.js";
+import { createPlan } from "../../packages/planner/planner.js";
+import { planTargets } from "../../packages/planner/planner-agent.js";
+import { buildPrompt } from "../../packages/llm/prompt-builder.js";
+import { buildSemanticIndex, semanticSearch } from "../../packages/context-agent/semantic/file-index.js";
+import { createBranch, branchExists, assertCleanWorkingDirectory } from "../../packages/coding-agent/git/create-branch.js";
+import { checkoutBranch, getCurrentBranch } from "../../packages/coding-agent/git/checkout.js";
+import { commitChanges } from "../../packages/coding-agent/git/commit.js";
+import { openPullRequest, getDefaultBranch } from "../../packages/coding-agent/git/push-and-pr.js";
+import { runSelfHealLoop } from "../../packages/coding-agent/self-heal-loop.js";
+import { createProviderFromEnv } from "../../packages/providers/register.js";
 
 export interface SolveOptions {
   issueUrl: string;
@@ -26,6 +27,7 @@ export interface SolveOptions {
 
 export async function solve(options: SolveOptions): Promise<void> {
   const config = loadConfig();
+  const provider = createProviderFromEnv();
   const repoPath = path.resolve(options.repoPath);
 
   const guardSpinner = ora("Checking working directory is clean...").start();
@@ -60,13 +62,13 @@ export async function solve(options: SolveOptions): Promise<void> {
   if (!options.noSemantic) {
     const semanticSpinner = ora("Running semantic search over the codebase...").start();
     try {
-      const index = await buildSemanticIndex(dna, config.nimApiKey);
+      const index = await buildSemanticIndex(dna, provider);
       const query = `${issue.title}\n${issue.body}`.slice(0, 2000);
-      const matches = await semanticSearch(index, query, config.nimApiKey, 12);
+      const matches = await semanticSearch(index, query, provider, 12);
       semanticSpinner.succeed(`Semantic search found ${matches.length} candidate matches`);
 
       const planSpinner = ora("Running planner agent to select target files...").start();
-      const agentPlan = await planTargets(issue, dna, mapping, matches, config.nimApiKey, config.nimModel);
+      const agentPlan = await planTargets(issue, dna, mapping, matches, provider, config.model);
       if (agentPlan.usedFallback) {
         planSpinner.warn(`Planner agent fell back to keyword matching: ${agentPlan.reasoning}`);
       } else {
@@ -101,8 +103,8 @@ export async function solve(options: SolveOptions): Promise<void> {
   const healResult = await runSelfHealLoop({
     repoRoot: repoPath,
     prompt,
-    apiKey: config.nimApiKey,
-    model: config.nimModel,
+    provider,
+    model: config.model,
     testCommand: config.testCommand,
     maxAttempts: config.maxHealAttempts,
   });

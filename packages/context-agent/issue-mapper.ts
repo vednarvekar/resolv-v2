@@ -1,5 +1,5 @@
 import type { DNAProfile } from "../dna/types.js";
-import type { GitHubIssue } from "../github/fetch-issue.js";
+import type { GitHubIssue } from "./github/fetch-issue.js";
 
 export interface IssueMapping {
   keywords: string[];

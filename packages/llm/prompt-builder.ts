@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { DNAProfile } from "../dna/types.js";
-import type { GitHubIssue } from "../github/fetch-issue.js";
+import type { GitHubIssue } from "../context-agent/github/fetch-issue.js";
 import type { FixPlan } from "../planner/planner.js";
-import type { IssueMapping } from "../issue/issue-mapper.js";
+import type { IssueMapping } from "../context-agent/issue-mapper.js";
 
 /** Hard ceilings so a single prompt can't blow the model's context window. */
 const MAX_FILES_TO_INCLUDE = 5;
@@ -16,11 +16,8 @@ RESPONSE FORMAT — follow exactly, this is machine-parsed:
 For each file you change, output one block:
 
 \`\`\`file:relative/path/to/file.ts
-<<<<<<< SEARCH
 <exact existing code to find, copied verbatim from the file shown above>
-=======
 <the new code that replaces it>
->>>>>>> REPLACE
 \`\`\`
 
 Rules for this format:

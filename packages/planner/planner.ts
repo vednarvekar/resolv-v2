@@ -1,4 +1,4 @@
-import type { IssueMapping } from "../issue/issue-mapper.js";
+import type { IssueMapping } from "../context-agent/issue-mapper.js";
 
 export interface FixStep {
   order: number;

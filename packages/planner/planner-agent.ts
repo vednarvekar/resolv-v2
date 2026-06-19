@@ -1,8 +1,9 @@
-import { callNim } from "../llm/nim-client.js";
 import type { DNAProfile } from "../dna/types.js";
-import type { GitHubIssue } from "../github/fetch-issue.js";
-import type { SemanticMatch } from "../semantic/file-index.js";
-import type { IssueMapping } from "../issue/issue-mapper.js";
+import type { GitHubIssue } from "../context-agent/github/fetch-issue.js";
+import type { SemanticMatch } from "../context-agent/semantic/file-index.js";
+import type { IssueMapping } from "../context-agent/issue-mapper.js";
+import type { Provider } from "../providers/provider.js";
+import { Msg } from "../core/types.js";
 
 export interface AgentPlan {
   targetFiles: string[];
@@ -26,8 +27,8 @@ export async function planTargets(
   dna: DNAProfile,
   keywordMapping: IssueMapping,
   semanticMatches: SemanticMatch[],
-  apiKey: string,
-  model: string
+  provider: Provider,
+  model?: string
 ): Promise<AgentPlan> {
   const candidateFiles = new Set<string>([
     ...keywordMapping.relevantFiles,
@@ -66,8 +67,14 @@ Respond with ONLY valid JSON, no markdown, no prose, in exactly this shape:
 {"targetFiles": ["path1", "path2"], "targetFunctions": ["fn1", "fn2"], "reasoning": "one or two sentences"}`;
 
   try {
-    const result = await callNim({ prompt, apiKey, model, temperature: 0.1, maxTokens: 800 });
-    const parsed = parsePlanResponse(result.content);
+    const result = await provider.chat({
+      messages: [Msg.user(prompt)],
+      model,
+      temperature: 0.1,
+      maxTokens: 800,
+    });
+    const textBlock = result.message.content.find((block) => block.type === "text");
+    const parsed = textBlock?.type === "text" ? parsePlanResponse(textBlock.text) : null;
     if (parsed) return { ...parsed, usedFallback: false };
   } catch {
     // network/API failure — fall through to keyword-based fallback below

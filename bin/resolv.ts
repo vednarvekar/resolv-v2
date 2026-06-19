@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { solve } from "../src/cli/solve-command.js";
-import { runDnaCommand } from "../src/cli/dna-command.js";
-import { runConfigCommand } from "../src/cli/config-command.js";
-import { startRepl } from "../src/cli/repl.js";
+import { solve } from "../apps/cli-direct/solve-command.js";
+import { runDnaCommand } from "../apps/cli-direct/dna-command.js";
+import { runConfigCommand } from "../apps/cli-direct/config-command.js";
+import { startRepl } from "../apps/cli-direct/repl.js";
 
 const program = new Command();
 
 program
   .name("resolv")
   .description("In-Context, Style-Matching Issue Resolver CLI")
-  .version("1.0.0");
+  .version("v2");
 
 program
   .command("solve")

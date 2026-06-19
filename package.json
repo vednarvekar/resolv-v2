@@ -10,7 +10,9 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "dev": "tsx bin/resolv.ts",
-    "start": "node dist/bin/resolv.js"
+    "start": "node dist/bin/resolv.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.2",
@@ -27,7 +29,8 @@
     "@types/dotenv": "^6.1.1",
     "@types/node": "^22.19.21",
     "tsx": "^4.22.4",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": ">=18.0.0"

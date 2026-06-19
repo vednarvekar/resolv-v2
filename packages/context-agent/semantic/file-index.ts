@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getEmbeddings, cosineSimilarity } from "./embeddings.js";
-import type { DNAProfile, FunctionInfo } from "../dna/types.js";
+import { cosineSimilarity } from "./embeddings.js";
+import type { DNAProfile, FunctionInfo } from "../../dna/types.js";
+import type { Provider } from "../../providers/provider.js";
 
 export interface IndexedChunk {
   /** file-level chunk or function-level chunk */
@@ -46,7 +47,7 @@ function summarizeFunction(fn: FunctionInfo): string {
  */
 export async function buildSemanticIndex(
   dna: DNAProfile,
-  apiKey: string
+  provider: Provider
 ): Promise<SemanticIndex> {
   const fileChunks: { relativePath: string; summaryText: string }[] = [];
 
@@ -69,7 +70,7 @@ export async function buildSemanticIndex(
 
   if (allTexts.length === 0) return { chunks: [] };
 
-  const embeddings = await getEmbeddings(allTexts, { apiKey });
+  const embeddings = await provider.embed(allTexts);
 
   const chunks: IndexedChunk[] = [];
   let cursor = 0;
@@ -107,12 +108,12 @@ export interface SemanticMatch {
 export async function semanticSearch(
   index: SemanticIndex,
   query: string,
-  apiKey: string,
+  provider: Provider,
   topK = 10
 ): Promise<SemanticMatch[]> {
   if (index.chunks.length === 0) return [];
 
-  const [queryEmbedding] = await getEmbeddings([query], { apiKey });
+  const [queryEmbedding] = await provider.embed([query]);
   if (!queryEmbedding) return [];
 
   const scored = index.chunks.map((chunk) => ({

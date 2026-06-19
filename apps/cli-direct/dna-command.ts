@@ -3,7 +3,7 @@ import chalk from "chalk";
 import ora from "ora";
 import fs from "node:fs";
 
-import { extractDNA } from "../dna/extract.js";
+import { extractDNA } from "../../packages/dna/extract.js";
 
 export interface DnaCommandOptions {
   repoPath: string;
