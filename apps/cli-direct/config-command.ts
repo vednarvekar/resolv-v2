@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import dotenv from "dotenv"
-dotenv.config()
+dotenv.config({ quiet: true });
 
 export function runConfigCommand(): void {
   console.log(chalk.bold("resolv configuration check"));

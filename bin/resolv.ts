@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-// import dotenv from "dotenv";
-// import path from "path";
-// import { fileURLToPath } from "url";
-
 import dotenv from "dotenv";
 import path from "path";
 import os from "os";
@@ -20,7 +16,7 @@ if (!fs.existsSync(configDir)) {
 }
 
 // 3. Force dotenv to strictly load from this global OS anchor path
-dotenv.config({ path: envPath });
+dotenv.config({ path: envPath, quiet: true });
 
 import { solve } from "../apps/cli-direct/solve-command.js";
 import { runDnaCommand } from "../apps/cli-direct/dna-command.js";

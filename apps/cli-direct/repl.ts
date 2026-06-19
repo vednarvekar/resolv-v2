@@ -1,24 +1,33 @@
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import chalk from "chalk";
-import fs from "node:fs"
+import fs from "node:fs";
 import path from "node:path";
 
 import { runConfigCommand } from "./config-command.js";
 import { runDnaCommand } from "./dna-command.js";
 
 export async function startRepl(): Promise<void> {
-  console.log(chalk.bold("resolv"));
-  console.log(chalk.dim("Type `config`, `help`, or `exit`. Use `solve <issue-url>` to run the solver."));
+  const name = chalk.hex("#470a73").bold("resolv> ")
+  // console.log(chalk.bold("resolv"));
+  console.log(chalk.blueBright.bgGray("     Welcome Ved!!.    "));
+  console.log()
 
-  const rl = readline.createInterface({ input, output, prompt: "resolv> " });
+  const rl = readline.createInterface({ input, output, prompt: `${name}` });
+  
+  // Handle the close event (triggered by rl.close() OR Ctrl+C)
+  rl.on("close", () => {
+    console.log(chalk.yellow("\nGoodbye!"));
+    process.exit(0);
+  });
+
   rl.prompt();
 
   for await (const rawLine of rl) {
     const line = rawLine.trim();
 
     if (line === "exit" || line === "quit") {
-      rl.close();
+      rl.close(); // This will trigger the 'close' listener above
       return;
     }
 
