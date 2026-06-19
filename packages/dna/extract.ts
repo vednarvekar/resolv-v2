@@ -34,17 +34,33 @@ export async function extractDNA(repoPath: string): Promise<DNAProfile> {
     `!${repoPath}/**/build/**`,
   ]);
 
-  const imports = analyzeImports(files, project, repoPath);
-  const exportsData = analyzeExports(files, project, repoPath);
-  const functionAnalysis = analyzeFunctions(project);
-  const helpers = analyzeHelpers(project);
-  const callGraph = analyzeCallGraph(project);
-  const architecture = analyzeArchitecture(project);
-  const naming = analyzeNaming(project);
-  const errorPatterns = analyzeErrors(project);
-  const asyncPatterns = analyzePatterns(project);
-  const dependencies = analyzeDependencies(imports, repoPath);
-  const structure = analyzeStructure(repoPath);
+  // --- DEBUG CHECK: Let's see what files ts-morph actually grabbed ---
+  const sourceFiles = project.getSourceFiles();
+  console.log(`\nFound ${sourceFiles.length} files in AST project.`);
+  
+  // Helper to run analyzers safely and catch where the type checker breaks
+  const runSafe = (name: string, fn: () => any) => {
+    try {
+      console.log(`⏳ Running ${name}...`);
+      return fn();
+    } catch (err) {
+      console.error(`\n❌ CRASHED INSIDE ANALYZER: ${name}`);
+      throw err;
+    }
+  };
+
+  const imports = runSafe("analyzeImports", () => analyzeImports(files, project, repoPath));
+  const exportsData = runSafe("analyzeExports", () => analyzeExports(files, project, repoPath));
+  const functionAnalysis = runSafe("analyzeFunctions", () => analyzeFunctions(project));
+  const helpers = runSafe("analyzeHelpers", () => analyzeHelpers(project));
+  const callGraph = runSafe("analyzeCallGraph", () => analyzeCallGraph(project));
+  const architecture = runSafe("analyzeArchitecture", () => analyzeArchitecture(project));
+  const naming = runSafe("analyzeNaming", () => analyzeNaming(project));
+  const errorPatterns = runSafe("analyzeErrors", () => analyzeErrors(project));
+  const asyncPatterns = runSafe("analyzePatterns", () => analyzePatterns(project));
+  const dependencies = runSafe("analyzeDependencies", () => analyzeDependencies(imports, repoPath));
+  const structure = runSafe("analyzeStructure", () => analyzeStructure(repoPath));
+  // -------------------------------------------------------------------
 
   return {
     repoRoot: repoPath,

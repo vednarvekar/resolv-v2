@@ -78,15 +78,26 @@ function isValidApplicationCall(call: CallExpression, typeChecker: TypeChecker):
   const expression = call.getExpression();
   const text = expression.getText();
 
-  if (/^(console|Promise|Math|Object|Array|JSON|String|Number|Error)\./.test(text)) {
+  // 1. Immediately drop common global / primitive namespaces
+  if (/^(console|Promise|Math|Object|Array|JSON|String|Number|Error|process|global|window)\./.test(text)) {
     return false;
   }
 
   const accessExpression = call.getExpressionIfKind(SyntaxKind.PropertyAccessExpression);
   if (accessExpression) {
-    const baseType = typeChecker.getTypeAtLocation(accessExpression.getExpression());
-    if (baseType.isArray() || baseType.isString() || baseType.isNumber()) {
-      return false;
+    try {
+      // 2. Wrap the crash-prone type checker in a safe block
+      const baseType = typeChecker.getTypeAtLocation(accessExpression.getExpression());
+      if (baseType && (baseType.isArray() || baseType.isString() || baseType.isNumber())) {
+        return false;
+      }
+    } catch {
+      // If the compiler chokes on a complex type layout, fallback safely to regex rules
+      const propName = accessExpression.getName();
+      const stringArrayBuiltins = ['push', 'pop', 'shift', 'unshift', 'map', 'filter', 'reduce', 'forEach', 'split', 'replace', 'trim', 'toLowerCase', 'toUpperCase', 'includes', 'join'];
+      if (stringArrayBuiltins.includes(propName)) {
+        return false;
+      }
     }
   }
 

@@ -11,6 +11,7 @@ export interface SelfHealOptions {
   model?: string;
   testCommand: string;
   maxAttempts?: number;
+  maxTokens?: number;
 }
 
 export interface SelfHealResult {
@@ -34,7 +35,7 @@ export async function runSelfHealLoop(options: SelfHealOptions): Promise<SelfHea
     const response = await options.provider.chat({
       messages: [Msg.user(prompt)],
       model: options.model,
-      maxTokens: 4096,
+      maxTokens: options.maxTokens ?? 4096,
     });
     const textBlock = response.message.content.find((b) => b.type === "text");
     return textBlock?.type === "text" ? textBlock.text : "";

@@ -6,7 +6,7 @@ export function analyzePatterns(project: Project): AsyncPattern[] {
 
   for (const sourceFile of project.getSourceFiles()) {
     const filePath = sourceFile.getFilePath();
-    if (filePath.includes("node_modules") || filePath.endsWith(".d.ts")) continue;
+    if (filePath.includes("node_modules") || filePath.endsWith(".d.ts") || filePath.includes(".*")) continue;
 
     const asyncAwait = sourceFile.getDescendantsOfKind(SyntaxKind.AwaitExpression).length;
 
