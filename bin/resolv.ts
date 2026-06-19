@@ -1,6 +1,27 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+// import dotenv from "dotenv";
+// import path from "path";
+// import { fileURLToPath } from "url";
+
+import dotenv from "dotenv";
+import path from "path";
+import os from "os";
+import fs from "fs";
+
+// 1. Point to a hidden configuration directory in the user's OS home folder
+const configDir = path.join(os.homedir(), ".config", "resolv");
+const envPath = path.join(configDir, ".env");
+
+// 2. Safety check: If the user hasn't created it yet, we can create the folder structure
+if (!fs.existsSync(configDir)) {
+  fs.mkdirSync(configDir, { recursive: true });
+}
+
+// 3. Force dotenv to strictly load from this global OS anchor path
+dotenv.config({ path: envPath });
+
 import { solve } from "../apps/cli-direct/solve-command.js";
 import { runDnaCommand } from "../apps/cli-direct/dna-command.js";
 import { runConfigCommand } from "../apps/cli-direct/config-command.js";

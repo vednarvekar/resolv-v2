@@ -46,10 +46,10 @@ export function runConfigCommand(): void {
     (provider === "google" && !!googleKey);
 
   if (!ready) {
-    console.log(chalk.red("Cannot run `resolv solve` until the selected provider is configured."));
+    console.log(chalk.red("Cannot run `solve` until the selected provider is configured."));
     process.exitCode = 1;
   } else {
-    console.log(chalk.green("Ready to run `resolv solve <issue-url>`."));
+    console.log(chalk.green("Ready to run `solve <issue-url>`."));
   }
 }
 
