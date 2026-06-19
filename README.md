@@ -144,61 +144,6 @@ Options:
 
 The target repo must be clean. Commit or stash local changes before running `solve`.
 
-## Project Layout
-
-```text
-bin/
-  resolv.ts                  CLI entrypoint
-
-apps/cli-direct/
-  config-command.ts          environment/provider check
-  dna-command.ts             standalone repo DNA scan
-  solve-command.ts           full issue-fixing pipeline
-  repl.ts                    minimal command shell
-
-config/
-  config.ts                  environment config loader
-
-packages/core/
-  types.ts                   provider, message, tool, event types
-  errors.ts                  shared error classes
-  events.ts                  event bus
-
-packages/providers/
-  provider.ts                Provider interface
-  register.ts                env-based provider factory
-  nim/                       NVIDIA NIM provider
-  anthropic/                 Anthropic provider
-  google/                    Gemini provider
-
-packages/dna/
-  extract.ts                 repo analysis entrypoint
-  analysis/                  file/import/function/helper/style analyzers
-
-packages/context-agent/
-  github/                    issue fetching and URL parsing
-  semantic/                  embeddings and in-memory semantic search
-  issue-mapper.ts            keyword candidate selection
-
-packages/planner/
-  planner.ts                 simple fix plan builder
-  planner-agent.ts           LLM target-file planner
-
-packages/llm/
-  prompt-builder.ts          fix and retry prompts
-
-packages/coding-agent/
-  apply-fix.ts               SEARCH/REPLACE parser and applier
-  run-tests.ts               test runner
-  self-heal-loop.ts          generate, apply, test, retry loop
-  git/                       branch, checkout, commit, push, PR helpers
-
-packages/orchestrator-agent/
-  agent-loop.ts              conversational tool-call loop, not wired to CLI yet
-  session.ts                 chat history and context
-  system-prompt.ts           agent behavior prompt
-  tool-registry.ts           tool registry
-```
 
 ## Design Notes
 
