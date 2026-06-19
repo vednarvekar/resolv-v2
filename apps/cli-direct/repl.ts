@@ -11,7 +11,8 @@ import { runDnaCommand } from "./dna-command.js";
 // ── Orchestrator Core Layers ─────────────────────────────────
 import { createProviderFromEnv } from "../../packages/providers/register.js";
 import { AgentSession } from "../../packages/orchestrator-agent/session.js";
-import { runAgentTurn } from "../../packages/orchestrator-agent/agent-loop.js";
+import { runLLMChatTurn } from "../../packages/llm/llm-calls.js";
+import { createLLMTools } from "../../packages/llm/llm-tools.js";
 import { ToolRegistry } from "../../packages/orchestrator-agent/tool-registry.js"; // Ensure path matches
 import { AgentEventBus } from "../../packages/core/events.js";
 
@@ -31,8 +32,8 @@ export async function startRepl(): Promise<void> {
   session.setRepoPath(process.cwd());
   
   // instantiate your custom tool registry block mapping context
-  const tools = new ToolRegistry(); 
-  // Note: if you have tools, register them here (e.g., tools.register(someTool))
+  const tools = new ToolRegistry();
+  tools.registerAll(createLLMTools(process.cwd()));
 
   // 2. Setup the event bus to react to streaming text and background processes
   const events = new AgentEventBus();
@@ -125,7 +126,7 @@ export async function startRepl(): Promise<void> {
 
     // 3. Fallback Route: Pass off conversational control loop directly to the runtime loop orchestrator
     try {
-      await runAgentTurn(line, {
+      await runLLMChatTurn(line, {
         provider,
         tools,
         session,

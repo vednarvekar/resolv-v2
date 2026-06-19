@@ -1,0 +1,7284 @@
+{
+  "repoRoot": "/home/vedvn/resolv-v2",
+  "scannedAt": "2026-06-19T15:51:33.407Z",
+  "files": [
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+      "relativePath": "apps/cli-direct/config-command.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2279,
+      "lineCount": 61
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+      "relativePath": "apps/cli-direct/dna-command.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 3505,
+      "lineCount": 81
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+      "relativePath": "apps/cli-direct/repl.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 4368,
+      "lineCount": 145
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts",
+      "relativePath": "apps/cli-direct/solve-command.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 6975,
+      "lineCount": 156
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/tui/components/types.ts",
+      "relativePath": "apps/tui/components/types.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 85,
+      "lineCount": 5
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/apps/tui/slash-commands/suggest.ts",
+      "relativePath": "apps/tui/slash-commands/suggest.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 291,
+      "lineCount": 19
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/bin/resolv.ts",
+      "relativePath": "bin/resolv.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2715,
+      "lineCount": 76
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/config/config.ts",
+      "relativePath": "config/config.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 610,
+      "lineCount": 24
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts",
+      "relativePath": "packages/coding-agent/apply-fix.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 4507,
+      "lineCount": 140
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/git/checkout.ts",
+      "relativePath": "packages/coding-agent/git/checkout.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 305,
+      "lineCount": 10
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/git/commit.ts",
+      "relativePath": "packages/coding-agent/git/commit.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 521,
+      "lineCount": 14
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts",
+      "relativePath": "packages/coding-agent/git/create-branch.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1016,
+      "lineCount": 31
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts",
+      "relativePath": "packages/coding-agent/git/push-and-pr.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2225,
+      "lineCount": 71
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/run-tests.ts",
+      "relativePath": "packages/coding-agent/run-tests.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1295,
+      "lineCount": 35
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts",
+      "relativePath": "packages/coding-agent/self-heal-loop.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2790,
+      "lineCount": 81
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts",
+      "relativePath": "packages/context-agent/github/fetch-issue.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1906,
+      "lineCount": 77
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/context-agent/github/parse-issue-url.ts",
+      "relativePath": "packages/context-agent/github/parse-issue-url.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 638,
+      "lineCount": 24
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts",
+      "relativePath": "packages/context-agent/issue-mapper.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1660,
+      "lineCount": 48
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+      "relativePath": "packages/context-agent/semantic/embeddings.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1981,
+      "lineCount": 72
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts",
+      "relativePath": "packages/context-agent/semantic/file-index.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 3816,
+      "lineCount": 126
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/core/errors.ts",
+      "relativePath": "packages/core/errors.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1243,
+      "lineCount": 42
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/core/events.ts",
+      "relativePath": "packages/core/events.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 941,
+      "lineCount": 32
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/core/types.ts",
+      "relativePath": "packages/core/types.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 4023,
+      "lineCount": 115
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+      "relativePath": "packages/dna/analysis/architecture.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 3985,
+      "lineCount": 110
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+      "relativePath": "packages/dna/analysis/callgraph.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 725,
+      "lineCount": 25
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts",
+      "relativePath": "packages/dna/analysis/dependencies.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1847,
+      "lineCount": 58
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+      "relativePath": "packages/dna/analysis/errors.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2348,
+      "lineCount": 70
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+      "relativePath": "packages/dna/analysis/exports.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2494,
+      "lineCount": 77
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+      "relativePath": "packages/dna/analysis/files.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1924,
+      "lineCount": 73
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+      "relativePath": "packages/dna/analysis/functions.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2462,
+      "lineCount": 75
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+      "relativePath": "packages/dna/analysis/helpers.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1355,
+      "lineCount": 33
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+      "relativePath": "packages/dna/analysis/imports.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 3825,
+      "lineCount": 115
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+      "relativePath": "packages/dna/analysis/naming.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1732,
+      "lineCount": 48
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts",
+      "relativePath": "packages/dna/analysis/patterns.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1951,
+      "lineCount": 55
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts",
+      "relativePath": "packages/dna/analysis/structure.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 900,
+      "lineCount": 37
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/extract.ts",
+      "relativePath": "packages/dna/extract.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 3285,
+      "lineCount": 82
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/dna/types.ts",
+      "relativePath": "packages/dna/types.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2732,
+      "lineCount": 122
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+      "relativePath": "packages/llm/prompt-builder.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 6268,
+      "lineCount": 164
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+      "relativePath": "packages/orchestrator-agent/agent-loop.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 6066,
+      "lineCount": 145
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts",
+      "relativePath": "packages/orchestrator-agent/session.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1673,
+      "lineCount": 53
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/orchestrator-agent/system-prompt.ts",
+      "relativePath": "packages/orchestrator-agent/system-prompt.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2949,
+      "lineCount": 40
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts",
+      "relativePath": "packages/orchestrator-agent/tool-registry.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1121,
+      "lineCount": 35
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts",
+      "relativePath": "packages/planner/planner-agent.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 4459,
+      "lineCount": 115
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/planner/planner.ts",
+      "relativePath": "packages/planner/planner.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1135,
+      "lineCount": 41
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+      "relativePath": "packages/providers/anthropic/anthropic-provider.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 4572,
+      "lineCount": 123
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+      "relativePath": "packages/providers/google/gemini-provider.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 6590,
+      "lineCount": 183
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts",
+      "relativePath": "packages/providers/nim/nim-provider.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 7516,
+      "lineCount": 216
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/providers/provider.ts",
+      "relativePath": "packages/providers/provider.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 1679,
+      "lineCount": 40
+    },
+    {
+      "absolutePath": "/home/vedvn/resolv-v2/packages/providers/register.ts",
+      "relativePath": "packages/providers/register.ts",
+      "extension": ".ts",
+      "language": "typescript",
+      "sizeBytes": 2845,
+      "lineCount": 75
+    }
+  ],
+  "imports": {
+    "bin/resolv.ts": [
+      {
+        "source": "commander",
+        "symbols": [
+          "Command"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "dotenv",
+        "symbols": [
+          "dotenv"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "os",
+        "symbols": [
+          "os"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../apps/cli-direct/solve-command.js",
+        "symbols": [
+          "solve"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../apps/cli-direct/dna-command.js",
+        "symbols": [
+          "runDnaCommand"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../apps/cli-direct/config-command.js",
+        "symbols": [
+          "runConfigCommand"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../apps/cli-direct/repl.js",
+        "symbols": [
+          "startRepl"
+        ],
+        "isExternal": false
+      }
+    ],
+    "config/config.ts": [
+      {
+        "source": "dotenv",
+        "symbols": [
+          "dotenv"
+        ],
+        "isExternal": true
+      }
+    ],
+    "apps/cli-direct/config-command.ts": [
+      {
+        "source": "chalk",
+        "symbols": [
+          "chalk"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "dotenv",
+        "symbols": [
+          "dotenv"
+        ],
+        "isExternal": true
+      }
+    ],
+    "apps/cli-direct/dna-command.ts": [
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "chalk",
+        "symbols": [
+          "chalk"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "ora",
+        "symbols": [
+          "ora"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../../packages/dna/extract.js",
+        "symbols": [
+          "extractDNA"
+        ],
+        "isExternal": false
+      }
+    ],
+    "apps/cli-direct/repl.ts": [
+      {
+        "source": "node:readline/promises",
+        "symbols": [
+          "readline"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:process",
+        "symbols": [
+          "stdin",
+          "stdout"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "chalk",
+        "symbols": [
+          "chalk"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "./config-command.js",
+        "symbols": [
+          "runConfigCommand"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./dna-command.js",
+        "symbols": [
+          "runDnaCommand"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/providers/register.js",
+        "symbols": [
+          "createProviderFromEnv"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/orchestrator-agent/session.js",
+        "symbols": [
+          "AgentSession"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/orchestrator-agent/agent-loop.js",
+        "symbols": [
+          "runAgentTurn"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/orchestrator-agent/tool-registry.js",
+        "symbols": [
+          "ToolRegistry"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/core/events.js",
+        "symbols": [
+          "AgentEventBus"
+        ],
+        "isExternal": false
+      }
+    ],
+    "apps/cli-direct/solve-command.ts": [
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "chalk",
+        "symbols": [
+          "chalk"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "ora",
+        "symbols": [
+          "ora"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../../config/config.js",
+        "symbols": [
+          "loadConfig"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/context-agent/github/parse-issue-url.js",
+        "symbols": [
+          "parseIssueUrl"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/context-agent/github/fetch-issue.js",
+        "symbols": [
+          "fetchIssue"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/dna/extract.js",
+        "symbols": [
+          "extractDNA"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/context-agent/issue-mapper.js",
+        "symbols": [
+          "mapIssueToDNA"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/planner/planner.js",
+        "symbols": [
+          "createPlan"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/planner/planner-agent.js",
+        "symbols": [
+          "planTargets"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/llm/prompt-builder.js",
+        "symbols": [
+          "buildPrompt"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/context-agent/semantic/file-index.js",
+        "symbols": [
+          "buildSemanticIndex",
+          "semanticSearch"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/coding-agent/git/create-branch.js",
+        "symbols": [
+          "createBranch",
+          "branchExists",
+          "assertCleanWorkingDirectory"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/coding-agent/git/checkout.js",
+        "symbols": [
+          "checkoutBranch",
+          "getCurrentBranch"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/coding-agent/git/commit.js",
+        "symbols": [
+          "commitChanges"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/coding-agent/git/push-and-pr.js",
+        "symbols": [
+          "openPullRequest",
+          "getDefaultBranch"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/coding-agent/self-heal-loop.js",
+        "symbols": [
+          "runSelfHealLoop"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../packages/providers/register.js",
+        "symbols": [
+          "createProviderFromEnv"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/coding-agent/apply-fix.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/coding-agent/run-tests.ts": [
+      {
+        "source": "node:child_process",
+        "symbols": [
+          "execSync"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/coding-agent/self-heal-loop.ts": [
+      {
+        "source": "../providers/provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../llm/prompt-builder.js",
+        "symbols": [
+          "buildRetryPrompt"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./apply-fix.js",
+        "symbols": [
+          "parseFileChanges",
+          "applyFileChanges"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./run-tests.js",
+        "symbols": [
+          "runTests",
+          "truncateForPrompt"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "Msg"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/context-agent/issue-mapper.ts": [
+      {
+        "source": "../dna/types.js",
+        "symbols": [
+          "DNAProfile"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./github/fetch-issue.js",
+        "symbols": [
+          "GitHubIssue"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/core/events.ts": [
+      {
+        "source": "./types.js",
+        "symbols": [
+          "AgentEvent"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/extract.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "./analysis/files.js",
+        "symbols": [
+          "scanFiles"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/imports.js",
+        "symbols": [
+          "analyzeImports"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/exports.js",
+        "symbols": [
+          "analyzeExports"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/functions.js",
+        "symbols": [
+          "analyzeFunctions"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/helpers.js",
+        "symbols": [
+          "analyzeHelpers"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/callgraph.js",
+        "symbols": [
+          "analyzeCallGraph"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/architecture.js",
+        "symbols": [
+          "analyzeArchitecture"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/naming.js",
+        "symbols": [
+          "analyzeNaming"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/errors.js",
+        "symbols": [
+          "analyzeErrors"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/patterns.js",
+        "symbols": [
+          "analyzePatterns"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/dependencies.js",
+        "symbols": [
+          "analyzeDependencies"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./analysis/structure.js",
+        "symbols": [
+          "analyzeStructure"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./types.js",
+        "symbols": [
+          "DNAProfile"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/llm/prompt-builder.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../dna/types.js",
+        "symbols": [
+          "DNAProfile"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../context-agent/github/fetch-issue.js",
+        "symbols": [
+          "GitHubIssue"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../planner/planner.js",
+        "symbols": [
+          "FixPlan"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../context-agent/issue-mapper.js",
+        "symbols": [
+          "IssueMapping"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/orchestrator-agent/agent-loop.ts": [
+      {
+        "source": "../core/events.js",
+        "symbols": [
+          "AgentEventBus"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../core/errors.js",
+        "symbols": [
+          "AgentLoopLimitError"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "Msg",
+          "Message",
+          "ToolUseContentBlock"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../providers/provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./session.js",
+        "symbols": [
+          "AgentSession"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./system-prompt.js",
+        "symbols": [
+          "buildSystemPrompt"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./tool-registry.js",
+        "symbols": [
+          "ToolRegistry"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/orchestrator-agent/session.ts": [
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "Message"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./system-prompt.js",
+        "symbols": [
+          "SystemPromptContext"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/orchestrator-agent/system-prompt.ts": [
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "ToolDefinition"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/orchestrator-agent/tool-registry.ts": [
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "ToolDefinition"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/planner/planner-agent.ts": [
+      {
+        "source": "../dna/types.js",
+        "symbols": [
+          "DNAProfile"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../context-agent/github/fetch-issue.js",
+        "symbols": [
+          "GitHubIssue"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../context-agent/semantic/file-index.js",
+        "symbols": [
+          "SemanticMatch"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../context-agent/issue-mapper.js",
+        "symbols": [
+          "IssueMapping"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../providers/provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "Msg"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/planner/planner.ts": [
+      {
+        "source": "../context-agent/issue-mapper.js",
+        "symbols": [
+          "IssueMapping"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/providers/provider.ts": [
+      {
+        "source": "../core/types.js",
+        "symbols": [
+          "ProviderChatOptions",
+          "ProviderResponse"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/providers/register.ts": [
+      {
+        "source": "../core/errors.js",
+        "symbols": [
+          "UnknownProviderError"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./anthropic/anthropic-provider.js",
+        "symbols": [
+          "AnthropicProvider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./google/gemini-provider.js",
+        "symbols": [
+          "GeminiProvider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./nim/nim-provider.js",
+        "symbols": [
+          "NimProvider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "./provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/coding-agent/git/checkout.ts": [
+      {
+        "source": "node:child_process",
+        "symbols": [
+          "execSync"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/coding-agent/git/commit.ts": [
+      {
+        "source": "node:child_process",
+        "symbols": [
+          "execSync"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/coding-agent/git/create-branch.ts": [
+      {
+        "source": "node:child_process",
+        "symbols": [
+          "execSync"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/coding-agent/git/push-and-pr.ts": [
+      {
+        "source": "node:child_process",
+        "symbols": [
+          "execSync"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "@octokit/rest",
+        "symbols": [
+          "Octokit"
+        ],
+        "isExternal": true
+      }
+    ],
+    "packages/context-agent/semantic/file-index.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "./embeddings.js",
+        "symbols": [
+          "cosineSimilarity"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../dna/types.js",
+        "symbols": [
+          "DNAProfile",
+          "FunctionInfo"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../providers/provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/architecture.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind",
+          "CallExpression",
+          "TypeChecker"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "ArchitectureFlow",
+          "ArchitectureInfo"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/callgraph.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "CallGraphNode"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/dependencies.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "ImportInfo",
+          "DependencyInfo"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/errors.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "ErrorPattern"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/exports.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "RepoFile",
+          "ExportInfo"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/files.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "Language",
+          "RepoFile"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/functions.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "FunctionInfo",
+          "FunctionAnalysis"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/helpers.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "HelperUsage"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/imports.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "RepoFile",
+          "ImportInfo"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/naming.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "NamingStats"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/patterns.ts": [
+      {
+        "source": "ts-morph",
+        "symbols": [
+          "Project",
+          "SyntaxKind"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "AsyncPattern"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/dna/analysis/structure.ts": [
+      {
+        "source": "node:fs",
+        "symbols": [
+          "fs"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "node:path",
+        "symbols": [
+          "path"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../types.js",
+        "symbols": [
+          "FolderNode"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/providers/anthropic/anthropic-provider.ts": [
+      {
+        "source": "@anthropic-ai/sdk",
+        "symbols": [
+          "Anthropic"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../../core/errors.js",
+        "symbols": [
+          "ProviderError"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../core/types.js",
+        "symbols": [
+          "ContentBlock",
+          "Message",
+          "ProviderChatOptions",
+          "ProviderResponse",
+          "ToolDefinition"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../provider.js",
+        "symbols": [
+          "EmbeddingsNotSupportedError"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/providers/google/gemini-provider.ts": [
+      {
+        "source": "@google/generative-ai",
+        "symbols": [
+          "GoogleGenerativeAI",
+          "Content",
+          "FunctionDeclaration",
+          "FunctionDeclarationSchema",
+          "Part",
+          "Schema",
+          "SchemaType"
+        ],
+        "isExternal": true
+      },
+      {
+        "source": "../../core/errors.js",
+        "symbols": [
+          "ProviderError"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../core/types.js",
+        "symbols": [
+          "ContentBlock",
+          "JSONSchemaProperty",
+          "Message",
+          "ProviderChatOptions",
+          "ProviderResponse",
+          "ToolDefinition"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      }
+    ],
+    "packages/providers/nim/nim-provider.ts": [
+      {
+        "source": "../../core/errors.js",
+        "symbols": [
+          "ProviderError"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../../core/types.js",
+        "symbols": [
+          "ContentBlock",
+          "Message",
+          "ProviderChatOptions",
+          "ProviderResponse",
+          "ToolDefinition"
+        ],
+        "isExternal": false
+      },
+      {
+        "source": "../provider.js",
+        "symbols": [
+          "Provider"
+        ],
+        "isExternal": false
+      }
+    ]
+  },
+  "exports": {
+    "config/config.ts": [
+      {
+        "name": "loadConfig",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "ResolvConfig",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "apps/cli-direct/config-command.ts": [
+      {
+        "name": "runConfigCommand",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "apps/cli-direct/dna-command.ts": [
+      {
+        "name": "runDnaCommand",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "DnaCommandOptions",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "apps/cli-direct/repl.ts": [
+      {
+        "name": "startRepl",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "apps/cli-direct/solve-command.ts": [
+      {
+        "name": "solve",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "SolveOptions",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/apply-fix.ts": [
+      {
+        "name": "parseFileChanges",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "applyFileChanges",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "FileChange",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/run-tests.ts": [
+      {
+        "name": "runTests",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "truncateForPrompt",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "TestResult",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/self-heal-loop.ts": [
+      {
+        "name": "runSelfHealLoop",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "SelfHealOptions",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "SelfHealResult",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/context-agent/issue-mapper.ts": [
+      {
+        "name": "mapIssueToDNA",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "IssueMapping",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/core/errors.ts": [
+      {
+        "name": "ProviderError",
+        "type": "class",
+        "isDefault": false
+      },
+      {
+        "name": "ToolInputError",
+        "type": "class",
+        "isDefault": false
+      },
+      {
+        "name": "AgentLoopLimitError",
+        "type": "class",
+        "isDefault": false
+      },
+      {
+        "name": "UnknownProviderError",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/core/events.ts": [
+      {
+        "name": "AgentEventBus",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/core/types.ts": [
+      {
+        "name": "Role",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "TextContentBlock",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ToolUseContentBlock",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ToolResultContentBlock",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ContentBlock",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "Message",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "Msg",
+        "type": "constant",
+        "isDefault": false
+      },
+      {
+        "name": "JSONSchema",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "JSONSchemaProperty",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ToolDefinition",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ToolExecutionResult",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ProviderResponse",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ProviderChatOptions",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "AgentEvent",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/extract.ts": [
+      {
+        "name": "extractDNA",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/types.ts": [
+      {
+        "name": "Language",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "RepoFile",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "FunctionInfo",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "FunctionAnalysis",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ExportInfo",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ImportInfo",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "HelperUsage",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "CallGraphNode",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ArchitectureFlow",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ArchitectureInfo",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "NamingStats",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ErrorPattern",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "AsyncPattern",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "DependencyInfo",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "FolderNode",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "DNAProfile",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/llm/prompt-builder.ts": [
+      {
+        "name": "buildPrompt",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "buildRetryPrompt",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/orchestrator-agent/agent-loop.ts": [
+      {
+        "name": "runAgentTurn",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "AgentLoopOptions",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "AgentTurnResult",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/orchestrator-agent/session.ts": [
+      {
+        "name": "AgentSession",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/orchestrator-agent/system-prompt.ts": [
+      {
+        "name": "buildSystemPrompt",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "SystemPromptContext",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/orchestrator-agent/tool-registry.ts": [
+      {
+        "name": "ToolRegistry",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/planner/planner-agent.ts": [
+      {
+        "name": "planTargets",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "AgentPlan",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/planner/planner.ts": [
+      {
+        "name": "createPlan",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "FixStep",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "FixPlan",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/providers/provider.ts": [
+      {
+        "name": "Provider",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "EmbeddingsNotSupportedError",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/providers/register.ts": [
+      {
+        "name": "isSupportedProvider",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "createProvider",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "createProviderFromEnv",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "listAvailableProviders",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "ProviderName",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "ProviderCredentials",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/git/checkout.ts": [
+      {
+        "name": "checkoutBranch",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "getCurrentBranch",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/git/commit.ts": [
+      {
+        "name": "commitChanges",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "hasUncommittedChanges",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/git/create-branch.ts": [
+      {
+        "name": "createBranch",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "branchExists",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "assertCleanWorkingDirectory",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/coding-agent/git/push-and-pr.ts": [
+      {
+        "name": "pushBranch",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "openPullRequest",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "getDefaultBranch",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "OpenPullRequestOptions",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "PrOutcome",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/context-agent/github/fetch-issue.ts": [
+      {
+        "name": "fetchIssue",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "GitHubComment",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "GitHubIssue",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/context-agent/github/parse-issue-url.ts": [
+      {
+        "name": "parseIssueUrl",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "ParsedIssueUrl",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/context-agent/semantic/embeddings.ts": [
+      {
+        "name": "getEmbeddings",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "cosineSimilarity",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "EmbeddingOptions",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/context-agent/semantic/file-index.ts": [
+      {
+        "name": "buildSemanticIndex",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "semanticSearch",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "IndexedChunk",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "SemanticIndex",
+        "type": "interface",
+        "isDefault": false
+      },
+      {
+        "name": "SemanticMatch",
+        "type": "interface",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/architecture.ts": [
+      {
+        "name": "analyzeArchitecture",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/callgraph.ts": [
+      {
+        "name": "analyzeCallGraph",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/dependencies.ts": [
+      {
+        "name": "analyzeDependencies",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "getUnusedDependencies",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/errors.ts": [
+      {
+        "name": "analyzeErrors",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/exports.ts": [
+      {
+        "name": "analyzeExports",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/files.ts": [
+      {
+        "name": "scanFiles",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "getLanguageBreakdown",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/functions.ts": [
+      {
+        "name": "analyzeFunctions",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/helpers.ts": [
+      {
+        "name": "analyzeHelpers",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/imports.ts": [
+      {
+        "name": "analyzeImports",
+        "type": "function",
+        "isDefault": false
+      },
+      {
+        "name": "getUniqueExternalDependencies",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/naming.ts": [
+      {
+        "name": "analyzeNaming",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/patterns.ts": [
+      {
+        "name": "analyzePatterns",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/dna/analysis/structure.ts": [
+      {
+        "name": "analyzeStructure",
+        "type": "function",
+        "isDefault": false
+      }
+    ],
+    "packages/providers/anthropic/anthropic-provider.ts": [
+      {
+        "name": "AnthropicProvider",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/providers/google/gemini-provider.ts": [
+      {
+        "name": "GeminiProvider",
+        "type": "class",
+        "isDefault": false
+      }
+    ],
+    "packages/providers/nim/nim-provider.ts": [
+      {
+        "name": "NimProvider",
+        "type": "class",
+        "isDefault": false
+      }
+    ]
+  },
+  "functions": [
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "issueUrl",
+        "opts"
+      ],
+      "async": true,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/bin/resolv.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "opts"
+      ],
+      "async": true,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/bin/resolv.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/bin/resolv.ts"
+    },
+    {
+      "name": "loadConfig",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 10,
+      "file": "/home/vedvn/resolv-v2/config/config.ts"
+    },
+    {
+      "name": "runConfigCommand",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 50,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts"
+    },
+    {
+      "name": "printCheck",
+      "kind": "function",
+      "params": [
+        "name",
+        "ok",
+        "hint"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts"
+    },
+    {
+      "name": "runDnaCommand",
+      "kind": "function",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 56,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "countBy",
+      "kind": "function",
+      "params": [
+        "values"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "formatCounts",
+      "kind": "function",
+      "params": [
+        "counts"
+      ],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "e"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "p"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "d"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "[k, v]"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+    },
+    {
+      "name": "startRepl",
+      "kind": "function",
+      "params": [],
+      "async": true,
+      "lines": 128,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "event"
+      ],
+      "async": false,
+      "lines": 24,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+    },
+    {
+      "name": "solve",
+      "kind": "function",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 128,
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+    },
+    {
+      "name": "parseSearchReplaceBlocks",
+      "kind": "function",
+      "params": [
+        "llmResponse"
+      ],
+      "async": false,
+      "lines": 32,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+    },
+    {
+      "name": "parseFileChanges",
+      "kind": "function",
+      "params": [
+        "llmResponse",
+        "repoRoot"
+      ],
+      "async": false,
+      "lines": 53,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+    },
+    {
+      "name": "applyFileChanges",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "changes"
+      ],
+      "async": false,
+      "lines": 19,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+    },
+    {
+      "name": "runTests",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "testCommand"
+      ],
+      "async": false,
+      "lines": 15,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/run-tests.ts"
+    },
+    {
+      "name": "truncateForPrompt",
+      "kind": "function",
+      "params": [
+        "output",
+        "maxChars"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/run-tests.ts"
+    },
+    {
+      "name": "runSelfHealLoop",
+      "kind": "function",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 50,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts"
+    },
+    {
+      "name": "applyGeneratedFix",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "llmResponse"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts"
+    },
+    {
+      "name": "mapIssueToDNA",
+      "kind": "function",
+      "params": [
+        "issue",
+        "dna"
+      ],
+      "async": false,
+      "lines": 19,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "extractKeywords",
+      "kind": "function",
+      "params": [
+        "text"
+      ],
+      "async": false,
+      "lines": 11,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "file"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "keyword"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "file"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "fn"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "keyword"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "fn"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "helper"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "keyword"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "helper"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "word"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+    },
+    {
+      "name": "on",
+      "kind": "method",
+      "params": [
+        "listener"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/packages/core/events.ts"
+    },
+    {
+      "name": "emit",
+      "kind": "method",
+      "params": [
+        "event"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/core/events.ts"
+    },
+    {
+      "name": "clear",
+      "kind": "method",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/events.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/events.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "l"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/core/events.ts"
+    },
+    {
+      "name": "user",
+      "kind": "method",
+      "params": [
+        "text"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/types.ts"
+    },
+    {
+      "name": "assistantText",
+      "kind": "method",
+      "params": [
+        "text"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/types.ts"
+    },
+    {
+      "name": "system",
+      "kind": "method",
+      "params": [
+        "text"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/types.ts"
+    },
+    {
+      "name": "toolResult",
+      "kind": "method",
+      "params": [
+        "toolUseId",
+        "content",
+        "isError"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/core/types.ts"
+    },
+    {
+      "name": "extractDNA",
+      "kind": "function",
+      "params": [
+        "repoPath"
+      ],
+      "async": true,
+      "lines": 60,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "name",
+        "fn"
+      ],
+      "async": false,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+    },
+    {
+      "name": "readFileSnippet",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "relativePath"
+      ],
+      "async": false,
+      "lines": 10,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "buildSourceContext",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "relevantFiles"
+      ],
+      "async": false,
+      "lines": 18,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "buildPrompt",
+      "kind": "function",
+      "params": [
+        "issue",
+        "dna",
+        "mapping",
+        "plan",
+        "repoRoot",
+        "refinedFiles"
+      ],
+      "async": false,
+      "lines": 62,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "buildRetryPrompt",
+      "kind": "function",
+      "params": [
+        "basePrompt",
+        "previousAttempt",
+        "testError",
+        "maxErrorChars",
+        "maxPreviousAttemptChars"
+      ],
+      "async": false,
+      "lines": 25,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "mostCommon",
+      "kind": "function",
+      "params": [
+        "values"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "e"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "p"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "h"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "step"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+    },
+    {
+      "name": "runAgentTurn",
+      "kind": "function",
+      "params": [
+        "userMessage",
+        "options"
+      ],
+      "async": true,
+      "lines": 95,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+    },
+    {
+      "name": "addMessage",
+      "kind": "method",
+      "params": [
+        "message"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "getHistory",
+      "kind": "method",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "clearHistory",
+      "kind": "method",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "truncateHistory",
+      "kind": "method",
+      "params": [
+        "keepLast"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "getContext",
+      "kind": "method",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "setRepoPath",
+      "kind": "method",
+      "params": [
+        "repoPath"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "setCurrentBranch",
+      "kind": "method",
+      "params": [
+        "branch"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "setStyleSummary",
+      "kind": "method",
+      "params": [
+        "summary"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/session.ts"
+    },
+    {
+      "name": "buildSystemPrompt",
+      "kind": "function",
+      "params": [
+        "tools",
+        "context"
+      ],
+      "async": false,
+      "lines": 23,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/system-prompt.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/system-prompt.ts"
+    },
+    {
+      "name": "register",
+      "kind": "method",
+      "params": [
+        "tool"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts"
+    },
+    {
+      "name": "registerAll",
+      "kind": "method",
+      "params": [
+        "tools"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts"
+    },
+    {
+      "name": "get",
+      "kind": "method",
+      "params": [
+        "name"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts"
+    },
+    {
+      "name": "list",
+      "kind": "method",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts"
+    },
+    {
+      "name": "has",
+      "kind": "method",
+      "params": [
+        "name"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts"
+    },
+    {
+      "name": "planTargets",
+      "kind": "function",
+      "params": [
+        "issue",
+        "dna",
+        "keywordMapping",
+        "semanticMatches",
+        "provider",
+        "model"
+      ],
+      "async": true,
+      "lines": 65,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "parsePlanResponse",
+      "kind": "function",
+      "params": [
+        "raw"
+      ],
+      "async": false,
+      "lines": 24,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "m"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "m"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "m"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "m"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "block"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "f"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "f"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+    },
+    {
+      "name": "createPlan",
+      "kind": "function",
+      "params": [
+        "issueTitle",
+        "mapping"
+      ],
+      "async": false,
+      "lines": 25,
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner.ts"
+    },
+    {
+      "name": "isSupportedProvider",
+      "kind": "function",
+      "params": [
+        "name"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/providers/register.ts"
+    },
+    {
+      "name": "createProvider",
+      "kind": "function",
+      "params": [
+        "name",
+        "credentials"
+      ],
+      "async": false,
+      "lines": 18,
+      "file": "/home/vedvn/resolv-v2/packages/providers/register.ts"
+    },
+    {
+      "name": "createProviderFromEnv",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 13,
+      "file": "/home/vedvn/resolv-v2/packages/providers/register.ts"
+    },
+    {
+      "name": "listAvailableProviders",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/providers/register.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "line"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/apps/tui/slash-commands/suggest.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "cmd"
+      ],
+      "async": false,
+      "lines": 2,
+      "file": "/home/vedvn/resolv-v2/apps/tui/slash-commands/suggest.ts"
+    },
+    {
+      "name": "checkoutBranch",
+      "kind": "function",
+      "params": [
+        "branchName"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/checkout.ts"
+    },
+    {
+      "name": "getCurrentBranch",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/checkout.ts"
+    },
+    {
+      "name": "commitChanges",
+      "kind": "function",
+      "params": [
+        "message"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/commit.ts"
+    },
+    {
+      "name": "hasUncommittedChanges",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/commit.ts"
+    },
+    {
+      "name": "createBranch",
+      "kind": "function",
+      "params": [
+        "branchName"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts"
+    },
+    {
+      "name": "branchExists",
+      "kind": "function",
+      "params": [
+        "branchName"
+      ],
+      "async": false,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts"
+    },
+    {
+      "name": "assertCleanWorkingDirectory",
+      "kind": "function",
+      "params": [],
+      "async": false,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts"
+    },
+    {
+      "name": "pushBranch",
+      "kind": "function",
+      "params": [
+        "branchName"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts"
+    },
+    {
+      "name": "openPullRequest",
+      "kind": "function",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 32,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts"
+    },
+    {
+      "name": "getDefaultBranch",
+      "kind": "function",
+      "params": [
+        "owner",
+        "repo",
+        "githubToken"
+      ],
+      "async": true,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts"
+    },
+    {
+      "name": "authHeaders",
+      "kind": "function",
+      "params": [
+        "token"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts"
+    },
+    {
+      "name": "fetchIssue",
+      "kind": "function",
+      "params": [
+        "owner",
+        "repo",
+        "issueNumber",
+        "token"
+      ],
+      "async": true,
+      "lines": 55,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "label"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts"
+    },
+    {
+      "name": "parseIssueUrl",
+      "kind": "function",
+      "params": [
+        "url"
+      ],
+      "async": false,
+      "lines": 17,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/parse-issue-url.ts"
+    },
+    {
+      "name": "getEmbeddings",
+      "kind": "function",
+      "params": [
+        "texts",
+        "options"
+      ],
+      "async": true,
+      "lines": 39,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts"
+    },
+    {
+      "name": "cosineSimilarity",
+      "kind": "function",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 16,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts"
+    },
+    {
+      "name": "summarizeFile",
+      "kind": "function",
+      "params": [
+        "repoRoot",
+        "relativePath"
+      ],
+      "async": false,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "summarizeFunction",
+      "kind": "function",
+      "params": [
+        "fn"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "buildSemanticIndex",
+      "kind": "function",
+      "params": [
+        "dna",
+        "provider"
+      ],
+      "async": true,
+      "lines": 53,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "semanticSearch",
+      "kind": "function",
+      "params": [
+        "index",
+        "query",
+        "provider",
+        "topK"
+      ],
+      "async": true,
+      "lines": 18,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "fn"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "chunk"
+      ],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+    },
+    {
+      "name": "analyzeArchitecture",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 37,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "detectLayer",
+      "kind": "function",
+      "params": [
+        "filePath",
+        "imports",
+        "calls"
+      ],
+      "async": false,
+      "lines": 33,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "isValidApplicationCall",
+      "kind": "function",
+      "params": [
+        "call",
+        "typeChecker"
+      ],
+      "async": false,
+      "lines": 33,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "i"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "call"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "call"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "c"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "i"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "i"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+    },
+    {
+      "name": "analyzeCallGraph",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 21,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "call"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts"
+    },
+    {
+      "name": "readPackageJson",
+      "kind": "function",
+      "params": [
+        "repoRoot"
+      ],
+      "async": false,
+      "lines": 14,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "packageName",
+      "kind": "function",
+      "params": [
+        "importSource"
+      ],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "analyzeDependencies",
+      "kind": "function",
+      "params": [
+        "imports",
+        "repoRoot"
+      ],
+      "async": false,
+      "lines": 28,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "getUnusedDependencies",
+      "kind": "function",
+      "params": [
+        "deps"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "k"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "[name, version]"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "d"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+    },
+    {
+      "name": "analyzeErrors",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 66,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts"
+    },
+    {
+      "name": "analyzePythonExports",
+      "kind": "function",
+      "params": [
+        "file"
+      ],
+      "async": false,
+      "lines": 22,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts"
+    },
+    {
+      "name": "analyzeExports",
+      "kind": "function",
+      "params": [
+        "files",
+        "project",
+        "repoPath"
+      ],
+      "async": false,
+      "lines": 47,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts"
+    },
+    {
+      "name": "detectLanguage",
+      "kind": "function",
+      "params": [
+        "ext"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts"
+    },
+    {
+      "name": "countLines",
+      "kind": "function",
+      "params": [
+        "filePath"
+      ],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts"
+    },
+    {
+      "name": "scanFiles",
+      "kind": "function",
+      "params": [
+        "repoPath"
+      ],
+      "async": false,
+      "lines": 40,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts"
+    },
+    {
+      "name": "getLanguageBreakdown",
+      "kind": "function",
+      "params": [
+        "files"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts"
+    },
+    {
+      "name": "analyzeFunctions",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 53,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "collectFunction",
+      "kind": "function",
+      "params": [
+        "functions",
+        "paramCounts",
+        "name",
+        "kind",
+        "params",
+        "isAsync",
+        "startLine",
+        "endLine",
+        "file"
+      ],
+      "async": false,
+      "lines": 17,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "p"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "p"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "p"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "sum",
+        "fn"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "fn"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "[name]"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "param"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+    },
+    {
+      "name": "analyzeHelpers",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 26,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "[name, data]"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "h"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+    },
+    {
+      "name": "rootPackageName",
+      "kind": "function",
+      "params": [
+        "source"
+      ],
+      "async": false,
+      "lines": 4,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "isLocalSource",
+      "kind": "function",
+      "params": [
+        "source"
+      ],
+      "async": false,
+      "lines": 3,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "analyzePythonImports",
+      "kind": "function",
+      "params": [
+        "file"
+      ],
+      "async": false,
+      "lines": 32,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "analyzeImports",
+      "kind": "function",
+      "params": [
+        "files",
+        "project",
+        "repoPath"
+      ],
+      "async": false,
+      "lines": 49,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "getUniqueExternalDependencies",
+      "kind": "function",
+      "params": [
+        "imports"
+      ],
+      "async": false,
+      "lines": 11,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "s"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+    },
+    {
+      "name": "analyzeNaming",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 34,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "s"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "s"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "s"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "s"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts"
+    },
+    {
+      "name": "analyzePatterns",
+      "kind": "function",
+      "params": [
+        "project"
+      ],
+      "async": false,
+      "lines": 51,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+    },
+    {
+      "name": "analyzeStructure",
+      "kind": "function",
+      "params": [
+        "repoRoot"
+      ],
+      "async": false,
+      "lines": 27,
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts"
+    },
+    {
+      "name": "toAnthropicMessages",
+      "kind": "function",
+      "params": [
+        "messages"
+      ],
+      "async": false,
+      "lines": 33,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "toAnthropicTools",
+      "kind": "function",
+      "params": [
+        "tools"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "fromAnthropicResponse",
+      "kind": "function",
+      "params": [
+        "raw"
+      ],
+      "async": false,
+      "lines": 22,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "chat",
+      "kind": "method",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 16,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "embed",
+      "kind": "method",
+      "params": [],
+      "async": true,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "block"
+      ],
+      "async": false,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 5,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "block"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts"
+    },
+    {
+      "name": "toGeminiType",
+      "kind": "function",
+      "params": [
+        "jsonType"
+      ],
+      "async": false,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "toGeminiTools",
+      "kind": "function",
+      "params": [
+        "tools"
+      ],
+      "async": false,
+      "lines": 21,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "toGeminiContents",
+      "kind": "function",
+      "params": [
+        "messages"
+      ],
+      "async": false,
+      "lines": 32,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "chat",
+      "kind": "method",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 56,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "embed",
+      "kind": "method",
+      "params": [
+        "texts",
+        "model"
+      ],
+      "async": true,
+      "lines": 14,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 19,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "[key, prop]"
+      ],
+      "async": false,
+      "lines": 9,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 6,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "block"
+      ],
+      "async": false,
+      "lines": 7,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+    },
+    {
+      "name": "toOpenAiMessage",
+      "kind": "function",
+      "params": [
+        "message",
+        "systemPrompt"
+      ],
+      "async": false,
+      "lines": 41,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "toOpenAiTools",
+      "kind": "function",
+      "params": [
+        "tools"
+      ],
+      "async": false,
+      "lines": 10,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "fromOpenAiResponse",
+      "kind": "function",
+      "params": [
+        "raw"
+      ],
+      "async": false,
+      "lines": 39,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "chat",
+      "kind": "method",
+      "params": [
+        "options"
+      ],
+      "async": true,
+      "lines": 31,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "embed",
+      "kind": "method",
+      "params": [
+        "texts",
+        "model"
+      ],
+      "async": true,
+      "lines": 32,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "b"
+      ],
+      "async": false,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "t"
+      ],
+      "async": false,
+      "lines": 8,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    },
+    {
+      "name": "anonymous-arrow",
+      "kind": "arrow",
+      "params": [
+        "a",
+        "b"
+      ],
+      "async": false,
+      "lines": 1,
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+    }
+  ],
+  "functionStats": {
+    "totalFunctions": 228,
+    "avgFunctionSize": 12,
+    "asyncPercentage": 9,
+    "commonParamNames": [
+      "b",
+      "a",
+      "repoRoot",
+      "options",
+      "project",
+      "name",
+      "c",
+      "fn",
+      "t",
+      "p"
+    ]
+  },
+  "helpers": [
+    {
+      "name": "chalk.dim",
+      "usages": 15,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "chalk.cyan",
+      "usages": 14,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+      ]
+    },
+    {
+      "name": "sourceFile.getDescendantsOfKind",
+      "usages": 13,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "runSafe",
+      "usages": 11,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/extract.ts"
+      ]
+    },
+    {
+      "name": "String",
+      "usages": 10,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts",
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+      ]
+    },
+    {
+      "name": "execSync",
+      "usages": 10,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/coding-agent/run-tests.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/git/checkout.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/git/commit.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts"
+      ]
+    },
+    {
+      "name": "project.getSourceFiles",
+      "usages": 10,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/extract.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "filePath.includes",
+      "usages": 10,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "ora",
+      "usages": 9,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "sourceFile.getFilePath",
+      "usages": 9,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "filePath.endsWith",
+      "usages": 9,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/naming.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "events?.emit",
+      "usages": 8,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+      ]
+    },
+    {
+      "name": "out.push",
+      "usages": 8,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "path.join",
+      "usages": 7,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts"
+      ]
+    },
+    {
+      "name": "path.resolve",
+      "usages": 7,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+      ]
+    },
+    {
+      "name": "rl.prompt",
+      "usages": 7,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+      ]
+    },
+    {
+      "name": "fs.readFileSync",
+      "usages": 7,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "lower.includes",
+      "usages": 7,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+      ]
+    },
+    {
+      "name": "chalk.bold",
+      "usages": 6,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+      ]
+    },
+    {
+      "name": "\"─\".repeat",
+      "usages": 6,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts"
+      ]
+    },
+    {
+      "name": "chalk.red",
+      "usages": 6,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "results.push",
+      "usages": 6,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "process.cwd",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+      ]
+    },
+    {
+      "name": "printCheck",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts"
+      ]
+    },
+    {
+      "name": "chalk.green",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "session.addMessage",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+      ]
+    },
+    {
+      "name": "steps.push",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/planner/planner.ts"
+      ]
+    },
+    {
+      "name": "fetch",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts",
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "source.startsWith",
+      "usages": 5,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "tools.map",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/system-prompt.ts",
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "call.getExpression",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+      ]
+    },
+    {
+      "name": "line.startsWith",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "walk",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts"
+      ]
+    },
+    {
+      "name": "fileImports.push",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "content.push",
+      "usages": 4,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "fs.existsSync",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts"
+      ]
+    },
+    {
+      "name": "fs.mkdirSync",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+      ]
+    },
+    {
+      "name": "dotenv.config",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/config/config.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/config-command.ts"
+      ]
+    },
+    {
+      "name": "program\n  .command",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts"
+      ]
+    },
+    {
+      "name": "chalk.yellow",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "changes.push",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+      ]
+    },
+    {
+      "name": "Msg.user",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts",
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+        "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+      ]
+    },
+    {
+      "name": "keywords.some",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/issue-mapper.ts"
+      ]
+    },
+    {
+      "name": "resultMessages.push",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+      ]
+    },
+    {
+      "name": "Msg.toolResult",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts"
+      ]
+    },
+    {
+      "name": "response.text().catch",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "response.text",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "response.json",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "call.getExpression().getText",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts"
+      ]
+    },
+    {
+      "name": "c.includes",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+      ]
+    },
+    {
+      "name": "i.endsWith",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts"
+      ]
+    },
+    {
+      "name": "call.getExpressionIfKind",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "fn.getParameters",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "content.split",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "path.relative",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "collectFunction",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+      ]
+    },
+    {
+      "name": "p.getName",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+      ]
+    },
+    {
+      "name": "symbols.push",
+      "usages": 3,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "runDnaCommand",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+      ]
+    },
+    {
+      "name": "runConfigCommand",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/bin/resolv.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts"
+      ]
+    },
+    {
+      "name": "Number",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/config/config.ts",
+        "/home/vedvn/resolv-v2/packages/context-agent/github/parse-issue-url.ts"
+      ]
+    },
+    {
+      "name": "extractDNA",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "fs.writeFileSync",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts"
+      ]
+    },
+    {
+      "name": "dna.errorPatterns.map",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "dna.asyncPatterns.map",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "dna.helpers.slice",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "counts.set",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "counts.get",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "[...counts.entries()].sort",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "counts.entries",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts"
+      ]
+    },
+    {
+      "name": "createProviderFromEnv",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts"
+      ]
+    },
+    {
+      "name": "readline.createInterface",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/apps/tui/slash-commands/suggest.ts"
+      ]
+    },
+    {
+      "name": "rawLine.trim",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "content.slice",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts"
+      ]
+    },
+    {
+      "name": "mapping.relevantFunctions.join",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+        "/home/vedvn/resolv-v2/packages/planner/planner.ts"
+      ]
+    },
+    {
+      "name": "provider.chat",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+        "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts"
+      ]
+    },
+    {
+      "name": "texts.slice",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "(data.data ?? []).sort",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+        "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts"
+      ]
+    },
+    {
+      "name": "sourceFile.getImportDeclarations",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "sourceFile.getFunctions",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+      ]
+    },
+    {
+      "name": "fn.getName",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/callgraph.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts"
+      ]
+    },
+    {
+      "name": "expr.getName",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "/^(err|error|e)$/.test",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "first.getName",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/errors.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/patterns.ts"
+      ]
+    },
+    {
+      "name": "line.match",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "name.startsWith",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/exports.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/imports.ts"
+      ]
+    },
+    {
+      "name": "fs.readdirSync",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts"
+      ]
+    },
+    {
+      "name": "entry.isDirectory",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+        "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts"
+      ]
+    },
+    {
+      "name": "msg.content\n        .filter((b): b is { type: \"tool_result\"; toolUseId: string; content: string; isError: boolean } => b.type === \"tool_result\")\n        .map",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+      ]
+    },
+    {
+      "name": "msg.content\n        .filter",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+      ]
+    },
+    {
+      "name": "msg.content.map",
+      "usages": 2,
+      "files": [
+        "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+        "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts"
+      ]
+    }
+  ],
+  "callGraph": [
+    {
+      "functionName": "loadConfig",
+      "calls": [
+        "Number"
+      ]
+    },
+    {
+      "functionName": "runConfigCommand",
+      "calls": [
+        "console.log",
+        "chalk.bold",
+        "chalk.dim",
+        "\"─\".repeat",
+        "chalk.cyan",
+        "printCheck",
+        "chalk.red",
+        "chalk.green"
+      ]
+    },
+    {
+      "functionName": "printCheck",
+      "calls": [
+        "chalk.green",
+        "chalk.red",
+        "console.log",
+        "chalk.cyan",
+        "chalk.dim"
+      ]
+    },
+    {
+      "functionName": "runDnaCommand",
+      "calls": [
+        "path.resolve",
+        "ora(`Scanning ${repoPath}...`).start",
+        "ora",
+        "extractDNA",
+        "spinner.succeed",
+        "fs.writeFileSync",
+        "JSON.stringify",
+        "console.log",
+        "chalk.green",
+        "chalk.bold",
+        "chalk.dim",
+        "\"─\".repeat",
+        "chalk.cyan",
+        "countBy",
+        "dna.errorPatterns.map",
+        "formatCounts",
+        "dna.asyncPatterns.map",
+        "dna.helpers.slice",
+        "chalk.yellow",
+        "dna.dependencies.filter",
+        "chalk.gray"
+      ]
+    },
+    {
+      "functionName": "countBy",
+      "calls": [
+        "counts.set",
+        "counts.get"
+      ]
+    },
+    {
+      "functionName": "formatCounts",
+      "calls": [
+        "[...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} (${v})`).join",
+        "[...counts.entries()].sort((a, b) => b[1] - a[1]).map",
+        "[...counts.entries()].sort",
+        "counts.entries"
+      ]
+    },
+    {
+      "functionName": "startRepl",
+      "calls": [
+        "chalk.hex(\"#470a73\").bold",
+        "chalk.hex",
+        "console.log",
+        "chalk.blueBright.bgGray",
+        "showWelcome",
+        "createProviderFromEnv",
+        "session.setRepoPath",
+        "process.cwd",
+        "events.on",
+        "process.stdout.write",
+        "chalk.cyan",
+        "chalk.red",
+        "chalk.dim",
+        "readline.createInterface",
+        "rl.on",
+        "chalk.yellow",
+        "process.exit",
+        "rl.prompt",
+        "rawLine.trim",
+        "rl.close",
+        "runConfigCommand",
+        "path.join",
+        "fs.existsSync",
+        "fs.mkdirSync",
+        "runDnaCommand",
+        "runAgentTurn",
+        "String"
+      ]
+    },
+    {
+      "functionName": "solve",
+      "calls": [
+        "loadConfig",
+        "createProviderFromEnv",
+        "path.resolve",
+        "ora(\"Checking working directory is clean...\").start",
+        "ora",
+        "assertCleanWorkingDirectory",
+        "guardSpinner.succeed",
+        "guardSpinner.fail",
+        "parseIssueUrl",
+        "ora(`Fetching issue #${parsed.issueNumber} from ${parsed.owner}/${parsed.repo}...`).start",
+        "fetchIssue",
+        "issueSpinner.succeed",
+        "ora(\"Extracting repo DNA — this may take a moment on large repos...\").start",
+        "extractDNA",
+        "dnaSpinner.succeed",
+        "console.log",
+        "chalk.dim",
+        "mapIssueToDNA",
+        "ora(\"Running semantic search over the codebase...\").start",
+        "buildSemanticIndex",
+        "`${issue.title}\\n${issue.body}`.slice",
+        "semanticSearch",
+        "semanticSpinner.succeed",
+        "ora(\"Running planner agent to select target files...\").start",
+        "planTargets",
+        "planSpinner.warn",
+        "planSpinner.succeed",
+        "semanticSpinner.warn",
+        "console.warn",
+        "chalk.yellow",
+        "createPlan",
+        "buildPrompt",
+        "getCurrentBranch",
+        "ora(`Creating safety branch ${fixBranch}...`).start",
+        "branchExists",
+        "checkoutBranch",
+        "createBranch",
+        "branchSpinner.succeed",
+        "ora(\"Generating fix and running self-healing loop...\").start",
+        "runSelfHealLoop",
+        "healSpinner.fail",
+        "console.error",
+        "chalk.red",
+        "healSpinner.succeed",
+        "healResult.filesChanged.join",
+        "commitChanges",
+        "chalk.green",
+        "ora(\"Opening pull request...\").start",
+        "getDefaultBranch",
+        "openPullRequest",
+        "prSpinner.succeed",
+        "prSpinner.warn"
+      ]
+    },
+    {
+      "functionName": "parseSearchReplaceBlocks",
+      "calls": [
+        "fileBlockRegex.exec",
+        "fileMatch[1]?.trim",
+        "srRegex.exec",
+        "blocks.push"
+      ]
+    },
+    {
+      "functionName": "parseFileChanges",
+      "calls": [
+        "parseSearchReplaceBlocks",
+        "byFile.has",
+        "byFile.set",
+        "byFile.get(block.filePath)!.push",
+        "byFile.get",
+        "path.resolve",
+        "changes.push",
+        "fs.readFileSync",
+        "fileBlocks.map((b) => b.replace).join",
+        "fileBlocks.map",
+        "current.includes",
+        "current.replace"
+      ]
+    },
+    {
+      "functionName": "applyFileChanges",
+      "calls": [
+        "path.resolve",
+        "absPath.startsWith",
+        "fs.mkdirSync",
+        "path.dirname",
+        "fs.writeFileSync",
+        "written.push"
+      ]
+    },
+    {
+      "functionName": "runTests",
+      "calls": [
+        "execSync",
+        "[e.stdout, e.stderr].filter(Boolean).join",
+        "[e.stdout, e.stderr].filter"
+      ]
+    },
+    {
+      "functionName": "truncateForPrompt",
+      "calls": [
+        "output.slice"
+      ]
+    },
+    {
+      "functionName": "runSelfHealLoop",
+      "calls": [
+        "options.provider.chat",
+        "Msg.user",
+        "response.message.content.find",
+        "callProvider",
+        "applyGeneratedFix",
+        "runTests",
+        "buildRetryPrompt",
+        "truncateForPrompt"
+      ]
+    },
+    {
+      "functionName": "applyGeneratedFix",
+      "calls": [
+        "parseFileChanges",
+        "applyFileChanges"
+      ]
+    },
+    {
+      "functionName": "mapIssueToDNA",
+      "calls": [
+        "[issue.title, issue.body, ...issue.comments.map((c) => c.body)].join",
+        "issue.comments.map",
+        "extractKeywords",
+        "dna.files\n    .filter((file) => keywords.some((keyword) => file.relativePath.toLowerCase().includes(keyword)))\n    .map",
+        "dna.files\n    .filter",
+        "keywords.some",
+        "file.relativePath.toLowerCase().includes",
+        "file.relativePath.toLowerCase",
+        "dna.functions\n    .filter((fn) => keywords.some((keyword) => fn.name.toLowerCase().includes(keyword)))\n    .map",
+        "dna.functions\n    .filter",
+        "fn.name.toLowerCase().includes",
+        "fn.name.toLowerCase",
+        "dna.helpers\n    .filter((helper) => keywords.some((keyword) => helper.name.toLowerCase().includes(keyword)))\n    .map",
+        "dna.helpers\n    .filter",
+        "helper.name.toLowerCase().includes",
+        "helper.name.toLowerCase"
+      ]
+    },
+    {
+      "functionName": "extractKeywords",
+      "calls": [
+        "text\n        .toLowerCase()\n        .replace(/[^a-z0-9\\s]/g, \" \")\n        .split(/\\s+/)\n        .filter",
+        "text\n        .toLowerCase()\n        .replace(/[^a-z0-9\\s]/g, \" \")\n        .split",
+        "text\n        .toLowerCase()\n        .replace",
+        "text\n        .toLowerCase",
+        "STOP_WORDS.has"
+      ]
+    },
+    {
+      "functionName": "extractDNA",
+      "calls": [
+        "scanFiles",
+        "project.addSourceFilesAtPaths",
+        "project.getSourceFiles",
+        "console.log",
+        "fn",
+        "console.error",
+        "runSafe",
+        "analyzeImports",
+        "analyzeExports",
+        "analyzeFunctions",
+        "analyzeHelpers",
+        "analyzeCallGraph",
+        "analyzeArchitecture",
+        "analyzeNaming",
+        "analyzeErrors",
+        "analyzePatterns",
+        "analyzeDependencies",
+        "analyzeStructure",
+        "new Date().toISOString"
+      ]
+    },
+    {
+      "functionName": "readFileSnippet",
+      "calls": [
+        "path.resolve",
+        "fs.readFileSync",
+        "content.slice"
+      ]
+    },
+    {
+      "functionName": "buildSourceContext",
+      "calls": [
+        "relevantFiles.slice",
+        "readFileSnippet",
+        "snippet.slice",
+        "Math.max",
+        "sections.push",
+        "sections.join"
+      ]
+    },
+    {
+      "functionName": "buildPrompt",
+      "calls": [
+        "issue.comments\n    .slice(-3)\n    .map((c) => `- ${c.author}: ${c.body.slice(0, 300)}`)\n    .join",
+        "issue.comments\n    .slice(-3)\n    .map",
+        "issue.comments\n    .slice",
+        "c.body.slice",
+        "mostCommon",
+        "dna.errorPatterns.map",
+        "dna.asyncPatterns.map",
+        "dna.helpers.slice(0, 15).map((h) => `${h.name} (used ${h.usages}x)`).join",
+        "dna.helpers.slice(0, 15).map",
+        "dna.helpers.slice",
+        "buildSourceContext",
+        "`\nYou are fixing a GitHub issue inside an existing repository. You must behave like a senior engineer on this exact codebase, not a generic AI tool.\n\nISSUE TITLE:\n${issue.title}\n\nISSUE DESCRIPTION:\n${issue.body}\n\nRECENT DISCUSSION:\n${recentComments || \"(no comments)\"}\n\nRELEVANT FILES:\n${filesToShow.join(\"\\n\") || \"(none matched — inspect the repo structure below)\"}\n\nRELEVANT FUNCTIONS:\n${mapping.relevantFunctions.join(\"\\n\") || \"(none matched)\"}\n\nACTUAL FILE CONTENTS (use this exact text for SEARCH blocks below):\n${sourceContext}\n\nREPO STYLE PROFILE (you MUST match these):\n- Naming convention: ${dna.naming.dominantStyle}\n- Error handling style: ${dominantErrorStyle}\n- Async style: ${dominantAsyncStyle}\n- Frequently reused helpers: ${topHelpers || \"(none detected)\"}\n\nPLAN:\n${plan.steps.map((step) => `${step.order}. ${step.action}`).join(\"\\n\")}\n\nIMPORTANT RULES:\n- Reuse existing helpers listed above whenever possible — do not write a new version of something that already exists.\n- Match the naming convention (${dna.naming.dominantStyle}) and error handling style (${dominantErrorStyle}) exactly.\n- Match the async style (${dominantAsyncStyle}) already used in this codebase.\n- Do not introduce new external dependencies.\n- Do not rewrite unrelated code.\n\n${RESPONSE_FORMAT_INSTRUCTIONS}\n`.trim",
+        "filesToShow.join",
+        "mapping.relevantFunctions.join",
+        "plan.steps.map((step) => `${step.order}. ${step.action}`).join",
+        "plan.steps.map"
+      ]
+    },
+    {
+      "functionName": "buildRetryPrompt",
+      "calls": [
+        "testError.slice",
+        "previousAttempt.slice"
+      ]
+    },
+    {
+      "functionName": "mostCommon",
+      "calls": [
+        "counts.set",
+        "counts.get",
+        "[...counts.entries()].sort",
+        "counts.entries"
+      ]
+    },
+    {
+      "functionName": "runAgentTurn",
+      "calls": [
+        "session.addMessage",
+        "Msg.user",
+        "buildSystemPrompt",
+        "tools.list",
+        "session.getContext",
+        "provider.chat",
+        "session.getHistory",
+        "String",
+        "events?.emit",
+        "Msg.assistantText",
+        "response.message.content.filter",
+        "textBlocks.map((b) => b.text).join",
+        "textBlocks.map",
+        "tools.get",
+        "resultMessages.push",
+        "Msg.toolResult",
+        "tool.execute"
+      ]
+    },
+    {
+      "functionName": "buildSystemPrompt",
+      "calls": [
+        "tools.map((t) => t.name).join",
+        "tools.map"
+      ]
+    },
+    {
+      "functionName": "planTargets",
+      "calls": [
+        "semanticMatches.filter((m) => m.chunk.kind === \"file\").map",
+        "semanticMatches.filter",
+        "semanticMatches\n      .filter((m) => m.chunk.kind === \"function\" && m.chunk.symbolName)\n      .map",
+        "semanticMatches\n      .filter",
+        "issue.body.slice",
+        "[...candidateFiles].join",
+        "[...candidateFunctions].join",
+        "provider.chat",
+        "Msg.user",
+        "result.message.content.find",
+        "parsePlanResponse"
+      ]
+    },
+    {
+      "functionName": "parsePlanResponse",
+      "calls": [
+        "raw.replace(/```json\\s*|```\\s*/g, \"\").trim",
+        "raw.replace",
+        "JSON.parse",
+        "Array.isArray",
+        "parsed.targetFiles.filter",
+        "parsed.targetFunctions.filter"
+      ]
+    },
+    {
+      "functionName": "createPlan",
+      "calls": [
+        "steps.push",
+        "mapping.relevantFunctions.join",
+        "mapping.relevantHelpers.join"
+      ]
+    },
+    {
+      "functionName": "isSupportedProvider",
+      "calls": [
+        "(SUPPORTED_PROVIDERS as string[]).includes"
+      ]
+    },
+    {
+      "functionName": "createProvider",
+      "calls": []
+    },
+    {
+      "functionName": "createProviderFromEnv",
+      "calls": [
+        "isSupportedProvider",
+        "createProvider"
+      ]
+    },
+    {
+      "functionName": "listAvailableProviders",
+      "calls": []
+    },
+    {
+      "functionName": "checkoutBranch",
+      "calls": [
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "getCurrentBranch",
+      "calls": [
+        "execSync(\"git rev-parse --abbrev-ref HEAD\", { encoding: \"utf-8\" }).trim",
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "commitChanges",
+      "calls": [
+        "execSync",
+        "message.replace"
+      ]
+    },
+    {
+      "functionName": "hasUncommittedChanges",
+      "calls": [
+        "execSync",
+        "status.trim"
+      ]
+    },
+    {
+      "functionName": "createBranch",
+      "calls": [
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "branchExists",
+      "calls": [
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "assertCleanWorkingDirectory",
+      "calls": [
+        "execSync(\"git status --porcelain\", { encoding: \"utf-8\" }).trim",
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "pushBranch",
+      "calls": [
+        "execSync"
+      ]
+    },
+    {
+      "functionName": "openPullRequest",
+      "calls": [
+        "pushBranch",
+        "String",
+        "octokit.rest.pulls.create"
+      ]
+    },
+    {
+      "functionName": "getDefaultBranch",
+      "calls": [
+        "octokit.rest.repos.get"
+      ]
+    },
+    {
+      "functionName": "authHeaders",
+      "calls": []
+    },
+    {
+      "functionName": "fetchIssue",
+      "calls": [
+        "authHeaders",
+        "fetch",
+        "issueResponse.json",
+        "commentsResponse.json",
+        "rawComments.map",
+        "issue.labels.map"
+      ]
+    },
+    {
+      "functionName": "parseIssueUrl",
+      "calls": [
+        "url.match",
+        "Number",
+        "Number.isNaN"
+      ]
+    },
+    {
+      "functionName": "getEmbeddings",
+      "calls": [
+        "texts.slice",
+        "fetch",
+        "JSON.stringify",
+        "response.text().catch",
+        "response.text",
+        "response.json",
+        "(data.data ?? []).sort",
+        "results.push"
+      ]
+    },
+    {
+      "functionName": "cosineSimilarity",
+      "calls": [
+        "Math.sqrt"
+      ]
+    },
+    {
+      "functionName": "summarizeFile",
+      "calls": [
+        "fs.readFileSync",
+        "path.resolve",
+        "content.slice"
+      ]
+    },
+    {
+      "functionName": "summarizeFunction",
+      "calls": [
+        "fn.params.join"
+      ]
+    },
+    {
+      "functionName": "buildSemanticIndex",
+      "calls": [
+        "dna.files.slice",
+        "summarizeFile",
+        "fileChunks.push",
+        "dna.functions.slice(0, MAX_FUNCTIONS_TO_INDEX).map",
+        "dna.functions.slice",
+        "summarizeFunction",
+        "fileChunks.map",
+        "functionChunks.map",
+        "provider.embed",
+        "chunks.push"
+      ]
+    },
+    {
+      "functionName": "semanticSearch",
+      "calls": [
+        "provider.embed",
+        "index.chunks.map",
+        "cosineSimilarity",
+        "scored.sort((a, b) => b.score - a.score).slice",
+        "scored.sort"
+      ]
+    },
+    {
+      "functionName": "analyzeArchitecture",
+      "calls": [
+        "project.getTypeChecker",
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getImportDeclarations().map",
+        "sourceFile.getImportDeclarations",
+        "i.getModuleSpecifierValue",
+        "sourceFile\n      .getDescendantsOfKind(SyntaxKind.CallExpression)\n      .filter((call) => isValidApplicationCall(call, typeChecker))\n      .map",
+        "sourceFile\n      .getDescendantsOfKind(SyntaxKind.CallExpression)\n      .filter",
+        "sourceFile\n      .getDescendantsOfKind",
+        "isValidApplicationCall",
+        "call.getExpression().getText",
+        "call.getExpression",
+        "detectLayer",
+        "result.routes.push",
+        "result.controllers.push",
+        "result.services.push",
+        "result.repositories.push"
+      ]
+    },
+    {
+      "functionName": "detectLayer",
+      "calls": [
+        "calls.some",
+        "/\\.(get|post|put|delete|patch|options|head|use|route|all)$/i.test",
+        "/\\b(db|prisma|ctx\\.db|database|knex|pg|mongoose|model|collection)\\b/i.test",
+        "c.includes",
+        "imports.some",
+        "/\\/(db|repo|repository|model|prisma|data|storage)\\//i.test",
+        "i.endsWith",
+        "/\\/(service|usecase|domain)\\//i.test",
+        "filePath.toLowerCase",
+        "lower.includes"
+      ]
+    },
+    {
+      "functionName": "isValidApplicationCall",
+      "calls": [
+        "call.getExpression",
+        "expression.getText",
+        "/^(console|Promise|Math|Object|Array|JSON|String|Number|Error|process|global|window)\\./.test",
+        "call.getExpressionIfKind",
+        "typeChecker.getTypeAtLocation",
+        "accessExpression.getExpression",
+        "baseType.isArray",
+        "baseType.isString",
+        "baseType.isNumber",
+        "accessExpression.getName",
+        "stringArrayBuiltins.includes",
+        "text.includes",
+        "[\"next\", \"require\", \"super\", \"cb\", \"callback\"].includes"
+      ]
+    },
+    {
+      "functionName": "analyzeCallGraph",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getFunctions",
+        "fn\n        .getDescendantsOfKind(SyntaxKind.CallExpression)\n        .map",
+        "fn\n        .getDescendantsOfKind",
+        "call.getExpression().getText",
+        "call.getExpression",
+        "graph.push",
+        "fn.getName"
+      ]
+    },
+    {
+      "functionName": "readPackageJson",
+      "calls": [
+        "path.join",
+        "fs.existsSync",
+        "JSON.parse",
+        "fs.readFileSync"
+      ]
+    },
+    {
+      "functionName": "packageName",
+      "calls": [
+        "importSource.startsWith",
+        "importSource.split(\"/\").slice(0, 2).join",
+        "importSource.split(\"/\").slice",
+        "importSource.split"
+      ]
+    },
+    {
+      "functionName": "analyzeDependencies",
+      "calls": [
+        "readPackageJson",
+        "Object.keys(allDeps).map",
+        "Object.keys",
+        "Object.values",
+        "packageName",
+        "usageCounts.has",
+        "usageCounts.set",
+        "usageCounts.get",
+        "Object.entries(allDeps).map",
+        "Object.entries",
+        "results.sort"
+      ]
+    },
+    {
+      "functionName": "getUnusedDependencies",
+      "calls": [
+        "deps.filter"
+      ]
+    },
+    {
+      "functionName": "analyzeErrors",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getDescendantsOfKind",
+        "call.getExpressionIfKind",
+        "expr.getName",
+        "typeRef.getTypeName().getText",
+        "typeRef.getTypeName",
+        "/^(Result|Either|Option|Maybe)$/.test",
+        "fn.getParameters",
+        "/^(err|error|e)$/.test",
+        "first.getName",
+        "cls.getExtends",
+        "heritage?.getText",
+        "cls.getName",
+        "customExceptionNames.add",
+        "ranked.reduce",
+        "results.push"
+      ]
+    },
+    {
+      "functionName": "analyzePythonExports",
+      "calls": [
+        "fs.readFileSync",
+        "content.split",
+        "line.startsWith",
+        "line.match",
+        "name.startsWith",
+        "fileExports.push"
+      ]
+    },
+    {
+      "functionName": "analyzeExports",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getExportedDeclarations",
+        "decl.getKindName",
+        "sourceFile.getDefaultExportSymbol()?.getName",
+        "sourceFile.getDefaultExportSymbol",
+        "fileExports.push",
+        "path.relative",
+        "analyzePythonExports"
+      ]
+    },
+    {
+      "functionName": "detectLanguage",
+      "calls": []
+    },
+    {
+      "functionName": "countLines",
+      "calls": [
+        "fs.readFileSync",
+        "content.split"
+      ]
+    },
+    {
+      "functionName": "scanFiles",
+      "calls": [
+        "fs.readdirSync",
+        "IGNORE.includes",
+        "path.join",
+        "entry.isDirectory",
+        "walk",
+        "path.extname",
+        "detectLanguage",
+        "fs.statSync",
+        "results.push",
+        "path.relative",
+        "countLines"
+      ]
+    },
+    {
+      "functionName": "getLanguageBreakdown",
+      "calls": []
+    },
+    {
+      "functionName": "analyzeFunctions",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getFunctions",
+        "collectFunction",
+        "fn.getName",
+        "fn.getParameters().map",
+        "fn.getParameters",
+        "p.getName",
+        "fn.isAsync",
+        "fn.getStartLineNumber",
+        "fn.getEndLineNumber",
+        "sourceFile.getDescendantsOfKind",
+        "method.getName",
+        "method.getParameters().map",
+        "method.getParameters",
+        "method.isAsync",
+        "method.getStartLineNumber",
+        "method.getEndLineNumber",
+        "arrow.getParameters().map",
+        "arrow.getParameters",
+        "arrow.isAsync",
+        "arrow.getStartLineNumber",
+        "arrow.getEndLineNumber",
+        "functions.reduce",
+        "functions.filter",
+        "[...paramCounts.entries()]\n    .sort((a, b) => b[1] - a[1])\n    .slice(0, 10)\n    .map",
+        "[...paramCounts.entries()]\n    .sort((a, b) => b[1] - a[1])\n    .slice",
+        "[...paramCounts.entries()]\n    .sort",
+        "paramCounts.entries",
+        "Math.round"
+      ]
+    },
+    {
+      "functionName": "collectFunction",
+      "calls": [
+        "params.forEach",
+        "paramCounts.set",
+        "paramCounts.get",
+        "functions.push"
+      ]
+    },
+    {
+      "functionName": "analyzeHelpers",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getDescendantsOfKind",
+        "call.getExpression().getText",
+        "call.getExpression",
+        "NATIVE_PREFIXES.test",
+        "name.includes",
+        "NOISE_CALLS.has",
+        "usageMap.has",
+        "usageMap.set",
+        "usageMap.get",
+        "entry.files.add",
+        "[...usageMap.entries()]\n    .map(([name, data]) => ({ name, usages: data.count, files: [...data.files] }))\n    // helpers used in only one file aren't \"shared utilities\" — keep multi-file ones\n    .filter((h) => h.files.length >= 2 || h.usages >= 3)\n    .sort",
+        "[...usageMap.entries()]\n    .map(([name, data]) => ({ name, usages: data.count, files: [...data.files] }))\n    // helpers used in only one file aren't \"shared utilities\" — keep multi-file ones\n    .filter",
+        "[...usageMap.entries()]\n    .map",
+        "usageMap.entries"
+      ]
+    },
+    {
+      "functionName": "rootPackageName",
+      "calls": [
+        "source.startsWith",
+        "source.split(\"/\").slice(0, 2).join",
+        "source.split(\"/\").slice",
+        "source.split"
+      ]
+    },
+    {
+      "functionName": "isLocalSource",
+      "calls": [
+        "source.startsWith"
+      ]
+    },
+    {
+      "functionName": "analyzePythonImports",
+      "calls": [
+        "fs.readFileSync",
+        "content.split",
+        "rawLine.trim",
+        "line.startsWith",
+        "line.replace(\"import \", \"\").split",
+        "line.replace",
+        "mod.trim().split(\" as \")[0]?.trim",
+        "mod.trim().split",
+        "mod.trim",
+        "fileImports.push",
+        "name.startsWith",
+        "line.match",
+        "match[2]\n          .split(\",\")\n          .map((s) => s.trim().split(\" as \")[0]?.trim() ?? \"\")\n          .filter",
+        "match[2]\n          .split(\",\")\n          .map",
+        "match[2]\n          .split",
+        "s.trim().split(\" as \")[0]?.trim",
+        "s.trim().split",
+        "s.trim",
+        "source.startsWith"
+      ]
+    },
+    {
+      "functionName": "analyzeImports",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getImportDeclarations",
+        "decl.getModuleSpecifierValue",
+        "decl.getDefaultImport",
+        "symbols.push",
+        "defaultImport.getText",
+        "decl.getNamespaceImport",
+        "namespaceImport.getText",
+        "decl.getNamedImports",
+        "named.getName",
+        "fileImports.push",
+        "isLocalSource",
+        "sourceFile.getDescendantsOfKind",
+        "callExpr.getExpression().getText",
+        "callExpr.getExpression",
+        "callExpr.getArguments",
+        "arg.getText().replace",
+        "arg.getText",
+        "path.relative",
+        "analyzePythonImports"
+      ]
+    },
+    {
+      "functionName": "getUniqueExternalDependencies",
+      "calls": [
+        "Object.values",
+        "set.add",
+        "rootPackageName"
+      ]
+    },
+    {
+      "functionName": "analyzeNaming",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getDescendantsOfKind",
+        "idNode.getText",
+        "isScreaming",
+        "isPascal",
+        "isSnake",
+        "isCamel",
+        "counts.reduce"
+      ]
+    },
+    {
+      "functionName": "analyzePatterns",
+      "calls": [
+        "project.getSourceFiles",
+        "sourceFile.getFilePath",
+        "filePath.includes",
+        "filePath.endsWith",
+        "sourceFile.getDescendantsOfKind",
+        "call.getExpressionIfKind",
+        "expr.getName",
+        "fn.getParameters",
+        "/^(err|error|e)$/.test",
+        "first.getName",
+        "/^(result|res|data|value|val|body|response|cb)$/.test",
+        "second.getName",
+        "results.push"
+      ]
+    },
+    {
+      "functionName": "analyzeStructure",
+      "calls": [
+        "path.basename",
+        "fs.readdirSync",
+        "IGNORE.has",
+        "entry.isDirectory",
+        "node.children.push",
+        "walk",
+        "path.join"
+      ]
+    },
+    {
+      "functionName": "toAnthropicMessages",
+      "calls": [
+        "msg.content\n        .filter((b): b is { type: \"tool_result\"; toolUseId: string; content: string; isError: boolean } => b.type === \"tool_result\")\n        .map",
+        "msg.content\n        .filter",
+        "out.push",
+        "msg.content.map"
+      ]
+    },
+    {
+      "functionName": "toAnthropicTools",
+      "calls": [
+        "tools.map"
+      ]
+    },
+    {
+      "functionName": "fromAnthropicResponse",
+      "calls": [
+        "raw.content.map"
+      ]
+    },
+    {
+      "functionName": "toGeminiType",
+      "calls": []
+    },
+    {
+      "functionName": "toGeminiTools",
+      "calls": [
+        "tools.map",
+        "Object.fromEntries",
+        "Object.entries(t.inputSchema.properties).map",
+        "Object.entries",
+        "toGeminiType"
+      ]
+    },
+    {
+      "functionName": "toGeminiContents",
+      "calls": [
+        "msg.content\n        .filter((b): b is { type: \"tool_result\"; toolUseId: string; content: string; isError: boolean } => b.type === \"tool_result\")\n        .map",
+        "msg.content\n        .filter",
+        "out.push",
+        "msg.content.map"
+      ]
+    },
+    {
+      "functionName": "toOpenAiMessage",
+      "calls": [
+        "out.push",
+        "msg.content.filter",
+        "textParts.map((t) => t.text).join",
+        "textParts.map",
+        "toolUseParts.map",
+        "JSON.stringify"
+      ]
+    },
+    {
+      "functionName": "toOpenAiTools",
+      "calls": [
+        "tools.map"
+      ]
+    },
+    {
+      "functionName": "fromOpenAiResponse",
+      "calls": [
+        "content.push",
+        "JSON.parse"
+      ]
+    }
+  ],
+  "architecture": {
+    "routes": [
+      {
+        "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+        "layer": "route",
+        "imports": [
+          "node:path",
+          "chalk",
+          "ora",
+          "node:fs",
+          "../../packages/dna/extract.js"
+        ],
+        "calls": [
+          "path.resolve",
+          "ora(`Scanning ${repoPath}...`).start",
+          "ora",
+          "extractDNA",
+          "spinner.succeed",
+          "fs.writeFileSync",
+          "chalk.green",
+          "chalk.bold",
+          "chalk.dim",
+          "\"─\".repeat",
+          "chalk.cyan",
+          "countBy",
+          "formatCounts",
+          "chalk.yellow",
+          "chalk.gray",
+          "counts.set",
+          "counts.get",
+          "counts.entries"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts",
+        "layer": "route",
+        "imports": [
+          "node:fs",
+          "node:path"
+        ],
+        "calls": [
+          "fileBlockRegex.exec",
+          "srRegex.exec",
+          "parseSearchReplaceBlocks",
+          "byFile.has",
+          "byFile.set",
+          "byFile.get",
+          "path.resolve",
+          "fs.readFileSync",
+          "fs.mkdirSync",
+          "path.dirname",
+          "fs.writeFileSync"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+        "layer": "route",
+        "imports": [
+          "node:fs",
+          "node:path",
+          "../dna/types.js",
+          "../context-agent/github/fetch-issue.js",
+          "../planner/planner.js",
+          "../context-agent/issue-mapper.js"
+        ],
+        "calls": [
+          "`\nRESPONSE FORMAT — follow exactly, this is machine-parsed:\n\nFor each file you change, output one block:\n\n\\`\\`\\`file:relative/path/to/file.ts\n<exact existing code to find, copied verbatim from the file shown above>\n<the new code that replaces it>\n\\`\\`\\`\n\nRules for this format:\n- The SEARCH text must match the existing file content character-for-character (including whitespace/indentation) so it can be located and replaced.\n- Keep each SEARCH block as small as possible — only the lines that actually change, plus 1-2 lines of surrounding context if needed for uniqueness. Do NOT paste the whole file.\n- You may include multiple SEARCH/REPLACE blocks for the same file, or blocks for multiple files.\n- Only use a full-file dump (no SEARCH/REPLACE markers, just the new file content directly inside the \\`\\`\\`file:path block) when creating a brand new file that doesn't exist yet.\n- Do not include any prose, explanation, or markdown outside these blocks.\n`.trim",
+          "path.resolve",
+          "fs.readFileSync",
+          "readFileSnippet",
+          "mostCommon",
+          "buildSourceContext",
+          "counts.set",
+          "counts.get",
+          "counts.entries"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+        "layer": "route",
+        "imports": [
+          "../core/events.js",
+          "../core/errors.js",
+          "../core/types.js",
+          "../providers/provider.js",
+          "./session.js",
+          "./system-prompt.js",
+          "./tool-registry.js"
+        ],
+        "calls": [
+          "session.addMessage",
+          "Msg.user",
+          "buildSystemPrompt",
+          "tools.list",
+          "session.getContext",
+          "provider.chat",
+          "session.getHistory",
+          "String",
+          "events?.emit",
+          "Msg.assistantText",
+          "tools.get",
+          "Msg.toolResult",
+          "tool.execute"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/tool-registry.ts",
+        "layer": "route",
+        "imports": [
+          "../core/types.js"
+        ],
+        "calls": [
+          "this.tools.has",
+          "this.tools.set",
+          "this.register",
+          "this.tools.get",
+          "this.tools.values"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts",
+        "layer": "route",
+        "imports": [
+          "node:child_process",
+          "@octokit/rest"
+        ],
+        "calls": [
+          "execSync",
+          "pushBranch",
+          "String",
+          "octokit.rest.pulls.create",
+          "octokit.rest.repos.get"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts",
+        "layer": "route",
+        "imports": [
+          "node:fs",
+          "node:path",
+          "../types.js"
+        ],
+        "calls": [
+          "path.join",
+          "fs.existsSync",
+          "fs.readFileSync",
+          "readPackageJson",
+          "packageName",
+          "usageCounts.has",
+          "usageCounts.set",
+          "usageCounts.get"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/dna/analysis/functions.ts",
+        "layer": "route",
+        "imports": [
+          "ts-morph",
+          "../types.js"
+        ],
+        "calls": [
+          "project.getSourceFiles",
+          "sourceFile.getFilePath",
+          "filePath.includes",
+          "filePath.endsWith",
+          "sourceFile.getFunctions",
+          "collectFunction",
+          "fn.getName",
+          "fn.getParameters",
+          "p.getName",
+          "fn.isAsync",
+          "fn.getStartLineNumber",
+          "fn.getEndLineNumber",
+          "sourceFile.getDescendantsOfKind",
+          "method.getName",
+          "method.getParameters",
+          "method.isAsync",
+          "method.getStartLineNumber",
+          "method.getEndLineNumber",
+          "arrow.getParameters",
+          "arrow.isAsync",
+          "arrow.getStartLineNumber",
+          "arrow.getEndLineNumber",
+          "paramCounts.entries",
+          "paramCounts.set",
+          "paramCounts.get"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/dna/analysis/helpers.ts",
+        "layer": "route",
+        "imports": [
+          "ts-morph",
+          "../types.js"
+        ],
+        "calls": [
+          "project.getSourceFiles",
+          "sourceFile.getFilePath",
+          "filePath.includes",
+          "filePath.endsWith",
+          "sourceFile.getDescendantsOfKind",
+          "call.getExpression().getText",
+          "call.getExpression",
+          "NATIVE_PREFIXES.test",
+          "NOISE_CALLS.has",
+          "usageMap.has",
+          "usageMap.set",
+          "usageMap.get",
+          "entry.files.add",
+          "usageMap.entries"
+        ]
+      }
+    ],
+    "controllers": [],
+    "services": [],
+    "repositories": [
+      {
+        "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+        "layer": "repository",
+        "imports": [
+          "ts-morph",
+          "../types.js"
+        ],
+        "calls": [
+          "project.getTypeChecker",
+          "project.getSourceFiles",
+          "sourceFile.getFilePath",
+          "filePath.includes",
+          "filePath.endsWith",
+          "sourceFile.getImportDeclarations",
+          "i.getModuleSpecifierValue",
+          "sourceFile\n      .getDescendantsOfKind",
+          "isValidApplicationCall",
+          "call.getExpression().getText",
+          "call.getExpression",
+          "detectLayer",
+          "/\\.(get|post|put|delete|patch|options|head|use|route|all)$/i.test",
+          "/\\b(db|prisma|ctx\\.db|database|knex|pg|mongoose|model|collection)\\b/i.test",
+          "/\\/(db|repo|repository|model|prisma|data|storage)\\//i.test",
+          "/\\/(service|usecase|domain)\\//i.test",
+          "expression.getText",
+          "/^(console|Promise|Math|Object|Array|JSON|String|Number|Error|process|global|window)\\./.test",
+          "call.getExpressionIfKind",
+          "typeChecker.getTypeAtLocation",
+          "accessExpression.getExpression",
+          "baseType.isArray",
+          "baseType.isString",
+          "baseType.isNumber",
+          "accessExpression.getName"
+        ]
+      },
+      {
+        "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+        "layer": "repository",
+        "imports": [
+          "@google/generative-ai",
+          "../../core/errors.js",
+          "../../core/types.js",
+          "../provider.js"
+        ],
+        "calls": [
+          "toGeminiType",
+          "this.client.getGenerativeModel",
+          "toGeminiTools",
+          "model.generateContent",
+          "toGeminiContents",
+          "String",
+          "embedModel.embedContent"
+        ]
+      }
+    ]
+  },
+  "naming": {
+    "camelCase": 1562,
+    "snake_case": 30,
+    "PascalCase": 674,
+    "SCREAMING_SNAKE": 76,
+    "dominantStyle": "camelCase"
+  },
+  "errorPatterns": [
+    {
+      "file": "/home/vedvn/resolv-v2/bin/resolv.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+      "style": "callback-err",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/apply-fix.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/run-tests.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/core/errors.ts",
+      "style": "none",
+      "customExceptionNames": [
+        "ProviderError",
+        "ToolInputError",
+        "AgentLoopLimitError",
+        "UnknownProviderError"
+      ]
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/dna/extract.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/llm/prompt-builder.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/provider.ts",
+      "style": "none",
+      "customExceptionNames": [
+        "EmbeddingsNotSupportedError"
+      ]
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/create-branch.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+      "style": "promise-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/architecture.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/dependencies.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/files.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/dna/analysis/structure.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+      "style": "try-catch",
+      "customExceptionNames": []
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts",
+      "style": "promise-catch",
+      "customExceptionNames": []
+    }
+  ],
+  "asyncPatterns": [
+    {
+      "file": "/home/vedvn/resolv-v2/bin/resolv.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/dna-command.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/repl.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/apps/cli-direct/solve-command.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/self-heal-loop.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/orchestrator-agent/agent-loop.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/planner/planner-agent.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/coding-agent/git/push-and-pr.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/github/fetch-issue.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/embeddings.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/context-agent/semantic/file-index.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/anthropic/anthropic-provider.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/google/gemini-provider.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    },
+    {
+      "file": "/home/vedvn/resolv-v2/packages/providers/nim/nim-provider.ts",
+      "usesAsyncAwait": true,
+      "usesPromiseChain": false,
+      "usesCallbacks": false,
+      "dominantStyle": "async-await"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "ts-morph",
+      "version": "^28.0.0",
+      "isDev": false,
+      "usageCount": 10
+    },
+    {
+      "name": "chalk",
+      "version": "^5.6.2",
+      "isDev": false,
+      "usageCount": 4
+    },
+    {
+      "name": "dotenv",
+      "version": "^17.4.2",
+      "isDev": false,
+      "usageCount": 3
+    },
+    {
+      "name": "ora",
+      "version": "^9.4.0",
+      "isDev": false,
+      "usageCount": 2
+    },
+    {
+      "name": "@anthropic-ai/sdk",
+      "version": "^0.104.2",
+      "isDev": false,
+      "usageCount": 1
+    },
+    {
+      "name": "@google/generative-ai",
+      "version": "^0.24.1",
+      "isDev": false,
+      "usageCount": 1
+    },
+    {
+      "name": "@octokit/rest",
+      "version": "^21.0.0",
+      "isDev": false,
+      "usageCount": 1
+    },
+    {
+      "name": "commander",
+      "version": "^12.0.0",
+      "isDev": false,
+      "usageCount": 1
+    },
+    {
+      "name": "octokit",
+      "version": "^4.0.0",
+      "isDev": false,
+      "usageCount": 0
+    },
+    {
+      "name": "terminal-kit",
+      "version": "^3.1.2",
+      "isDev": false,
+      "usageCount": 0
+    },
+    {
+      "name": "@types/dotenv",
+      "version": "^6.1.1",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "@types/node",
+      "version": "^22.19.21",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "@types/terminal-kit",
+      "version": "^2.5.7",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "i",
+      "version": "^0.3.7",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "tsx",
+      "version": "^4.22.4",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "typescript",
+      "version": "^5.6.0",
+      "isDev": true,
+      "usageCount": 0
+    },
+    {
+      "name": "vitest",
+      "version": "^4.1.9",
+      "isDev": true,
+      "usageCount": 0
+    }
+  ],
+  "structure": {
+    "name": "resolv-v2",
+    "path": "/home/vedvn/resolv-v2",
+    "children": [
+      {
+        "name": ".agents",
+        "path": "/home/vedvn/resolv-v2/.agents",
+        "children": [],
+        "fileCount": 0
+      },
+      {
+        "name": ".resolv",
+        "path": "/home/vedvn/resolv-v2/.resolv",
+        "children": [],
+        "fileCount": 0
+      },
+      {
+        "name": ".vscode",
+        "path": "/home/vedvn/resolv-v2/.vscode",
+        "children": [],
+        "fileCount": 1
+      },
+      {
+        "name": "apps",
+        "path": "/home/vedvn/resolv-v2/apps",
+        "children": [
+          {
+            "name": "cli-direct",
+            "path": "/home/vedvn/resolv-v2/apps/cli-direct",
+            "children": [],
+            "fileCount": 4
+          },
+          {
+            "name": "tui",
+            "path": "/home/vedvn/resolv-v2/apps/tui",
+            "children": [
+              {
+                "name": "components",
+                "path": "/home/vedvn/resolv-v2/apps/tui/components",
+                "children": [],
+                "fileCount": 1
+              },
+              {
+                "name": "slash-commands",
+                "path": "/home/vedvn/resolv-v2/apps/tui/slash-commands",
+                "children": [],
+                "fileCount": 1
+              }
+            ],
+            "fileCount": 0
+          }
+        ],
+        "fileCount": 0
+      },
+      {
+        "name": "bin",
+        "path": "/home/vedvn/resolv-v2/bin",
+        "children": [],
+        "fileCount": 1
+      },
+      {
+        "name": "config",
+        "path": "/home/vedvn/resolv-v2/config",
+        "children": [],
+        "fileCount": 1
+      },
+      {
+        "name": "packages",
+        "path": "/home/vedvn/resolv-v2/packages",
+        "children": [
+          {
+            "name": "coding-agent",
+            "path": "/home/vedvn/resolv-v2/packages/coding-agent",
+            "children": [
+              {
+                "name": "git",
+                "path": "/home/vedvn/resolv-v2/packages/coding-agent/git",
+                "children": [],
+                "fileCount": 4
+              },
+              {
+                "name": "tools",
+                "path": "/home/vedvn/resolv-v2/packages/coding-agent/tools",
+                "children": [],
+                "fileCount": 0
+              }
+            ],
+            "fileCount": 3
+          },
+          {
+            "name": "context-agent",
+            "path": "/home/vedvn/resolv-v2/packages/context-agent",
+            "children": [
+              {
+                "name": "github",
+                "path": "/home/vedvn/resolv-v2/packages/context-agent/github",
+                "children": [],
+                "fileCount": 2
+              },
+              {
+                "name": "semantic",
+                "path": "/home/vedvn/resolv-v2/packages/context-agent/semantic",
+                "children": [],
+                "fileCount": 2
+              },
+              {
+                "name": "tools",
+                "path": "/home/vedvn/resolv-v2/packages/context-agent/tools",
+                "children": [],
+                "fileCount": 0
+              }
+            ],
+            "fileCount": 1
+          },
+          {
+            "name": "core",
+            "path": "/home/vedvn/resolv-v2/packages/core",
+            "children": [],
+            "fileCount": 3
+          },
+          {
+            "name": "dna",
+            "path": "/home/vedvn/resolv-v2/packages/dna",
+            "children": [
+              {
+                "name": "analysis",
+                "path": "/home/vedvn/resolv-v2/packages/dna/analysis",
+                "children": [],
+                "fileCount": 12
+              }
+            ],
+            "fileCount": 2
+          },
+          {
+            "name": "llm",
+            "path": "/home/vedvn/resolv-v2/packages/llm",
+            "children": [],
+            "fileCount": 1
+          },
+          {
+            "name": "orchestrator-agent",
+            "path": "/home/vedvn/resolv-v2/packages/orchestrator-agent",
+            "children": [],
+            "fileCount": 4
+          },
+          {
+            "name": "planner",
+            "path": "/home/vedvn/resolv-v2/packages/planner",
+            "children": [],
+            "fileCount": 2
+          },
+          {
+            "name": "providers",
+            "path": "/home/vedvn/resolv-v2/packages/providers",
+            "children": [
+              {
+                "name": "anthropic",
+                "path": "/home/vedvn/resolv-v2/packages/providers/anthropic",
+                "children": [],
+                "fileCount": 1
+              },
+              {
+                "name": "google",
+                "path": "/home/vedvn/resolv-v2/packages/providers/google",
+                "children": [],
+                "fileCount": 1
+              },
+              {
+                "name": "nim",
+                "path": "/home/vedvn/resolv-v2/packages/providers/nim",
+                "children": [],
+                "fileCount": 1
+              }
+            ],
+            "fileCount": 2
+          }
+        ],
+        "fileCount": 0
+      },
+      {
+        "name": "tests",
+        "path": "/home/vedvn/resolv-v2/tests",
+        "children": [
+          {
+            "name": "core",
+            "path": "/home/vedvn/resolv-v2/tests/core",
+            "children": [],
+            "fileCount": 0
+          },
+          {
+            "name": "dna",
+            "path": "/home/vedvn/resolv-v2/tests/dna",
+            "children": [],
+            "fileCount": 0
+          },
+          {
+            "name": "fixtures",
+            "path": "/home/vedvn/resolv-v2/tests/fixtures",
+            "children": [
+              {
+                "name": "fake-repo",
+                "path": "/home/vedvn/resolv-v2/tests/fixtures/fake-repo",
+                "children": [
+                  {
+                    "name": "src",
+                    "path": "/home/vedvn/resolv-v2/tests/fixtures/fake-repo/src",
+                    "children": [],
+                    "fileCount": 0
+                  }
+                ],
+                "fileCount": 0
+              },
+              {
+                "name": "mock-responses",
+                "path": "/home/vedvn/resolv-v2/tests/fixtures/mock-responses",
+                "children": [],
+                "fileCount": 0
+              }
+            ],
+            "fileCount": 0
+          },
+          {
+            "name": "healing",
+            "path": "/home/vedvn/resolv-v2/tests/healing",
+            "children": [],
+            "fileCount": 0
+          },
+          {
+            "name": "providers",
+            "path": "/home/vedvn/resolv-v2/tests/providers",
+            "children": [],
+            "fileCount": 0
+          },
+          {
+            "name": "tools",
+            "path": "/home/vedvn/resolv-v2/tests/tools",
+            "children": [],
+            "fileCount": 0
+          }
+        ],
+        "fileCount": 0
+      }
+    ],
+    "fileCount": 8
+  }
+}
