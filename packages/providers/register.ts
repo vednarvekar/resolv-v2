@@ -1,29 +1,31 @@
 // packages/providers/register.ts
-// Single place that constructs Provider instances from config.
-// Never imports provider SDKs directly in the rest of the codebase.
+// Factory: builds a Provider from a loaded ResolvConfig.
+// Only place in the codebase that knows about concrete provider classes.
 
 import { UnknownProviderError } from "../core/errors.js";
 import { AnthropicProvider } from "./anthropic/anthropic-provider.js";
 import { GeminiProvider } from "./google/gemini-provider.js";
 import { NimProvider } from "./nim/nim-provider.js";
 import { OllamaProvider } from "./ollama/ollama_provider.js";
+import { OpenAIProvider } from "./openai/openai-provider.js";
+import { GrokProvider } from "./grok/grok-provider.js";
+import { OpenRouterProvider } from "./openrouter/openrouter-provider.js";
 import type { Provider } from "./provider.js";
 import { loadConfig, type ResolvConfig } from "../../config/config.js";
 
-export type ProviderName = "nim" | "anthropic" | "google" | "ollama";
+export type { ResolvConfig };
+export type ProviderName = "nim" | "anthropic" | "google" | "ollama" | "openai" | "grok" | "openrouter";
 
-export const SUPPORTED_PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama"];
+export const SUPPORTED_PROVIDERS: ProviderName[] = [
+  "anthropic", "google", "openai", "grok", "openrouter", "nim", "ollama",
+];
 
 export function isSupportedProvider(name: string): name is ProviderName {
   return (SUPPORTED_PROVIDERS as string[]).includes(name);
 }
 
-/**
- * Build a Provider from an explicit config object.
- * Preferred over createProviderFromEnv when config is already loaded.
- */
 export function createProviderFromConfig(config: ResolvConfig): Provider {
-  const { provider, apiKeys } = config;
+  const { provider, apiKeys, model } = config;
 
   switch (provider) {
     case "anthropic": {
@@ -35,6 +37,21 @@ export function createProviderFromConfig(config: ResolvConfig): Provider {
       const key = apiKeys.google;
       if (!key) throw new Error("GOOGLE_API_KEY is required. Run /provider to configure.");
       return new GeminiProvider(key);
+    }
+    case "openai": {
+      const key = apiKeys.openai;
+      if (!key) throw new Error("OPENAI_API_KEY is required. Run /provider to configure.");
+      return new OpenAIProvider(key, model);
+    }
+    case "grok": {
+      const key = apiKeys.grok;
+      if (!key) throw new Error("XAI_API_KEY is required. Run /provider to configure.");
+      return new GrokProvider(key, model);
+    }
+    case "openrouter": {
+      const key = apiKeys.openrouter;
+      if (!key) throw new Error("OPENROUTER_API_KEY is required. Run /provider to configure.");
+      return new OpenRouterProvider(key, model);
     }
     case "nim": {
       const key = apiKeys.nim;
@@ -48,13 +65,8 @@ export function createProviderFromConfig(config: ResolvConfig): Provider {
   }
 }
 
-/**
- * Build a Provider from environment variables or config file.
- * Accepts an optional pre-loaded config to avoid re-reading disk.
- */
 export function createProviderFromEnv(config?: ResolvConfig): Provider {
-  const c = config ?? loadConfig();
-  return createProviderFromConfig(c);
+  return createProviderFromConfig(config ?? loadConfig());
 }
 
 export function listAvailableProviders(): ProviderName[] {

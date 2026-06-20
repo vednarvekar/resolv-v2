@@ -1,9 +1,8 @@
 // apps/tui/slash-commands/registry.ts
 // Single source of truth for all slash commands.
-// The REPL completer and /help both read from here — no duplication.
 
 export interface SlashCommand {
-  name: string;       // e.g. "/config"
+  name: string;
   description: string;
   usage?: string;
 }
@@ -11,44 +10,56 @@ export interface SlashCommand {
 export const SLASH_COMMANDS: SlashCommand[] = [
   {
     name: "/config",
-    description: "Show or change provider keys and other settings",
+    description: "Show or change settings",
     usage: "/config [change|key|github|test|retries]",
   },
   {
-    name: "/config-change",
-    description: "Interactively change API keys and other settings",
-  },
-  {
-    name: "/dna",
-    description: "Scan the current repo's codebase and save analysis to .resolv/analysis.json",
-  },
-  {
     name: "/provider",
-    description: "Switch the active AI provider (anthropic, google, nim, ollama)",
-    usage: "/provider <name>",
+    description: "Switch AI provider interactively",
+    usage: "/provider [name]",
   },
   {
     name: "/model",
-    description: "Switch the active model for the current provider",
+    description: "Switch model for current provider",
     usage: "/model [model-name]",
   },
   {
+    name: "/dna",
+    description: "Scan repo DNA, save to .resolv/analysis.json",
+  },
+  {
+    name: "/sessions",
+    description: "List recent chat sessions",
+  },
+  {
+    name: "/resume",
+    description: "Resume a previous chat session by ID",
+    usage: "/resume <session-id>",
+  },
+  {
+    name: "/new",
+    description: "Start a fresh chat session (saves current first)",
+  },
+  {
+    name: "/history",
+    description: "Show message count and current session ID",
+  },
+  {
     name: "/help",
-    description: "Show all available commands",
+    description: "Show all commands",
   },
   {
     name: "/clear",
-    description: "Clear the terminal screen",
+    description: "Clear screen",
   },
   {
     name: "/exit",
-    description: "Exit resolv",
+    description: "Exit resolv (session auto-saved)",
   },
 ];
 
 export const COMMAND_NAMES = SLASH_COMMANDS.map((c) => c.name);
 
-/** Tab completer: given partial input, return matching command names. */
 export function completeCommand(partial: string): [string[], string] {
   if (!partial.startsWith("/")) return [[], partial];
   const hits = COMMAND_NAMES.filter((c) => c.startsWith(partial));

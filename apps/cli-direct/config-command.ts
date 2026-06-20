@@ -32,6 +32,10 @@ export function runConfigCommand(): void {
       ? chalk.green(`✓ set  ${chalk.dim("(ends in " + key.slice(-4) + ")")}`)
       : chalk.red("✗ missing");
     console.log(`  ${chalk.cyan("API Key:")}   ${keyStatus}`);
+    const info = PROVIDER_INFO[config.provider]!;
+    if (info.keyEnv && process.env[info.keyEnv]) {
+      console.log(chalk.yellow(`  Warning: ${info.keyEnv} is set and overrides the saved key.`));
+    }
   } else {
     const baseUrl = process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
     console.log(`  ${chalk.cyan("Ollama:")}    ${chalk.dim(baseUrl)}`);

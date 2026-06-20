@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-// bin/resolv.ts
-// CLI entry point. Routes to:
-// - setup wizard on first run (no config file exists)
-// - subcommands: solve, dna, config, setup
-// - interactive REPL when called with no arguments
+// bin/resolv.ts — CLI entry point
 
 import dotenv from "dotenv";
 import { Command } from "commander";
@@ -21,21 +17,20 @@ const program = new Command();
 program
   .name("resolv")
   .description("Style-matching GitHub issue resolver")
-  .version("2.0.0");
+  .version("2.0.0")
+  .option("--resume <session-id>", "Resume a previous chat session");
 
 program
   .command("setup")
-  .description("Run the interactive setup wizard (provider, API key, model)")
-  .action(async () => {
-    await runSetupWizard();
-  });
+  .description("Run the interactive setup wizard")
+  .action(async () => { await runSetupWizard(); });
 
 program
   .command("solve")
   .description("Fix a GitHub issue and open a PR")
   .argument("<issue-url>", "GitHub issue URL")
   .option("-p, --path <path>", "Local repo path", process.cwd())
-  .option("--no-semantic", "Skip semantic search (faster, keyword-only)")
+  .option("--no-semantic", "Skip semantic search (faster)")
   .action(async (issueUrl: string, opts: { path: string; semantic: boolean }) => {
     try {
       await solve({ issueUrl, repoPath: opts.path, noSemantic: !opts.semantic });
@@ -49,7 +44,7 @@ program
   .command("dna")
   .description("Scan repo style DNA")
   .option("-p, --path <path>", "Repo path", process.cwd())
-  .option("--json <outputPath>", "Write full JSON profile to file")
+  .option("--json <outputPath>", "Write full JSON to file")
   .action(async (opts: { path: string; json?: string }) => {
     try {
       await runDnaCommand({ repoPath: opts.path, outputJson: opts.json });
@@ -64,16 +59,18 @@ program
   .description("Show current configuration")
   .action(() => runConfigCommand());
 
-// No subcommand → first run check → REPL
-if (process.argv.length <= 2) {
+// No subcommand → REPL (or first-run wizard)
+if (process.argv.length <= 2 || process.argv[2]?.startsWith("--resume")) {
+  const opts = program.opts<{ resume?: string }>();
+  // parse just the root options (not subcommands)
+  program.parseOptions(process.argv.slice(2));
+  const resumeId = program.opts<{ resume?: string }>().resume;
+
   const config = loadConfig();
   if (isFirstRun() || !isConfigured(config) || !config.model) {
-    runSetupWizard().then(() => {
-      // After setup, offer to start the REPL
-      import("../apps/cli-direct/repl.js").then(({ startRepl }) => startRepl());
-    });
+    runSetupWizard().then(() => startRepl());
   } else {
-    startRepl();
+    startRepl(resumeId);
   }
 } else {
   program.parse();

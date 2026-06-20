@@ -1,15 +1,12 @@
 // config/config.ts
-// Central config manager. Handles:
-// - Reading/writing ~/.config/resolv/config.json
-// - API key storage (never in source tree)
-// - Provider + model selection
-// - First-run detection
+// Central config manager. Reads/writes ~/.config/resolv/config.json
+// API keys never stored in the source tree.
 
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
-export type ProviderName = "anthropic" | "google" | "nim" | "ollama";
+export type ProviderName = "anthropic" | "google" | "nim" | "ollama" | "openai" | "grok" | "openrouter";
 
 export interface ResolvConfig {
   provider: ProviderName;
@@ -51,7 +48,7 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyLabel: "Anthropic API Key",
     defaultModel: "claude-sonnet-4-6",
     models: ["claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
-    description: "Best quality. Get key at console.anthropic.com",
+    description: "Best quality. console.anthropic.com",
   },
   google: {
     label: "Google (Gemini)",
@@ -59,7 +56,39 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyLabel: "Google AI API Key",
     defaultModel: "gemini-2.5-flash",
     models: ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash"],
-    description: "Fast and capable. Get key at aistudio.google.com",
+    description: "Fast and capable. aistudio.google.com",
+  },
+  openai: {
+    label: "OpenAI (GPT)",
+    keyEnv: "OPENAI_API_KEY",
+    keyLabel: "OpenAI API Key",
+    defaultModel: "gpt-4o",
+    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "o1-mini"],
+    description: "GPT-4o and more. platform.openai.com",
+  },
+  grok: {
+    label: "xAI Grok",
+    keyEnv: "XAI_API_KEY",
+    keyLabel: "xAI API Key",
+    defaultModel: "grok-3-mini",
+    models: ["grok-3", "grok-3-mini", "grok-3-fast"],
+    description: "Grok models by xAI. console.x.ai",
+  },
+  openrouter: {
+    label: "OpenRouter (Multi-model)",
+    keyEnv: "OPENROUTER_API_KEY",
+    keyLabel: "OpenRouter API Key",
+    defaultModel: "anthropic/claude-sonnet-4-6",
+    models: [
+      "anthropic/claude-sonnet-4-6",
+      "openai/gpt-4o",
+      "google/gemini-2.5-flash",
+      "meta-llama/llama-3.3-70b-instruct",
+      "deepseek/deepseek-r1",
+      "mistralai/mistral-large",
+      "qwen/qwen-2.5-72b-instruct",
+    ],
+    description: "200+ models, one key. openrouter.ai",
   },
   nim: {
     label: "NVIDIA NIM",
@@ -71,8 +100,9 @@ export const PROVIDER_INFO: Record<ProviderName, {
       "deepseek-ai/deepseek-r1",
       "meta/llama-3.3-70b-instruct",
       "mistralai/mistral-large-2-instruct",
+      "nvidia/llama-3.1-nemotron-ultra-253b-v1",
     ],
-    description: "NVIDIA hosted models. Get key at build.nvidia.com",
+    description: "NVIDIA hosted models. build.nvidia.com",
   },
   ollama: {
     label: "Ollama (Local LLM)",
@@ -85,31 +115,28 @@ export const PROVIDER_INFO: Record<ProviderName, {
 };
 
 export function ensureConfigDir(): void {
-  if (!fs.existsSync(CONFIG_DIR)) {
-    fs.mkdirSync(CONFIG_DIR, { recursive: true });
-  }
+  if (!fs.existsSync(CONFIG_DIR)) fs.mkdirSync(CONFIG_DIR, { recursive: true });
 }
 
 export function loadConfig(): ResolvConfig {
   ensureConfigDir();
 
-  // Layer: file config -> env vars
   let fileConfig: Partial<ResolvConfig> = {};
   if (fs.existsSync(CONFIG_FILE)) {
-    try {
-      fileConfig = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf-8"));
-    } catch {
-      fileConfig = {};
-    }
+    try { fileConfig = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf-8")); }
+    catch { fileConfig = {}; }
   }
 
   const merged: ResolvConfig = { ...DEFAULTS, ...fileConfig };
-  merged.apiKeys = fileConfig.apiKeys ?? {};
+  merged.apiKeys = { ...(fileConfig.apiKeys ?? {}) };
 
-  // Env var overrides (for CI/power users)
+  // Env var overrides
   if (process.env.ANTHROPIC_API_KEY) merged.apiKeys.anthropic = process.env.ANTHROPIC_API_KEY;
   if (process.env.GOOGLE_API_KEY) merged.apiKeys.google = process.env.GOOGLE_API_KEY;
   if (process.env.NVIDIA_API_KEY) merged.apiKeys.nim = process.env.NVIDIA_API_KEY;
+  if (process.env.OPENAI_API_KEY) merged.apiKeys.openai = process.env.OPENAI_API_KEY;
+  if (process.env.XAI_API_KEY) merged.apiKeys.grok = process.env.XAI_API_KEY;
+  if (process.env.OPENROUTER_API_KEY) merged.apiKeys.openrouter = process.env.OPENROUTER_API_KEY;
   if (process.env.RESOLV_PROVIDER) merged.provider = process.env.RESOLV_PROVIDER as ProviderName;
   if (process.env.RESOLV_MODEL) merged.model = process.env.RESOLV_MODEL;
   if (process.env.GITHUB_TOKEN) merged.githubToken = process.env.GITHUB_TOKEN;
@@ -119,7 +146,7 @@ export function loadConfig(): ResolvConfig {
 
 export function saveConfig(config: ResolvConfig): void {
   ensureConfigDir();
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), { mode: 0o600 }); // owner read/write only
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), { mode: 0o600 });
 }
 
 export function isFirstRun(): boolean {

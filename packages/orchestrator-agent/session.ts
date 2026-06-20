@@ -1,9 +1,6 @@
-// ============================================================
-// resolv — orchestrator-agent/session.ts
-// Holds conversation history plus the small bits of mutable context (repo
-// path, current branch, last DNA scan summary) that both the system prompt
-// and various tools need to read or update during a run.
-// ============================================================
+// packages/orchestrator-agent/session.ts
+// Conversation history + mutable session context.
+// Tracks whether the system prompt has been sent (it's only needed on the first turn).
 
 import type { Message } from "../core/types.js";
 import type { SystemPromptContext } from "./system-prompt.js";
@@ -11,8 +8,9 @@ import type { SystemPromptContext } from "./system-prompt.js";
 export class AgentSession {
   private history: Message[] = [];
   private context: SystemPromptContext = {};
+  private _firstTurnDone = false;
 
-  // ── conversation history ──────────────────────────────────
+  // ── History ───────────────────────────────────────────────
 
   addMessage(message: Message): void {
     this.history.push(message);
@@ -24,16 +22,34 @@ export class AgentSession {
 
   clearHistory(): void {
     this.history = [];
+    this._firstTurnDone = false;
   }
 
-  /** Drops everything except the most recent N messages — a basic context-length safety valve. */
+  /** Restore history from a persisted session. Marks first turn as done since
+   *  history already contains the system prompt from the original session. */
+  restoreHistory(history: Message[]): void {
+    this.history = [...history];
+    this._firstTurnDone = history.length > 0;
+  }
+
+  /** Keep only the N most recent messages to manage context length. */
   truncateHistory(keepLast: number): void {
     if (this.history.length > keepLast) {
       this.history = this.history.slice(-keepLast);
     }
   }
 
-  // ── session context ───────────────────────────────────────
+  // ── System prompt tracking ────────────────────────────────
+
+  isFirstTurn(): boolean {
+    return !this._firstTurnDone;
+  }
+
+  markFirstTurnDone(): void {
+    this._firstTurnDone = true;
+  }
+
+  // ── Context ───────────────────────────────────────────────
 
   getContext(): Readonly<SystemPromptContext> {
     return this.context;

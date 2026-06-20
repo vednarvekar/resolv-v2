@@ -12,7 +12,7 @@ import {
   saveConfig,
 } from "../../config/config.js";
 
-const PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama"];
+const PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama", "grok", "openai", "openrouter"];
 
 async function selectNumbered<T extends string>(
   rl: readline.Interface,
