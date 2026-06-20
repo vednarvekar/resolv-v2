@@ -43,7 +43,10 @@ resolv            # first run triggers setup wizard
 
 | Command | Description |
 |---------|-------------|
-| `/config` | Show provider, model, key status |
+| `/config` | Show provider, model, and masked key status |
+| `/config change` | Interactively change API key, GitHub token, test command, or retries |
+| `/config-change` | Alias for `/config change` |
+| `/config key` | Replace the active provider's API key |
 | `/dna` | Scan current repo, save to `.resolv/analysis.json` |
 | `/provider` | Switch provider (interactive) |
 | `/model` | Switch model (interactive) |
@@ -70,6 +73,7 @@ Optional env overrides can be exported by the shell or placed in a `.env` file i
 ANTHROPIC_API_KEY=...
 GOOGLE_API_KEY=...
 NVIDIA_API_KEY=...
+NIM_REQUEST_TIMEOUT_MS=90000
 GITHUB_TOKEN=...
 RESOLV_PROVIDER=anthropic
 RESOLV_MODEL=claude-sonnet-4-6

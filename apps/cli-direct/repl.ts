@@ -13,7 +13,7 @@ import chalk from "chalk";
 import ora from "ora";
 
 import { SLASH_COMMANDS, completeCommand } from "../tui/slash-commands/registry.js";
-import { runConfigCommand } from "./config-command.js";
+import { runConfigChangeCommand, runConfigCommand } from "./config-command.js";
 import { runDnaCommand } from "./dna-command.js";
 import { runProviderCommand, runModelCommand } from "./provider-command.js";
 import { loadConfig, isConfigured, PROVIDER_INFO } from "../../config/config.js";
@@ -172,8 +172,19 @@ export async function startRepl(): Promise<void> {
           break;
 
         case "/config":
-          runConfigCommand();
+          if (!args) {
+            runConfigCommand();
+          } else {
+            const result = await runConfigChangeCommand(args, rl);
+            if (result.providerCredentialsChanged) await activateSavedProvider();
+          }
           break;
+
+        case "/config-change": {
+          const result = await runConfigChangeCommand("change", rl);
+          if (result.providerCredentialsChanged) await activateSavedProvider();
+          break;
+        }
 
         case "/help":
           printHelp();

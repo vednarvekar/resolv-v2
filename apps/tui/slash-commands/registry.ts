@@ -11,7 +11,12 @@ export interface SlashCommand {
 export const SLASH_COMMANDS: SlashCommand[] = [
   {
     name: "/config",
-    description: "Show current provider, model, and API key status",
+    description: "Show or change provider keys and other settings",
+    usage: "/config [change|key|github|test|retries]",
+  },
+  {
+    name: "/config-change",
+    description: "Interactively change API keys and other settings",
   },
   {
     name: "/dna",

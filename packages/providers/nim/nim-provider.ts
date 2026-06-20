@@ -18,9 +18,35 @@ import type { Provider } from "../provider.js"
 
 const NIM_CHAT_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 const NIM_EMBEDDING_ENDPOINT = "https://integrate.api.nvidia.com/v1/embeddings";
+const NIM_MODELS_ENDPOINT = "https://integrate.api.nvidia.com/v1/models";
 const DEFAULT_MODEL = "google/gemma-4-31b-it";
 const DEFAULT_EMBEDDING_MODEL = "nvidia/nv-embedqa-e5-v5";
 const MAX_EMBEDDING_BATCH = 32;
+const DEFAULT_REQUEST_TIMEOUT_MS = 90_000;
+const HEALTH_CHECK_TIMEOUT_MS = 10_000;
+
+function requestTimeoutMs(): number {
+    const configured = Number.parseInt(process.env.NIM_REQUEST_TIMEOUT_MS ?? "", 10);
+    return Number.isFinite(configured) && configured >= 5_000 ? configured : DEFAULT_REQUEST_TIMEOUT_MS;
+}
+
+function fetchFailureMessage(cause: unknown, timeoutMs: number): string {
+    if (cause instanceof DOMException && cause.name === "TimeoutError") {
+        return `NVIDIA NIM request timed out after ${Math.round(timeoutMs / 1000)} seconds`;
+    }
+    const error = cause instanceof Error ? cause : undefined;
+    const nested = error?.cause as { code?: string; message?: string } | undefined;
+    const detail = nested?.code ?? nested?.message ?? error?.message ?? String(cause);
+    return `Could not reach NVIDIA NIM (${detail}). Check DNS, proxy/VPN, firewall, and access to integrate.api.nvidia.com`;
+}
+
+async function nimFetch(url: string, init: RequestInit, timeoutMs = requestTimeoutMs()): Promise<Response> {
+    try {
+        return await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+    } catch (cause) {
+        throw new ProviderError(fetchFailureMessage(cause, timeoutMs), "nim");
+    }
+}
 
 
 interface OpenAiToolCall {
@@ -164,6 +190,27 @@ export class NimProvider implements Provider {
 
     constructor(private readonly apiKey: string) {}
 
+    async healthCheck(model?: string): Promise<void> {
+        const response = await nimFetch(NIM_MODELS_ENDPOINT, {
+            headers: { Authorization: `Bearer ${this.apiKey}`, Accept: "application/json" },
+        }, HEALTH_CHECK_TIMEOUT_MS);
+
+        if (!response.ok) {
+            const detail = await response.text().catch(() => "");
+            throw new ProviderError(
+                `NVIDIA NIM health check failed with HTTP ${response.status}${detail ? `: ${detail}` : ""}`,
+                "nim",
+                response.status
+            );
+        }
+
+        if (!model) return;
+        const payload = (await response.json().catch(() => null)) as { data?: Array<{ id?: string }> } | null;
+        if (payload?.data?.length && !payload.data.some((item) => item.id === model)) {
+            throw new ProviderError(`NVIDIA NIM model "${model}" is not available for this API key.`, "nim");
+        }
+    }
+
     async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {
         const body: Record<string, unknown> = {
             model: options.model ?? this.defaultModel,
@@ -178,7 +225,7 @@ export class NimProvider implements Provider {
             body.tools = toOpenAiTools(options.tools)
         }
 
-        const response = await fetch(NIM_CHAT_ENDPOINT, {
+        const response = await nimFetch(NIM_CHAT_ENDPOINT, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
@@ -274,7 +321,7 @@ export class NimProvider implements Provider {
         for(let i = 0; i < texts.length; i += MAX_EMBEDDING_BATCH) {
             const batch = texts.slice(i, i + MAX_EMBEDDING_BATCH)
 
-            const response = await fetch(NIM_EMBEDDING_ENDPOINT, {
+            const response = await nimFetch(NIM_EMBEDDING_ENDPOINT, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${this.apiKey}`,
