@@ -1,11 +1,6 @@
-// ============================================================
-// resolv — providers/registry.ts
-// The one place that knows which Provider implementations exist and how
-// to construct them. Everything else asks this registry for "the current
-// provider" and never imports a concrete provider class directly — that's
-// what makes `/model` switching and RESOLV_PROVIDER env-based selection work
-// without touching agent-loop.ts or any tool.
-// ============================================================
+// packages/providers/register.ts
+// Single place that constructs Provider instances from config.
+// Never imports provider SDKs directly in the rest of the codebase.
 
 import { UnknownProviderError } from "../core/errors.js";
 import { AnthropicProvider } from "./anthropic/anthropic-provider.js";
@@ -13,71 +8,53 @@ import { GeminiProvider } from "./google/gemini-provider.js";
 import { NimProvider } from "./nim/nim-provider.js";
 import { OllamaProvider } from "./ollama/ollama_provider.js";
 import type { Provider } from "./provider.js";
+import { loadConfig, type ResolvConfig } from "../../config/config.js";
 
 export type ProviderName = "nim" | "anthropic" | "google" | "ollama";
 
-export interface ProviderCredentials {
-  nimApiKey?: string;
-  anthropicApiKey?: string;
-  googleApiKey?: string;
-}
-
-const SUPPORTED_PROVIDERS: ProviderName[] = ["nim", "anthropic", "google", "ollama"];
+export const SUPPORTED_PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama"];
 
 export function isSupportedProvider(name: string): name is ProviderName {
   return (SUPPORTED_PROVIDERS as string[]).includes(name);
 }
 
 /**
- * Builds a Provider instance by name. Throws UnknownProviderError for
- * anything not in SUPPORTED_PROVIDERS, and a clear credential error if the
- * matching API key wasn't supplied.
+ * Build a Provider from an explicit config object.
+ * Preferred over createProviderFromEnv when config is already loaded.
  */
-/**
- * Builds a Provider instance by name. Throws UnknownProviderError for
- * anything not in SUPPORTED_PROVIDERS, and a clear credential error if the
- * matching API key wasn't supplied.
- */
-export function createProvider(name: ProviderName, credentials: ProviderCredentials): Provider {
-  switch (name) {
-    case "nim":
-      if (!credentials.nimApiKey) throw new Error("NVIDIA_API_KEY is required to use the nim provider.");
-      return new NimProvider(credentials.nimApiKey);
+export function createProviderFromConfig(config: ResolvConfig): Provider {
+  const { provider, apiKeys } = config;
 
-    case "anthropic":
-      if (!credentials.anthropicApiKey) throw new Error("ANTHROPIC_API_KEY is required to use the anthropic provider.");
-      return new AnthropicProvider(credentials.anthropicApiKey);
-
-    case "google":
-      if (!credentials.googleApiKey) throw new Error("GOOGLE_API_KEY is required to use the google provider.");
-      return new GeminiProvider(credentials.googleApiKey);
-
+  switch (provider) {
+    case "anthropic": {
+      const key = apiKeys.anthropic;
+      if (!key) throw new Error("ANTHROPIC_API_KEY is required. Run /provider to configure.");
+      return new AnthropicProvider(key);
+    }
+    case "google": {
+      const key = apiKeys.google;
+      if (!key) throw new Error("GOOGLE_API_KEY is required. Run /provider to configure.");
+      return new GeminiProvider(key);
+    }
+    case "nim": {
+      const key = apiKeys.nim;
+      if (!key) throw new Error("NVIDIA_API_KEY is required. Run /provider to configure.");
+      return new NimProvider(key);
+    }
     case "ollama":
-      // Ollama runs locally over localhost, so it requires no API key.
       return new OllamaProvider();
-
     default:
-      throw new UnknownProviderError(name);
+      throw new UnknownProviderError(provider);
   }
 }
 
 /**
- * Reads RESOLV_PROVIDER from the environment (defaulting to "nim", since
- * that's resolv's free-tier default) and constructs the matching Provider
- * using whichever credentials are present in process.env.
+ * Build a Provider from environment variables or config file.
+ * Accepts an optional pre-loaded config to avoid re-reading disk.
  */
-export function createProviderFromEnv(): Provider {
-  const requested = process.env.RESOLV_PROVIDER ?? "nim";
-
-  if (!isSupportedProvider(requested)) {
-    throw new UnknownProviderError(requested);
-  }
-
-  return createProvider(requested, {
-    nimApiKey: process.env.NVIDIA_API_KEY,
-    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
-    googleApiKey: process.env.GOOGLE_API_KEY,
-  });
+export function createProviderFromEnv(config?: ResolvConfig): Provider {
+  const c = config ?? loadConfig();
+  return createProviderFromConfig(c);
 }
 
 export function listAvailableProviders(): ProviderName[] {

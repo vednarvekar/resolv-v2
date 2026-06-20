@@ -1,3 +1,6 @@
+// packages/planner/planner-agent.ts
+// LLM planning subagent: picks which candidate files actually need to change.
+
 import type { DNAProfile } from "../dna/types.js";
 import type { GitHubIssue } from "../context-agent/github/fetch-issue.js";
 import type { SemanticMatch } from "../context-agent/semantic/file-index.js";
@@ -9,19 +12,9 @@ export interface AgentPlan {
   targetFiles: string[];
   targetFunctions: string[];
   reasoning: string;
-  /** true if the model's JSON output failed to parse and we fell back to the keyword mapping */
   usedFallback: boolean;
 }
 
-/**
- * A planning subagent: a single, narrowly-scoped NIM call whose only job is
- * "given the issue and a candidate set of files/functions, decide which ones
- * actually need to change." This replaces pure substring/keyword matching
- * with judgment — keyword matching still runs first (in issue-mapper.ts) to
- * produce a candidate pool, and semantic search adds a second candidate pool,
- * but the LLM does the final filtering instead of "any file whose path
- * contains a issue keyword."
- */
 export async function planTargets(
   issue: GitHubIssue,
   dna: DNAProfile,
@@ -42,20 +35,19 @@ export async function planTargets(
       .map((m) => `${m.chunk.symbolName} (${m.chunk.relativePath})`),
   ]);
 
-  // nothing to reason about — skip the LLM call entirely and use whatever keyword matching found
   if (candidateFiles.size === 0 && candidateFunctions.size === 0) {
     return {
       targetFiles: keywordMapping.relevantFiles,
       targetFunctions: keywordMapping.relevantFunctions,
-      reasoning: "No candidates found by keyword or semantic search; nothing for the planner to filter.",
+      reasoning: "No candidates from keyword or semantic search.",
       usedFallback: true,
     };
   }
 
-  const prompt = `You are a planning agent. Given a GitHub issue and a candidate list of files/functions from a codebase, decide which ones actually need to change to fix the issue. Be conservative — only include files genuinely relevant to the fix, not tangentially related ones.
+  const prompt = `You are a planning agent. Given a GitHub issue and candidate files/functions, choose which ones actually need to change. Be conservative.
 
-ISSUE TITLE: ${issue.title}
-ISSUE BODY: ${issue.body.slice(0, 2000)}
+ISSUE: ${issue.title}
+BODY: ${issue.body.slice(0, 1500)}
 
 CANDIDATE FILES:
 ${[...candidateFiles].join("\n") || "(none)"}
@@ -63,51 +55,35 @@ ${[...candidateFiles].join("\n") || "(none)"}
 CANDIDATE FUNCTIONS:
 ${[...candidateFunctions].join("\n") || "(none)"}
 
-Respond with ONLY valid JSON, no markdown, no prose, in exactly this shape:
-{"targetFiles": ["path1", "path2"], "targetFunctions": ["fn1", "fn2"], "reasoning": "one or two sentences"}`;
+Respond ONLY with valid JSON:
+{"targetFiles": ["path1"], "targetFunctions": ["fn1"], "reasoning": "one sentence"}`;
 
   try {
-    const result = await provider.chat({
-      messages: [Msg.user(prompt)],
-      model,
-      temperature: 0.1,
-      maxTokens: 800,
-    });
-    const textBlock = result.message.content.find((block) => block.type === "text");
+    const result = await provider.chat({ messages: [Msg.user(prompt)], model, temperature: 0.1, maxTokens: 600 });
+    const textBlock = result.message.content.find((b) => b.type === "text");
     const parsed = textBlock?.type === "text" ? parsePlanResponse(textBlock.text) : null;
     if (parsed) return { ...parsed, usedFallback: false };
   } catch {
-    // network/API failure — fall through to keyword-based fallback below
+    // fall through to keyword fallback
   }
 
   return {
     targetFiles: keywordMapping.relevantFiles,
     targetFunctions: keywordMapping.relevantFunctions,
-    reasoning: "Planner agent call failed or returned unparseable output; fell back to keyword matching.",
+    reasoning: "Planner call failed; fell back to keyword matching.",
     usedFallback: true,
   };
 }
 
 function parsePlanResponse(raw: string): Omit<AgentPlan, "usedFallback"> | null {
-  // models sometimes wrap JSON in ```json fences despite instructions — strip if present
   const cleaned = raw.replace(/```json\s*|```\s*/g, "").trim();
-
   try {
-    const parsed = JSON.parse(cleaned) as {
-      targetFiles?: unknown;
-      targetFunctions?: unknown;
-      reasoning?: unknown;
+    const parsed = JSON.parse(cleaned) as { targetFiles?: unknown; targetFunctions?: unknown; reasoning?: unknown };
+    return {
+      targetFiles: Array.isArray(parsed.targetFiles) ? parsed.targetFiles.filter((f): f is string => typeof f === "string") : [],
+      targetFunctions: Array.isArray(parsed.targetFunctions) ? parsed.targetFunctions.filter((f): f is string => typeof f === "string") : [],
+      reasoning: typeof parsed.reasoning === "string" ? parsed.reasoning : "",
     };
-
-    const targetFiles = Array.isArray(parsed.targetFiles)
-      ? parsed.targetFiles.filter((f): f is string => typeof f === "string")
-      : [];
-    const targetFunctions = Array.isArray(parsed.targetFunctions)
-      ? parsed.targetFunctions.filter((f): f is string => typeof f === "string")
-      : [];
-    const reasoning = typeof parsed.reasoning === "string" ? parsed.reasoning : "";
-
-    return { targetFiles, targetFunctions, reasoning };
   } catch {
     return null;
   }

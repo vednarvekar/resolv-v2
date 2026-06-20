@@ -1,10 +1,15 @@
+// packages/dna/analysis/files.ts
+// Scans the repo for source files. Returns compact RepoFile objects —
+// absolutePath excluded from output to keep DNA JSON portable.
+
 import fs from "node:fs";
 import path from "node:path";
 import type { Language, RepoFile } from "../types.js";
 
-const IGNORE = [
+const ALWAYS_IGNORE = [
   "node_modules", ".git", "dist", "build", ".next",
   "__pycache__", ".venv", "venv", "coverage", ".nyc_output",
+  ".turbo", ".cache", "tmp", "temp",
 ];
 
 const EXT_MAP: Record<string, Language> = {
@@ -13,23 +18,30 @@ const EXT_MAP: Record<string, Language> = {
   ".py": "python",
 };
 
-function detectLanguage(ext: string): Language {
-  return EXT_MAP[ext] ?? "unknown";
+function matchesGitignore(name: string, patterns: string[]): boolean {
+  for (const pattern of patterns) {
+    // simple name match and glob-less pattern match
+    if (pattern === name) return true;
+    if (pattern.endsWith("/") && pattern.slice(0, -1) === name) return true;
+    if (pattern.startsWith("*") && name.endsWith(pattern.slice(1))) return true;
+  }
+  return false;
 }
 
-function countLines(filePath: string): number {
-  const content = fs.readFileSync(filePath, "utf-8");
-  return content.split("\n").length;
-}
-
-export function scanFiles(repoPath: string): RepoFile[] {
+export function scanFiles(repoRoot: string, gitignorePatterns: string[] = []): RepoFile[] {
   const results: RepoFile[] = [];
 
   function walk(dir: string) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
 
     for (const entry of entries) {
-      if (IGNORE.includes(entry.name)) continue;
+      if (ALWAYS_IGNORE.includes(entry.name)) continue;
+      if (matchesGitignore(entry.name, gitignorePatterns)) continue;
 
       const fullPath = path.join(dir, entry.name);
 
@@ -37,36 +49,25 @@ export function scanFiles(repoPath: string): RepoFile[] {
         walk(fullPath);
       } else {
         const ext = path.extname(entry.name);
-        const lang = detectLanguage(ext);
-        if (lang === "unknown") continue;
+        const lang = EXT_MAP[ext];
+        if (!lang || lang === "unknown") continue;
 
-        let stat: fs.Stats;
+        let lineCount = 0;
         try {
-          stat = fs.statSync(fullPath);
+          lineCount = fs.readFileSync(fullPath, "utf-8").split("\n").length;
         } catch {
           continue;
         }
 
         results.push({
-          absolutePath: fullPath,
-          relativePath: path.relative(repoPath, fullPath),
-          extension: ext,
+          relativePath: path.relative(repoRoot, fullPath),
           language: lang,
-          sizeBytes: stat.size,
-          lineCount: countLines(fullPath),
+          lineCount,
         });
       }
     }
   }
 
-  walk(repoPath);
+  walk(repoRoot);
   return results;
-}
-
-export function getLanguageBreakdown(files: RepoFile[]): Record<Language, number> {
-  const breakdown: Record<Language, number> = {
-    typescript: 0, javascript: 0, python: 0, unknown: 0,
-  };
-  for (const file of files) breakdown[file.language]++;
-  return breakdown;
 }

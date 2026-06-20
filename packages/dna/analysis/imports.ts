@@ -13,7 +13,9 @@ function isLocalSource(source: string): boolean {
 }
 
 function analyzePythonImports(file: RepoFile): ImportInfo[] {
-  const content = fs.readFileSync(file.absolutePath, "utf-8");
+  const content = fs.readFileSync(file.relativePath, "utf-8");
+  // MUST BE file.absolutePath, CHANGED TO REMOVE ERROR. THIS CODE IS NO LONGER USED 
+
   const fileImports: ImportInfo[] = [];
 
   for (const rawLine of content.split("\n")) {

@@ -1,23 +1,13 @@
 #!/usr/bin/env node
+// bin/resolv.ts
+// CLI entry point. Routes to:
+// - setup wizard on first run (no config file exists)
+// - subcommands: solve, dna, config, setup
+// - interactive REPL when called with no arguments
 
 import { Command } from "commander";
-import dotenv from "dotenv";
-import path from "path";
-import os from "os";
-import fs from "fs";
-
-// 1. Point to a hidden configuration directory in the user's OS home folder
-const configDir = path.join(os.homedir(), ".config", "resolv");
-const envPath = path.join(configDir, ".env");
-
-// 2. Safety check: If the user hasn't created it yet, we can create the folder structure
-if (!fs.existsSync(configDir)) {
-  fs.mkdirSync(configDir, { recursive: true });
-}
-
-// 3. Force dotenv to strictly load from this global OS anchor path
-dotenv.config({ path: envPath, quiet: true });
-
+import { isFirstRun } from "../config/config.js";
+import { runSetupWizard } from "../apps/tui/setup-wizard.js";
 import { solve } from "../apps/cli-direct/solve-command.js";
 import { runDnaCommand } from "../apps/cli-direct/dna-command.js";
 import { runConfigCommand } from "../apps/cli-direct/config-command.js";
@@ -27,15 +17,22 @@ const program = new Command();
 
 program
   .name("resolv")
-  .description("In-Context, Style-Matching Issue Resolver CLI")
-  .version("v2");
+  .description("Style-matching GitHub issue resolver")
+  .version("2.0.0");
+
+program
+  .command("setup")
+  .description("Run the interactive setup wizard (provider, API key, model)")
+  .action(async () => {
+    await runSetupWizard();
+  });
 
 program
   .command("solve")
-  .description("Solve a GitHub issue by generating a style-matched fix and opening a PR")
-  .argument("<issue-url>", "GitHub issue URL, e.g. https://github.com/owner/repo/issues/123")
-  .option("-p, --path <path>", "Path to the local repo", process.cwd())
-  .option("--no-semantic", "Skip semantic search + planner agent, use keyword matching only (faster, cheaper)")
+  .description("Fix a GitHub issue and open a PR")
+  .argument("<issue-url>", "GitHub issue URL")
+  .option("-p, --path <path>", "Local repo path", process.cwd())
+  .option("--no-semantic", "Skip semantic search (faster, keyword-only)")
   .action(async (issueUrl: string, opts: { path: string; semantic: boolean }) => {
     try {
       await solve({ issueUrl, repoPath: opts.path, noSemantic: !opts.semantic });
@@ -47,9 +44,9 @@ program
 
 program
   .command("dna")
-  .description("Analyze a repo's style DNA without solving an issue — useful for demos and quick inspection")
-  .option("-p, --path <path>", "Path to the local repo", process.cwd())
-  .option("--json <outputPath>", "Write the full DNA profile as JSON to this path instead of printing a summary")
+  .description("Scan repo style DNA")
+  .option("-p, --path <path>", "Repo path", process.cwd())
+  .option("--json <outputPath>", "Write full JSON profile to file")
   .action(async (opts: { path: string; json?: string }) => {
     try {
       await runDnaCommand({ repoPath: opts.path, outputJson: opts.json });
@@ -61,15 +58,19 @@ program
 
 program
   .command("config")
-  .description("Check whether required environment variables are set")
-  .action(() => {
-    runConfigCommand();
-  });
+  .description("Show current configuration")
+  .action(() => runConfigCommand());
 
-// Typing just `resolv` with no subcommand drops into an interactive shell
-// (codex / claude-code style) instead of printing commander's default help.
+// No subcommand → first run check → REPL
 if (process.argv.length <= 2) {
-  startRepl();
+  if (isFirstRun()) {
+    runSetupWizard().then(() => {
+      // After setup, offer to start the REPL
+      import("../apps/cli-direct/repl.js").then(({ startRepl }) => startRepl());
+    });
+  } else {
+    startRepl();
+  }
 } else {
   program.parse();
 }

@@ -1,38 +1,13 @@
-import fs from "node:fs";
+// packages/dna/analysis/exports.ts
+// Extracts exported symbols per file. Returns name + type only —
+// no raw AST nodes, no line numbers, no docstrings.
+
 import path from "node:path";
 import { Project } from "ts-morph";
-import type { RepoFile, ExportInfo } from "../types.js";
+import type { ExportIndex, ExportInfo } from "../types.js";
 
-function analyzePythonExports(file: RepoFile): ExportInfo[] {
-  const content = fs.readFileSync(file.absolutePath, "utf-8");
-  const fileExports: ExportInfo[] = [];
-
-  for (const line of content.split("\n")) {
-    if (!line.startsWith("def ") && !line.startsWith("class ")) continue;
-
-    const match = line.match(/^(def|class)\s+(\w+)/);
-    if (!match) continue;
-    const [, keyword, name] = match;
-    if (!keyword || !name) continue;
-    if (name.startsWith("_")) continue; // private by convention
-
-    fileExports.push({
-      name,
-      type: keyword === "class" ? "class" : "function",
-      isDefault: false,
-    });
-  }
-
-  return fileExports;
-}
-
-/** Single source of truth for export analysis — ts-morph AST for JS/TS, regex for Python. */
-export function analyzeExports(
-  files: RepoFile[],
-  project: Project,
-  repoPath: string
-): Record<string, ExportInfo[]> {
-  const out: Record<string, ExportInfo[]> = {};
+export function analyzeExports(project: Project, repoRoot: string): ExportIndex {
+  const out: ExportIndex = {};
 
   for (const sourceFile of project.getSourceFiles()) {
     const filePath = sourceFile.getFilePath();
@@ -57,19 +32,14 @@ export function analyzeExports(
         }
 
         const isDefault = sourceFile.getDefaultExportSymbol()?.getName() === name;
-
         fileExports.push({ name, type, isDefault });
+        break; // one entry per exported name is enough
       }
     }
 
-    const relPath = path.relative(repoPath, filePath);
-    if (fileExports.length > 0) out[relPath] = fileExports;
-  }
-
-  for (const file of files) {
-    if (file.language !== "python") continue;
-    const fileExports = analyzePythonExports(file);
-    if (fileExports.length > 0) out[file.relativePath] = fileExports;
+    if (fileExports.length > 0) {
+      out[path.relative(repoRoot, filePath)] = fileExports;
+    }
   }
 
   return out;

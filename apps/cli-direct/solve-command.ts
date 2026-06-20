@@ -1,8 +1,12 @@
+// apps/cli-direct/solve-command.ts
+// Full issue-fix pipeline: fetch issue → DNA → plan → edit → test → commit → PR.
+
 import path from "node:path";
 import chalk from "chalk";
 import ora from "ora";
 
-import { loadConfig } from "../../config/config.js";
+import { loadConfig, loadAppConfig } from "../../config/config.js";
+import { createProviderFromEnv } from "../../packages/providers/register.js";
 import { parseIssueUrl } from "../../packages/context-agent/github/parse-issue-url.js";
 import { fetchIssue } from "../../packages/context-agent/github/fetch-issue.js";
 import { extractDNA } from "../../packages/dna/extract.js";
@@ -16,21 +20,20 @@ import { checkoutBranch, getCurrentBranch } from "../../packages/coding-agent/gi
 import { commitChanges } from "../../packages/coding-agent/git/commit.js";
 import { openPullRequest, getDefaultBranch } from "../../packages/coding-agent/git/push-and-pr.js";
 import { runSelfHealLoop } from "../../packages/coding-agent/self-heal-loop.js";
-import { createProviderFromEnv } from "../../packages/providers/register.js";
 
 export interface SolveOptions {
   issueUrl: string;
   repoPath: string;
-  /** skip the semantic-search + planner-agent step and use plain keyword matching only (faster, no embedding cost) */
   noSemantic?: boolean;
 }
 
 export async function solve(options: SolveOptions): Promise<void> {
   const config = loadConfig();
-  const provider = createProviderFromEnv();
+  const appConfig = loadAppConfig();
+  const provider = createProviderFromEnv(config);
   const repoPath = path.resolve(options.repoPath);
 
-  const guardSpinner = ora("Checking working directory is clean...").start();
+  const guardSpinner = ora("Checking working directory...").start();
   try {
     assertCleanWorkingDirectory();
     guardSpinner.succeed("Working directory is clean");
@@ -42,47 +45,36 @@ export async function solve(options: SolveOptions): Promise<void> {
 
   const parsed = parseIssueUrl(options.issueUrl);
 
-  const issueSpinner = ora(`Fetching issue #${parsed.issueNumber} from ${parsed.owner}/${parsed.repo}...`).start();
-  const issue = await fetchIssue(parsed.owner, parsed.repo, parsed.issueNumber, config.githubToken);
-  issueSpinner.succeed(`Fetched issue #${parsed.issueNumber}: "${issue.title}" (${issue.comments.length} comments)`);
+  const issueSpinner = ora(`Fetching issue #${parsed.issueNumber}...`).start();
+  const issue = await fetchIssue(parsed.owner, parsed.repo, parsed.issueNumber, appConfig.githubToken);
+  issueSpinner.succeed(`"${issue.title}" (${issue.comments.length} comments)`);
 
-  const dnaSpinner = ora("Extracting repo DNA — this may take a moment on large repos...").start();
+  const dnaSpinner = ora("Extracting repo DNA...").start();
   const dna = await extractDNA(repoPath);
-  dnaSpinner.succeed(
-    `DNA extracted: ${dna.files.length} files, ${dna.functions.length} functions, ${dna.helpers.length} shared helpers`
-  );
-  console.log(chalk.dim(`  Naming convention: ${dna.naming.dominantStyle}`));
+  dnaSpinner.succeed(`${dna.files.length} files · ${dna.functions.length} functions · ${dna.helpers.length} helpers`);
 
   const mapping = mapIssueToDNA(issue, dna);
 
-  // semantic search + planner agent: an LLM-judgment layer on top of keyword matching.
-  // Degrades gracefully — if embeddings or the planner call fail, we fall back to
-  // pure keyword matching, which still works on its own.
   let refinedFiles: string[] | undefined;
   if (!options.noSemantic) {
-    const semanticSpinner = ora("Running semantic search over the codebase...").start();
+    const semSpinner = ora("Running semantic search...").start();
     try {
       const index = await buildSemanticIndex(dna, provider);
       const query = `${issue.title}\n${issue.body}`.slice(0, 2000);
       const matches = await semanticSearch(index, query, provider, 12);
-      semanticSpinner.succeed(`Semantic search found ${matches.length} candidate matches`);
+      semSpinner.succeed(`${matches.length} semantic matches`);
 
-      const planSpinner = ora("Running planner agent to select target files...").start();
-      const agentPlan = await planTargets(issue, dna, mapping, matches, provider, config.model);
+      const planSpinner = ora("Planner agent selecting target files...").start();
+      const agentPlan = await planTargets(issue, dna, mapping, matches, provider, appConfig.model);
       if (agentPlan.usedFallback) {
-        planSpinner.warn(`Planner agent fell back to keyword matching: ${agentPlan.reasoning}`);
+        planSpinner.warn(`Fell back to keyword matching: ${agentPlan.reasoning}`);
       } else {
-        planSpinner.succeed(`Planner agent selected ${agentPlan.targetFiles.length} target file(s)`);
-        console.log(chalk.dim(`  Reasoning: ${agentPlan.reasoning}`));
+        planSpinner.succeed(`${agentPlan.targetFiles.length} target file(s) selected`);
         refinedFiles = agentPlan.targetFiles;
       }
     } catch (err) {
-      semanticSpinner.warn(`Semantic search/planning unavailable, using keyword matching only: ${(err as Error).message}`);
+      semSpinner.warn(`Semantic search unavailable, using keyword matching: ${(err as Error).message}`);
     }
-  }
-
-  if ((refinedFiles ?? mapping.relevantFiles).length === 0) {
-    console.warn(chalk.yellow("Warning: no files matched the issue. The LLM will work from repo structure alone — fix quality may be lower."));
   }
 
   const plan = createPlan(issue.title, mapping);
@@ -91,7 +83,7 @@ export async function solve(options: SolveOptions): Promise<void> {
   const originalBranch = getCurrentBranch();
   const fixBranch = `fix/issue-${parsed.issueNumber}`;
 
-  const branchSpinner = ora(`Creating safety branch ${fixBranch}...`).start();
+  const branchSpinner = ora(`Branch: ${fixBranch}`).start();
   if (branchExists(fixBranch)) {
     checkoutBranch(fixBranch);
   } else {
@@ -99,23 +91,21 @@ export async function solve(options: SolveOptions): Promise<void> {
   }
   branchSpinner.succeed(`On branch ${fixBranch}`);
 
-  const healSpinner = ora("Generating fix and running self-healing loop...").start();
+  const healSpinner = ora("Generating fix...").start();
   const healResult = await runSelfHealLoop({
     repoRoot: repoPath,
     prompt,
     provider,
-    model: config.model,
-    testCommand: config.testCommand,
-    maxAttempts: config.maxHealAttempts,
+    model: appConfig.model,
+    testCommand: appConfig.testCommand,
+    maxAttempts: appConfig.maxHealAttempts,
   });
 
   if (!healResult.success) {
     if (healResult.noParseableChange) {
-      healSpinner.fail(
-        `The model never produced a parseable SEARCH/REPLACE response across ${healResult.attempts} attempt(s). No changes were applied.`
-      );
+      healSpinner.fail(`Model produced no parseable SEARCH/REPLACE blocks after ${healResult.attempts} attempts.`);
     } else {
-      healSpinner.fail(`Fix did not pass tests after ${healResult.attempts} attempt(s).`);
+      healSpinner.fail(`Tests still failing after ${healResult.attempts} attempts.`);
       console.error(chalk.red(healResult.finalOutput));
     }
     checkoutBranch(originalBranch);
@@ -123,33 +113,32 @@ export async function solve(options: SolveOptions): Promise<void> {
     return;
   }
 
-  healSpinner.succeed(`Tests passed after ${healResult.attempts} attempt(s)`);
-  console.log(chalk.dim(`  Files changed: ${healResult.filesChanged.join(", ")}`));
+  healSpinner.succeed(`Tests pass (${healResult.attempts} attempt${healResult.attempts > 1 ? "s" : ""})`);
+  console.log(chalk.dim(`  Changed: ${healResult.filesChanged.join(", ")}`));
 
-  commitChanges(`fix: resolve issue #${parsed.issueNumber} - ${issue.title}`);
+  commitChanges(`fix: resolve issue #${parsed.issueNumber} — ${issue.title}`);
 
-  if (!config.githubToken) {
-    console.log(chalk.green(`Done. Fix is committed locally on branch "${fixBranch}". Push manually to open a PR.`));
+  if (!appConfig.githubToken) {
+    console.log(chalk.green(`\n  Done. Fix committed on "${fixBranch}". Push manually to open a PR.\n`));
     return;
   }
 
   const prSpinner = ora("Opening pull request...").start();
-  const baseBranch = await getDefaultBranch(parsed.owner, parsed.repo, config.githubToken);
-
+  const baseBranch = await getDefaultBranch(parsed.owner, parsed.repo, appConfig.githubToken);
   const prOutcome = await openPullRequest({
     owner: parsed.owner,
     repo: parsed.repo,
     branchName: fixBranch,
     baseBranch,
     title: `Fix: ${issue.title}`,
-    body: `Resolves #${parsed.issueNumber}\n\nAutomated fix generated by resolv, matching this repo's existing style:\n- Naming: ${dna.naming.dominantStyle}\n- Took ${healResult.attempts} attempt(s) to pass tests.`,
-    githubToken: config.githubToken,
+    body: `Resolves #${parsed.issueNumber}\n\nGenerated by resolv — ${healResult.attempts} attempt(s), matching existing style (${dna.dominantNaming}, ${dna.dominantAsyncStyle}).`,
+    githubToken: appConfig.githubToken,
   });
 
   if (prOutcome.status === "opened") {
-    prSpinner.succeed(`Pull request opened: ${prOutcome.url}`);
+    prSpinner.succeed(`PR opened: ${prOutcome.url}`);
   } else {
     prSpinner.warn(prOutcome.reason);
-    console.log(chalk.green(`Your fix is safe locally on branch "${prOutcome.branchName}". Push it manually and open the PR yourself when ready.`));
+    console.log(chalk.green(`  Fix is on branch "${fixBranch}". Push and open PR manually.\n`));
   }
 }

@@ -1,109 +1,60 @@
-import { Project, SyntaxKind, CallExpression, TypeChecker } from "ts-morph";
-import type { ArchitectureFlow, ArchitectureInfo } from "../types.js";
+// packages/dna/analysis/architecture.ts
+// Classifies files into architecture layers (route/controller/service/repository).
+// Returns file path lists only — no raw import/call arrays.
+
+import path from "node:path";
+import { Project, SyntaxKind } from "ts-morph";
+import type { ArchitectureInfo } from "../types.js";
+
+function detectLayer(filePath: string, importSources: string[], callTexts: string[]): "route" | "controller" | "service" | "repository" | null {
+  const lower = filePath.toLowerCase();
+
+  const hasRoutingCall = callTexts.some(
+    (c) => /\.(get|post|put|delete|patch|options|use|route|all)$/i.test(c)
+  );
+  if (hasRoutingCall) return "route";
+
+  const hasDatabaseCall = callTexts.some(
+    (c) => /\b(prisma|db|knex|mongoose|model|collection)\b/i.test(c) ||
+      c.includes("findMany") || c.includes("findOne") || c.includes("insertMany")
+  );
+  if (hasDatabaseCall) return "repository";
+
+  if (importSources.some((i) => /\/(db|repo|repository|model|prisma)\//i.test(i))) return "service";
+  if (importSources.some((i) => /\/(service|usecase)\//i.test(i))) return "controller";
+
+  if (lower.includes("route") || lower.includes("router")) return "route";
+  if (lower.includes("controller")) return "controller";
+  if (lower.includes("service")) return "service";
+  if (lower.includes("repository") || lower.includes("repo")) return "repository";
+
+  return null;
+}
 
 export function analyzeArchitecture(project: Project): ArchitectureInfo {
-  const result: ArchitectureInfo = {
-    routes: [], controllers: [], services: [], repositories: [],
-  };
-
-  const typeChecker = project.getTypeChecker();
+  const result: ArchitectureInfo = { routes: [], controllers: [], services: [], repositories: [] };
 
   for (const sourceFile of project.getSourceFiles()) {
     const filePath = sourceFile.getFilePath();
     if (filePath.includes("node_modules") || filePath.endsWith(".d.ts")) continue;
 
     const imports = sourceFile.getImportDeclarations().map((i) => i.getModuleSpecifierValue());
-
     const calls = sourceFile
       .getDescendantsOfKind(SyntaxKind.CallExpression)
-      .filter((call) => isValidApplicationCall(call, typeChecker))
-      .map((call) => call.getExpression().getText());
+      .map((c) => c.getExpression().getText())
+      .filter((t) => !/^(console|Promise|Math|Object|Array|JSON)\./.test(t));
 
     const layer = detectLayer(filePath, imports, calls);
+    if (!layer) continue;
 
-    const flow: ArchitectureFlow = {
-      file: filePath,
-      layer,
-      imports,
-      calls: [...new Set(calls)],
-    };
-
+    const relativePath = path.basename(filePath);
     switch (layer) {
-      case "route": result.routes.push(flow); break;
-      case "controller": result.controllers.push(flow); break;
-      case "service": result.services.push(flow); break;
-      case "repository": result.repositories.push(flow); break;
+      case "route": result.routes.push(relativePath); break;
+      case "controller": result.controllers.push(relativePath); break;
+      case "service": result.services.push(relativePath); break;
+      case "repository": result.repositories.push(relativePath); break;
     }
   }
 
   return result;
-}
-
-function detectLayer(
-  filePath: string,
-  imports: string[],
-  calls: string[]
-): ArchitectureFlow["layer"] {
-  const hasRoutingCall = calls.some(
-    (c) => /\.(get|post|put|delete|patch|options|head|use|route|all)$/i.test(c) || c === "route" || c === "router"
-  );
-  if (hasRoutingCall) return "route";
-
-  const hasDatabaseCall = calls.some(
-    (c) =>
-      /\b(db|prisma|ctx\.db|database|knex|pg|mongoose|model|collection)\b/i.test(c) ||
-      c.includes("findMany") || c.includes("findOne") || c.includes("insertMany")
-  );
-  if (hasDatabaseCall) return "repository";
-
-  if (imports.some((i) => /\/(db|repo|repository|model|prisma|data|storage)\//i.test(i) || i.endsWith("db") || i.endsWith("model"))) {
-    return "service";
-  }
-
-  if (imports.some((i) => /\/(service|usecase|domain)\//i.test(i) || i.endsWith("service"))) {
-    return "controller";
-  }
-
-  const lower = filePath.toLowerCase();
-  if (lower.includes("route") || lower.includes("router")) return "route";
-  if (lower.includes("controller")) return "controller";
-  if (lower.includes("service")) return "service";
-  if (lower.includes("repository") || lower.includes("repo") || lower.includes("model")) return "repository";
-
-  return "unknown";
-}
-
-/** Filters out native/global calls so the call list reflects real application logic. */
-function isValidApplicationCall(call: CallExpression, typeChecker: TypeChecker): boolean {
-  const expression = call.getExpression();
-  const text = expression.getText();
-
-  // 1. Immediately drop common global / primitive namespaces
-  if (/^(console|Promise|Math|Object|Array|JSON|String|Number|Error|process|global|window)\./.test(text)) {
-    return false;
-  }
-
-  const accessExpression = call.getExpressionIfKind(SyntaxKind.PropertyAccessExpression);
-  if (accessExpression) {
-    try {
-      // 2. Wrap the crash-prone type checker in a safe block
-      const baseType = typeChecker.getTypeAtLocation(accessExpression.getExpression());
-      if (baseType && (baseType.isArray() || baseType.isString() || baseType.isNumber())) {
-        return false;
-      }
-    } catch {
-      // If the compiler chokes on a complex type layout, fallback safely to regex rules
-      const propName = accessExpression.getName();
-      const stringArrayBuiltins = ['push', 'pop', 'shift', 'unshift', 'map', 'filter', 'reduce', 'forEach', 'split', 'replace', 'trim', 'toLowerCase', 'toUpperCase', 'includes', 'join'];
-      if (stringArrayBuiltins.includes(propName)) {
-        return false;
-      }
-    }
-  }
-
-  if (!text.includes(".") && ["next", "require", "super", "cb", "callback"].includes(text)) {
-    return false;
-  }
-
-  return true;
 }

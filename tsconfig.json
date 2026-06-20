@@ -16,6 +16,12 @@
     "moduleDetection": "force",
     "noUncheckedIndexedAccess": true
   },
-  "include": ["bin/**/*.ts", "src/**/*.ts", "packages/**/*.ts", "tests/**/*.ts"],
+  "include": [
+    "bin/**/*.ts",
+    "apps/**/*.ts",
+    "config/**/*.ts",
+    "packages/**/*.ts",
+    "tests/**/*.ts"
+, "packages/dna/analysis/callgraph.ts", "packages/dna/analysis/imports.ts", "packages/dna/analysis/naming.ts", "packages/dna/analysis/structure.ts"  ],
   "exclude": ["node_modules", "dist"]
 }

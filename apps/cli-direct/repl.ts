@@ -1,72 +1,105 @@
+// apps/cli-direct/repl.ts
+// Main interactive REPL. Responsibilities:
+// - Tab-complete slash commands
+// - Route commands to handlers
+// - Pass free-text to the LLM agent loop
+// - Clean, informative UI without noise
+
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import chalk from "chalk";
-import fs from "node:fs";
 import path from "node:path";
+import fs from "node:fs";
+import chalk from "chalk";
 
-// ── Local Escape Utilities ───────────────────────────────────
+import { SLASH_COMMANDS, completeCommand } from "../tui/slash-commands/registry.js";
 import { runConfigCommand } from "./config-command.js";
 import { runDnaCommand } from "./dna-command.js";
-
-// ── Orchestrator Core Layers ─────────────────────────────────
+import { runProviderCommand, runModelCommand } from "./provider-command.js";
+import { loadConfig, isConfigured, PROVIDER_INFO } from "../../config/config.js";
 import { createProviderFromEnv } from "../../packages/providers/register.js";
 import { AgentSession } from "../../packages/orchestrator-agent/session.js";
 import { runLLMChatTurn } from "../../packages/llm/llm-calls.js";
 import { createLLMTools } from "../../packages/llm/llm-tools.js";
-import { ToolRegistry } from "../../packages/orchestrator-agent/tool-registry.js"; // Ensure path matches
+import { ToolRegistry } from "../../packages/orchestrator-agent/tool-registry.js";
 import { AgentEventBus } from "../../packages/core/events.js";
 
+function printWelcome(provider: string, model: string) {
+  console.log("");
+  console.log(chalk.hex("#7c3aed").bold("  resolv") + chalk.dim(" — style-matching issue resolver"));
+  console.log(chalk.dim(`  Provider: ${provider} · Model: ${model}`));
+  console.log(chalk.dim(`  Type / for commands, or ask anything about your codebase.`));
+  console.log("");
+}
+
+function printHelp() {
+  console.log("");
+  console.log(chalk.hex("#7c3aed").bold("  Commands"));
+  console.log(chalk.dim("  " + "─".repeat(48)));
+  for (const cmd of SLASH_COMMANDS) {
+    const name = chalk.cyan(cmd.name.padEnd(12));
+    console.log(`  ${name} ${chalk.dim(cmd.description)}`);
+    if (cmd.usage) console.log(`  ${"".padEnd(12)}   ${chalk.dim("Usage: " + cmd.usage)}`);
+  }
+  console.log("");
+  console.log(chalk.dim("  Anything else is sent to the LLM agent."));
+  console.log("");
+}
+
+function parseCommand(line: string): { command: string; args: string } {
+  const [command, ...rest] = line.split(" ");
+  return { command: command ?? "", args: rest.join(" ").trim() };
+}
+
 export async function startRepl(): Promise<void> {
-  const name = chalk.hex("#470a73").bold("resolv> ");
-  const showWelcome = () => {
-    console.log(chalk.blueBright.bgGray("     Welcome Ved!!.     "));
-    console.log();
-  };
-  showWelcome();
+  const config = loadConfig();
 
-  // 1. Initialize persistent architectural singletons
-  const provider = createProviderFromEnv();
+  if (!isConfigured(config)) {
+    console.log(chalk.yellow("\n  No provider configured. Run: resolv setup\n"));
+    process.exit(1);
+  }
+
+  const providerInfo = PROVIDER_INFO[config.provider]!;
+  const activeModel = config.model ?? providerInfo.defaultModel;
+
+  printWelcome(providerInfo.label, activeModel);
+
+  // Wire up provider + agent infrastructure
+  const provider = createProviderFromEnv(config);
   const session = new AgentSession();
-  
-  // Initialize context parameters for the system prompt building logic
   session.setRepoPath(process.cwd());
-  
-  // instantiate your custom tool registry block mapping context
-  const tools = new ToolRegistry();
-  tools.registerAll(createLLMTools(process.cwd()));
 
-  // 2. Setup the event bus to react to streaming text and background processes
+  const toolRegistry = new ToolRegistry();
+  toolRegistry.registerAll(createLLMTools(process.cwd()));
+
   const events = new AgentEventBus();
-
   events.on((event) => {
     switch (event.type) {
       case "text_delta":
-        // Print streamed text blocks out in real-time
         process.stdout.write(event.text);
         break;
-
       case "tool_call_start":
-        console.log(chalk.cyan(`\n🛠️  [Tool Call]: Running "${event.toolName}"...`));
+        process.stdout.write(chalk.dim(`\n  ⚙  ${event.toolName}...\n`));
         break;
-
       case "tool_call_end":
-        if (event.isError) {
-          console.log(chalk.red(`❌ [Tool Error]: Failed implementation call.`));
-        } else {
-          console.log(chalk.dim(`✅ [Tool Completed]`));
-        }
+        if (event.isError) process.stdout.write(chalk.red(`  ✗ Tool failed\n`));
         break;
-
       case "error":
-        console.log(chalk.red(`\n⚠️  [Agent Error]: ${event.message}`));
+        process.stdout.write(chalk.red(`\n  Error: ${event.message}\n`));
         break;
     }
   });
 
-  const rl = readline.createInterface({ input, output, prompt: `${name}` });
-  
+  const promptStr = chalk.hex("#7c3aed").bold("resolv") + chalk.dim(" ❯ ");
+
+  const rl = readline.createInterface({
+    input,
+    output,
+    prompt: promptStr,
+    completer: (line: string) => completeCommand(line),
+  });
+
   rl.on("close", () => {
-    console.log(chalk.yellow("\nGoodbye!"));
+    console.log(chalk.dim("\n  Goodbye.\n"));
     process.exit(0);
   });
 
@@ -75,70 +108,75 @@ export async function startRepl(): Promise<void> {
   for await (const rawLine of rl) {
     const line = rawLine.trim();
 
-    if (line === "") {
+    if (!line) {
       rl.prompt();
       continue;
     }
 
-    if (line === "clear" || line === "/clear") {
-      // Explaining the ANSI trick: \u001b[2J clears the screen, \u001b[H homes the cursor at 0,0
-      process.stdout.write("\u001b[2J\u001b[H"); 
-      showWelcome();
-      rl.prompt();
-      continue;
-    }
+    // Slash commands
+    if (line.startsWith("/")) {
+      const { command, args } = parseCommand(line);
 
-    // Standard local session escape conditions
-    if (line === "exit" || line === "quit" || line === "/exit") {
-      rl.close();
-      return;
-    }
+      switch (command) {
+        case "/clear":
+          process.stdout.write("\x1b[2J\x1b[H");
+          printWelcome(providerInfo.label, activeModel);
+          break;
 
-    if (line === "/config") {
-      runConfigCommand();
-      rl.prompt();
-      continue;
-    } 
+        case "/config":
+          runConfigCommand();
+          break;
 
-    if (line === "/dna") {
-      const targetDir = path.join(process.cwd(), ".resolv");
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
+        case "/help":
+          printHelp();
+          break;
+
+        case "/dna": {
+          const targetDir = path.join(process.cwd(), ".resolv");
+          if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+          const outputPath = path.join(targetDir, "analysis.json");
+          await runDnaCommand({ repoPath: process.cwd(), outputJson: outputPath });
+          break;
+        }
+
+        case "/provider":
+          await runProviderCommand(args);
+          // Restart would be needed for full effect — inform user
+          console.log(chalk.dim("  Note: restart resolv for the new provider to take effect.\n"));
+          break;
+
+        case "/model":
+          await runModelCommand(args);
+          console.log(chalk.dim("  Note: restart resolv for the new model to take effect.\n"));
+          break;
+
+        case "/exit":
+        case "/quit":
+          rl.close();
+          return;
+
+        default:
+          console.log(chalk.red(`  Unknown command: ${command}`));
+          console.log(chalk.dim("  Type /help to see available commands.\n"));
       }
 
-      const outputFilePath = path.join(targetDir, "analysis.json");
-      console.log(chalk.cyan("Running local DNA scan pipeline..."));
-      
-      await runDnaCommand({ 
-        repoPath: process.cwd(), 
-        outputJson: outputFilePath 
-      });
-
       rl.prompt();
       continue;
     }
 
-    if (line === "/help") {
-      console.log("Commands: /config, /dna, /help, exit");
-      rl.prompt();
-      continue;
-    }
-
-    // 3. Fallback Route: Pass off conversational control loop directly to the runtime loop orchestrator
+    // Free-text → LLM agent
     try {
+      process.stdout.write("\n");
       await runLLMChatTurn(line, {
         provider,
-        tools,
+        tools: toolRegistry,
         session,
-        events
+        events,
+        model: config.model,
       });
-      
-      console.log("\n");
-
-    } catch (error) {
-      console.log(
-        chalk.red(`\nExecution Halted: ${error instanceof Error ? error.message : String(error)}`)
-      );
+      process.stdout.write("\n\n");
+    } catch (err) {
+      console.log(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
     }
 
     rl.prompt();

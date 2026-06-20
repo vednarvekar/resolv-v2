@@ -1,63 +1,49 @@
+// apps/cli-direct/config-command.ts
+// Prints a clean summary of the current resolv configuration.
+
 import chalk from "chalk";
-import dotenv from "dotenv"
-dotenv.config({ quiet: true });
+import {
+  loadConfig,
+  isConfigured,
+  PROVIDER_INFO,
+  getActiveApiKey,
+} from "../../config/config.js";
 
 export function runConfigCommand(): void {
-  console.log(chalk.bold("resolv configuration check"));
-  console.log(chalk.dim("─".repeat(50)));
-
-  const provider = process.env.RESOLV_PROVIDER ?? "nim";
-  console.log(`${chalk.cyan("RESOLV_PROVIDER:")}     ${provider}`);
-
-  const nimKey = process.env.NVIDIA_API_KEY;
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  const googleKey = process.env.GOOGLE_API_KEY;
-
-  if (provider === "nim") {
-    printCheck("NVIDIA_API_KEY", !!nimKey, "Required for RESOLV_PROVIDER=nim.");
-  } else if (provider === "anthropic") {
-    printCheck("ANTHROPIC_API_KEY", !!anthropicKey, "Required for RESOLV_PROVIDER=anthropic.");
-  } else if (provider === "google") {
-    printCheck("GOOGLE_API_KEY", !!googleKey, "Required for RESOLV_PROVIDER=google.");
-  } else if (provider === "ollama") {
-    printCheck("OLLAMA", true, "Runs locally and does not require an API key.");
-  } else {
-    printCheck("RESOLV_PROVIDER", false, 'Supported values: "nim", "anthropic", "google", "ollama".');
-  }
-
-  const ghToken = process.env.GITHUB_TOKEN;
-  printCheck(
-    "GITHUB_TOKEN",
-    !!ghToken,
-    "Optional. Without it, fixes stay local (no PR is opened). Needs repo write access to open PRs."
-  );
-
-  const model = process.env.RESOLV_MODEL;
-  console.log(`${chalk.cyan("RESOLV_MODEL:")}        ${model ?? chalk.dim("(provider default)")}`);
-
-  const testCmd = process.env.RESOLV_TEST_COMMAND;
-  console.log(`${chalk.cyan("RESOLV_TEST_COMMAND:")} ${testCmd ?? chalk.dim("(default: npm test)")}`);
-
-  const maxAttempts = process.env.RESOLV_MAX_ATTEMPTS;
-  console.log(`${chalk.cyan("RESOLV_MAX_ATTEMPTS:")} ${maxAttempts ?? chalk.dim("(default: 4)")}`);
+  const config = loadConfig();
+  const info = PROVIDER_INFO[config.provider]!;
 
   console.log("");
-  const ready =
-    (provider === "nim" && !!nimKey) ||
-    (provider === "anthropic" && !!anthropicKey) ||
-    (provider === "google" && !!googleKey) ||
-    provider === "ollama";
+  console.log(chalk.hex("#7c3aed").bold("  resolv configuration"));
+  console.log(chalk.dim("  " + "─".repeat(48)));
+  console.log("");
+  console.log(`  ${chalk.cyan("Provider:")}  ${chalk.bold(info.label)}`);
+  console.log(`  ${chalk.cyan("Model:")}     ${chalk.bold(config.model ?? info.defaultModel)}`);
 
-  if (!ready) {
-    console.log(chalk.red("Cannot run `solve` until the selected provider is configured."));
-    process.exitCode = 1;
+  if (config.provider !== "ollama") {
+    const key = getActiveApiKey(config);
+    const keyStatus = key
+      ? chalk.green(`✓ set  ${chalk.dim("(ends in " + key.slice(-4) + ")")}`)
+      : chalk.red("✗ missing");
+    console.log(`  ${chalk.cyan("API Key:")}   ${keyStatus}`);
   } else {
-    console.log(chalk.green("Ready to run `solve <issue-url>`."));
+    const baseUrl = process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
+    console.log(`  ${chalk.cyan("Ollama:")}    ${chalk.dim(baseUrl)}`);
   }
-}
 
-function printCheck(name: string, ok: boolean, hint: string): void {
-  const status = ok ? chalk.green("✓ set") : chalk.red("✗ missing");
-  console.log(`${chalk.cyan(`${name}:`)} ${status}`);
-  if (!ok) console.log(chalk.dim(`  ${hint}`));
+  const ghToken = config.githubToken;
+  const ghStatus = ghToken
+    ? chalk.green(`✓ set  ${chalk.dim("(ends in " + ghToken.slice(-4) + ")")}`)
+    : chalk.dim("not set (PRs will stay local)");
+  console.log(`  ${chalk.cyan("GitHub:")}    ${ghStatus}`);
+  console.log(`  ${chalk.cyan("Tests:")}     ${chalk.dim(config.testCommand)}`);
+  console.log(`  ${chalk.cyan("Max retries:")} ${chalk.dim(String(config.maxHealAttempts))}`);
+  console.log("");
+
+  if (!isConfigured(config)) {
+    console.log(chalk.red("  ✗ Not ready — run /provider to set a provider and API key."));
+  } else {
+    console.log(chalk.green("  ✓ Ready"));
+  }
+  console.log("");
 }

@@ -1,82 +1,99 @@
+// packages/dna/extract.ts
+// Single entry point for repo DNA extraction.
+// Builds ONE ts-morph Project and reuses it across every analyzer.
+// Output is intentionally compact — see types.ts for design rationale.
+
 import { Project } from "ts-morph";
+import fs from "node:fs";
+import path from "node:path";
 
 import { scanFiles } from "./analysis/files.js";
-import { analyzeImports } from "./analysis/imports.js";
 import { analyzeExports } from "./analysis/exports.js";
 import { analyzeFunctions } from "./analysis/functions.js";
 import { analyzeHelpers } from "./analysis/helpers.js";
-import { analyzeCallGraph } from "./analysis/callgraph.js";
 import { analyzeArchitecture } from "./analysis/architecture.js";
-import { analyzeNaming } from "./analysis/naming.js";
 import { analyzeErrors } from "./analysis/errors.js";
 import { analyzePatterns } from "./analysis/patterns.js";
 import { analyzeDependencies } from "./analysis/dependencies.js";
-import { analyzeStructure } from "./analysis/structure.js";
 
-import type { DNAProfile } from "./types.js";
+import type { DNAProfile, NamingStyle } from "./types.js";
 
-/**
- * Single entry point for repo DNA extraction.
- * Builds ONE ts-morph Project and reuses it across every JS/TS analyzer,
- * so the repo's source is parsed once, not once-per-module.
- */
-export async function extractDNA(repoPath: string): Promise<DNAProfile> {
-  const files = scanFiles(repoPath);
+/** Read .gitignore and return patterns to skip during scan. */
+function readGitignorePatterns(repoRoot: string): string[] {
+  const gitignorePath = path.join(repoRoot, ".gitignore");
+  if (!fs.existsSync(gitignorePath)) return [];
+  return fs
+    .readFileSync(gitignorePath, "utf-8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+}
+
+/** Detect dominant naming style from function/export names — no per-identifier counting. */
+function detectNamingStyle(names: string[]): NamingStyle {
+  let camel = 0, snake = 0, pascal = 0;
+  for (const n of names) {
+    if (/^[a-z][a-zA-Z0-9]*$/.test(n) && /[A-Z]/.test(n)) camel++;
+    else if (/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/.test(n)) snake++;
+    else if (/^[A-Z][a-zA-Z0-9]+$/.test(n)) pascal++;
+  }
+  const total = camel + snake + pascal;
+  if (total === 0) return "camelCase";
+  if (camel / total > 0.5) return "camelCase";
+  if (snake / total > 0.5) return "snake_case";
+  if (pascal / total > 0.5) return "PascalCase";
+  return "mixed";
+}
+
+function mostCommon<T extends string>(values: T[]): T | undefined {
+  if (!values.length) return undefined;
+  const counts = new Map<T, number>();
+  for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+}
+
+export async function extractDNA(repoRoot: string): Promise<DNAProfile> {
+  const gitignorePatterns = readGitignorePatterns(repoRoot);
+  const files = scanFiles(repoRoot, gitignorePatterns);
 
   const project = new Project({ skipFileDependencyResolution: true });
   project.addSourceFilesAtPaths([
-    `${repoPath}/**/*.ts`,
-    `${repoPath}/**/*.tsx`,
-    `${repoPath}/**/*.js`,
-    `${repoPath}/**/*.jsx`,
-    `!${repoPath}/**/node_modules/**`,
-    `!${repoPath}/**/dist/**`,
-    `!${repoPath}/**/build/**`,
+    `${repoRoot}/**/*.ts`,
+    `${repoRoot}/**/*.tsx`,
+    `${repoRoot}/**/*.js`,
+    `${repoRoot}/**/*.jsx`,
+    `!${repoRoot}/**/node_modules/**`,
+    `!${repoRoot}/**/dist/**`,
+    `!${repoRoot}/**/build/**`,
+    `!${repoRoot}/**/*.d.ts`,
   ]);
 
-  // --- DEBUG CHECK: Let's see what files ts-morph actually grabbed ---
-  const sourceFiles = project.getSourceFiles();
-  console.log(`\nFound ${sourceFiles.length} files in AST project.`);
-  
-  // Helper to run analyzers safely and catch where the type checker breaks
-  const runSafe = (name: string, fn: () => any) => {
-    try {
-      console.log(`⏳ Running ${name}...`);
-      return fn();
-    } catch (err) {
-      console.error(`\n❌ CRASHED INSIDE ANALYZER: ${name}`);
-      throw err;
-    }
-  };
+  const exportsData = analyzeExports(project, repoRoot);
+  const functionAnalysis = analyzeFunctions(project);
+  const helpers = analyzeHelpers(project);
+  const architecture = analyzeArchitecture(project);
+  const errorPatterns = analyzeErrors(project);
+  const asyncPatterns = analyzePatterns(project);
+  const dependencies = analyzeDependencies(repoRoot);
 
-  const imports = runSafe("analyzeImports", () => analyzeImports(files, project, repoPath));
-  const exportsData = runSafe("analyzeExports", () => analyzeExports(files, project, repoPath));
-  const functionAnalysis = runSafe("analyzeFunctions", () => analyzeFunctions(project));
-  const helpers = runSafe("analyzeHelpers", () => analyzeHelpers(project));
-  const callGraph = runSafe("analyzeCallGraph", () => analyzeCallGraph(project));
-  const architecture = runSafe("analyzeArchitecture", () => analyzeArchitecture(project));
-  const naming = runSafe("analyzeNaming", () => analyzeNaming(project));
-  const errorPatterns = runSafe("analyzeErrors", () => analyzeErrors(project));
-  const asyncPatterns = runSafe("analyzePatterns", () => analyzePatterns(project));
-  const dependencies = runSafe("analyzeDependencies", () => analyzeDependencies(imports, repoPath));
-  const structure = runSafe("analyzeStructure", () => analyzeStructure(repoPath));
-  // -------------------------------------------------------------------
+  // Derive dominant styles from aggregated data (one label each, not per-file arrays)
+  const allFunctionNames = functionAnalysis.functions.map((f) => f.name).filter((n) => n !== "anonymous");
+  const dominantNaming = detectNamingStyle(allFunctionNames);
+  const dominantAsyncStyle = mostCommon(asyncPatterns.map((p) => p.dominantStyle)) ?? "async-await";
+  const dominantErrorStyle = mostCommon(errorPatterns.map((e) => e.style)) ?? "try-catch";
 
   return {
-    repoRoot: repoPath,
+    repoRoot,
     scannedAt: new Date().toISOString(),
     files,
-    imports,
     exports: exportsData,
     functions: functionAnalysis.functions,
     functionStats: functionAnalysis.stats,
     helpers,
-    callGraph,
     architecture,
-    naming,
-    errorPatterns,
-    asyncPatterns,
+    dominantNaming,
+    dominantAsyncStyle,
+    dominantErrorStyle,
     dependencies,
-    structure,
   };
 }
