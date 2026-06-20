@@ -251,6 +251,69 @@ export abstract class OpenAICompatProvider implements Provider {
     }
   }
 
+  async listModels(): Promise<string[]> {
+    const url = this.cfg.healthCheckUrl ?? `${this.cfg.baseUrl}/models`;
+    const res = await this.fetchWithTimeout(url, { headers: this.headers }, 10_000);
+    if (!res.ok) {
+      const detail = await this.formatResponseDetail(res);
+      throw new ProviderError(
+        `${this.name} model list failed (HTTP ${res.status})${detail ? `: ${detail}` : ""}`,
+        this.name,
+        res.status
+      );
+    }
+
+    const payload = await res.json().catch(() => null);
+    if (!payload || typeof payload !== "object") {
+      throw new ProviderError(`${this.name}: model list response was not valid JSON`, this.name);
+    }
+
+    const candidates: string[] = [];
+    const anyPayload = payload as any;
+
+    if (Array.isArray(anyPayload.data)) {
+      for (const item of anyPayload.data) {
+        if (item && typeof item === "object") {
+          const id = typeof item.id === "string"
+            ? item.id
+            : typeof item.name === "string"
+              ? item.name
+              : typeof item.model === "string"
+                ? item.model
+                : undefined;
+          if (id) candidates.push(id);
+        }
+      }
+    }
+
+    if (candidates.length === 0 && Array.isArray(anyPayload.models)) {
+      for (const item of anyPayload.models) {
+        if (item && typeof item === "object") {
+          const id = typeof item.name === "string" ? item.name : typeof item.model === "string" ? item.model : undefined;
+          if (id) candidates.push(id);
+        } else if (typeof item === "string") {
+          candidates.push(item);
+        }
+      }
+    }
+
+    if (candidates.length === 0 && Array.isArray(payload)) {
+      for (const item of payload) {
+        if (typeof item === "string") candidates.push(item);
+        else if (item && typeof item === "object") {
+          const id = typeof item.id === "string" ? item.id : typeof item.name === "string" ? item.name : undefined;
+          if (id) candidates.push(id);
+        }
+      }
+    }
+
+    if (candidates.length === 0) {
+      throw new ProviderError(`${this.name}: unable to discover available models from provider response`, this.name);
+    }
+
+    return Array.from(new Set(candidates)).sort();
+  }
+
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {
     const timeoutMs = this.cfg.requestTimeoutMs ?? 120_000;
     const url = `${this.cfg.baseUrl}/chat/completions`;

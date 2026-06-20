@@ -18,6 +18,9 @@ export interface Provider {
 
     /** Checks that the provider is reachable and, when supplied, the model is available. */
     healthCheck?(model?: string): Promise<void>;
+
+    /** Lists models available to the configured provider key. */
+    listModels?(): Promise<string[]>;
  
     /**
     * Sends a chat completion request. Implementations are responsible for

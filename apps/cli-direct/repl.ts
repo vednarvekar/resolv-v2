@@ -2,6 +2,7 @@
 // Main interactive REPL with session persistence, tab completion, and all commands.
 
 import readline from "node:readline/promises";
+import { cursorTo } from "node:readline";
 import { stdin as input, stdout as output } from "node:process";
 import path from "node:path";
 import fs from "node:fs";
@@ -28,7 +29,7 @@ import {
 
 function printWelcome(provider: string, model: string, sessionId: string) {
   console.log("");
-  console.log(chalk.bgHex("#7c3aed").white.bold("  resolv  ") + chalk.dim(" — style-matching issue resolver"));
+  console.log(chalk.bgHex("#7c3aed").white.bold("  Welcome to resolv  "));
   console.log(chalk.dim("  " + "─".repeat(62)));
   console.log(`  ${chalk.white("Provider:")} ${chalk.bold(provider)}`);
   console.log(`  ${chalk.white("Model:   ")} ${chalk.bold(model)}`);
@@ -87,6 +88,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
 
   // Session setup
   let sessionId = resumeId ?? newSessionId();
+  let isResuming = Boolean(resumeId);
   const session = new AgentSession();
   session.setRepoPath(process.cwd());
 
@@ -96,13 +98,16 @@ export async function startRepl(resumeId?: string): Promise<void> {
     if (!persisted) {
       console.log(chalk.red(`\n  Session "${resumeId}" not found.\n`));
       sessionId = newSessionId();
+      isResuming = false;
     } else {
       session.restoreHistory(persisted.history);
       console.log(chalk.green(`\n  Resumed session ${resumeId} (${persisted.history.length} messages)\n`));
     }
   }
 
-  printWelcome(providerInfo.label, activeModel, sessionId);
+  if (!isResuming) {
+    printWelcome(providerInfo.label, activeModel, sessionId);
+  }
 
   const toolRegistry = new ToolRegistry();
   toolRegistry.registerAll(createLLMTools(process.cwd()));
@@ -163,7 +168,18 @@ export async function startRepl(resumeId?: string): Promise<void> {
     }
   });
 
-  const promptStr = chalk.bgHex("#7c3aed").white(" resolv ") + chalk.dim(" ❯ ");
+  const columns = process.stdout.columns ?? 80;
+  const promptWidth = Math.max(30, columns - 6);
+  const promptBorder = renderPromptBorder(promptWidth);
+  const promptFooter = renderPromptFooter(promptWidth);
+
+  const promptLabelText = "resolv ❯";
+  const promptLineSpaces = Math.max(0, promptWidth - promptLabelText.length - 1);
+  const promptStr =
+    chalk.dim("  │ ") +
+    chalk.hex("#7c3aed").bold("resolv ") +
+    chalk.dim("❯ ") +
+    " ".repeat(promptLineSpaces);
 
   const rl = readline.createInterface({
     input,
@@ -212,7 +228,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   while (!closed) {
     let rawLine: string;
     try {
-      rawLine = await rl.question(promptStr);
+      rawLine = await rlQuestion();
     } catch {
       break;
     }

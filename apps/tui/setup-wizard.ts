@@ -31,7 +31,7 @@ function drawMenu<T extends string>(
     const label = labelFn(items[i]!);
     const dim = dimFn?.(items[i]!) ?? "";
     if (i === selected) {
-      process.stdout.write(`  ${chalk.bgHex("#7c3aed").white.bold(` ❯ ${label} `)}  ${chalk.dim(dim)}\n`);
+      process.stdout.write(`  ${chalk.hex("#7c3aed").white.bold(` ❯ ${label} `)}  ${chalk.dim(dim)}\n`);
     } else {
       process.stdout.write(`    ${chalk.white(label)}  ${chalk.dim(dim)}\n`);
     }
@@ -109,7 +109,6 @@ async function selectModelName(info: {
 }
 
 function printBanner() {
-  
   console.log("");
   console.log(chalk.hex("#7c3aed").bold(" ██████╗ ███████╗███████╗ ██████╗ ██╗    ██╗   ██╗    ██╗ "));
   console.log(chalk.hex("#7c3aed").bold(" ██╔══██╗██╔════╝██╔════╝██╔═══██╗██║    ██║   ██║    ██║ "));
