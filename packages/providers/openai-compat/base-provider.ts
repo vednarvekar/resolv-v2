@@ -175,11 +175,26 @@ export abstract class OpenAICompatProvider implements Provider {
     };
   }
 
+  private createAbortController(timeoutMs: number) {
+    const controller = new AbortController();
+    let timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    return {
+      controller,
+      reset: () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => controller.abort(), timeoutMs);
+      },
+      clear: () => clearTimeout(timer),
+    };
+  }
+
   protected async fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number): Promise<Response> {
+    const { controller, clear } = this.createAbortController(timeoutMs);
     try {
-      return await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+      return await fetch(url, { ...init, signal: controller.signal });
     } catch (cause) {
-      if (cause instanceof DOMException && cause.name === "TimeoutError") {
+      if (cause instanceof DOMException && cause.name === "AbortError") {
         throw new ProviderError(
           `${this.name} request timed out after ${Math.round(timeoutMs / 1000)}s`,
           this.name
@@ -187,6 +202,8 @@ export abstract class OpenAICompatProvider implements Provider {
       }
       const detail = cause instanceof Error ? cause.message : String(cause);
       throw new ProviderError(`Cannot reach ${this.name} at ${url}: ${detail}`, this.name);
+    } finally {
+      clear();
     }
   }
 
@@ -251,18 +268,24 @@ export abstract class OpenAICompatProvider implements Provider {
       body.tools = toOAITools(options.tools);
     }
 
-    const res = await this.fetchWithTimeout(url, {
+    const controllerInfo = this.createAbortController(timeoutMs);
+    const res = await fetch(url, {
       method: "POST",
       headers: this.headers,
       body: JSON.stringify(body),
-    }, timeoutMs);
+      signal: controllerInfo.controller.signal,
+    });
 
     if (!res.ok) {
       const errText = await this.formatResponseDetail(res);
+      controllerInfo.clear();
       throw new ProviderError(`${this.name} request failed (HTTP ${res.status}): ${errText}`, this.name, res.status);
     }
 
-    if (!res.body) throw new ProviderError(`${this.name}: empty response body`, this.name);
+    if (!res.body) {
+      controllerInfo.clear();
+      throw new ProviderError(`${this.name}: empty response body`, this.name);
+    }
 
     // Stream processing
     const reader = res.body.getReader();
@@ -299,15 +322,20 @@ export abstract class OpenAICompatProvider implements Provider {
       }
     };
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split(/\r?\n/);
-      buffer = lines.pop() ?? "";
-      for (const line of lines) processLine(line);
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        controllerInfo.reset();
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split(/\r?\n/);
+        buffer = lines.pop() ?? "";
+        for (const line of lines) processLine(line);
+      }
+      if (buffer.trim()) processLine(buffer);
+    } finally {
+      controllerInfo.clear();
     }
-    if (buffer.trim()) processLine(buffer);
 
     const raw: OAIResponse = {
       choices: [{

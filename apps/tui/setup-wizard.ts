@@ -83,6 +83,31 @@ async function selectFromList<T extends string>(
   });
 }
 
+async function selectModelName(info: {
+  label: string;
+  keyEnv: string | null;
+  keyLabel: string | null;
+  defaultModel: string;
+  models: string[];
+  description: string;
+}): Promise<string> {
+  const options = [...info.models, "Custom model..."];
+  const selected = await selectFromList(options, (m) => m);
+  if (selected === "Custom model...") {
+    const rl = readline.createInterface({ input, output });
+    while (true) {
+      const custom = await rl.question(chalk.hex("#7c3aed")("  Enter model name: "));
+      if (custom.trim()) {
+        rl.close();
+        return custom.trim();
+      }
+      console.log(chalk.red("  Model name cannot be empty."));
+    }
+  }
+
+  return selected;
+}
+
 function printBanner() {
   
   console.log("");
@@ -157,7 +182,7 @@ export async function runSetupWizard(): Promise<void> {
   // Model selection
   if (!config.model || !info.models.includes(config.model)) {
     console.log("\n  Choose a model:\n");
-    config.model = await selectFromList(info.models, (m) => m);
+    config.model = await selectModelName(info);
     saveConfig(config as ResolvConfig);
   }
   console.log(`  ${chalk.green("✓")} Model: ${chalk.bold(config.model ?? info.defaultModel)}\n`);

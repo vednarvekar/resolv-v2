@@ -44,3 +44,8 @@ This means CI can override via env vars without touching the user's config file.
 | `isConfigured(config)` | True if the active provider has a key (or is Ollama) |
 | `getActiveApiKey(config)` | Returns the API key for the current provider |
 | `PROVIDER_INFO` | Metadata for each provider: label, models, description |
+
+## Notes
+
+- The active provider and model can be overridden via environment variables.
+- Request timeouts are now reset while streaming progress is received, preventing slow model responses from being aborted prematurely.

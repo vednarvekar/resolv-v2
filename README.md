@@ -59,7 +59,10 @@ resolv            # first run triggers setup wizard
 
 - **Anthropic** (Claude) — `claude-sonnet-4-6`, `claude-opus-4-6`
 - **Google** (Gemini) — `gemini-2.5-pro`, `gemini-2.5-flash`
-- **NVIDIA NIM** — `deepseek-r1`, `llama-3.3-70b`, and others
+- **NVIDIA NIM** — `google/gemma-4-31b-it`, `deepseek-ai/deepseek-r1`, `meta/llama-3.3-70b-instruct`
+- **OpenAI** (GPT) — `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `o1-mini`
+- **xAI Grok** — `grok-3`, `grok-3-mini`, `grok-3-fast`
+- **OpenRouter** — `anthropic/claude-sonnet-4-6`, `openai/gpt-4o`, `google/gemini-2.5-flash`, `meta-llama/llama-3.3-70b-instruct`, `qwen/qwen-2.5-72b-instruct`, and many more
 - **Ollama** — local models, no API key needed
 
 ## Configuration
@@ -72,15 +75,20 @@ Optional env overrides can be exported by the shell or placed in a `.env` file i
 ```bash
 ANTHROPIC_API_KEY=...
 GOOGLE_API_KEY=...
+OPENAI_API_KEY=...
+XAI_API_KEY=...
+OPENROUTER_API_KEY=...
 NVIDIA_API_KEY=...
 NIM_REQUEST_TIMEOUT_MS=90000
 GITHUB_TOKEN=...
-RESOLV_PROVIDER=anthropic
-RESOLV_MODEL=claude-sonnet-4-6
+RESOLV_PROVIDER=openrouter
+RESOLV_MODEL=qwen/qwen-2.5-72b-instruct
 RESOLV_TEST_COMMAND="npm test"
 RESOLV_MAX_ATTEMPTS=4
 OLLAMA_BASE_URL=http://localhost:11434
 ```
+
+For any provider other than `ollama`, the active provider credentials are loaded from the selected provider config or the corresponding environment variable.
 
 ### Ollama on Windows with a WSL client
 

@@ -18,6 +18,6 @@ describe("NVIDIA NIM diagnostics", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(failure));
 
     await expect(new NimProvider("test-key").healthCheck("google/gemma-4-31b-it"))
-      .rejects.toThrow(/ENOTFOUND.*integrate\.api\.nvidia\.com/);
+      .rejects.toThrow(/fetch failed \(ENOTFOUND\).*integrate\.api\.nvidia\.com/);
   });
 });

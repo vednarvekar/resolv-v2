@@ -28,6 +28,30 @@ async function selectNumbered<T extends string>(
   }
 }
 
+async function chooseModel(rl: readline.Interface, info: typeof PROVIDER_INFO[keyof typeof PROVIDER_INFO]): Promise<string> {
+  const options = [...info.models, "Custom model..."];
+  console.log("");
+  options.forEach((item, index) => console.log(`  ${chalk.cyan(`${index + 1}.`)} ${item}`));
+
+  while (true) {
+    const answer = await rl.question(chalk.hex("#7c3aed")(`  Select [1-${options.length}]: `));
+    const index = Number.parseInt(answer.trim(), 10) - 1;
+    if (!Number.isInteger(index) || index < 0 || index >= options.length) {
+      console.log(chalk.red(`  Enter a number from 1 to ${options.length}.`));
+      continue;
+    }
+
+    if (index === options.length - 1) {
+      const custom = await rl.question(chalk.hex("#7c3aed")("  Enter custom model name: "));
+      if (custom.trim()) return custom.trim();
+      console.log(chalk.red("  Model name cannot be empty."));
+      continue;
+    }
+
+    return options[index]!;
+  }
+}
+
 export async function runProviderCommand(args: string, rl: readline.Interface): Promise<void> {
   const config = loadConfig();
   const targetProvider = args.trim() as ProviderName | "";
@@ -76,7 +100,7 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
 
   // Model selection
   console.log("\n  Select model:\n");
-  const model = await selectNumbered(rl, info.models, (name) => name);
+  const model = await chooseModel(rl, info);
   config.model = model;
 
   saveConfig(config as ResolvConfig);
@@ -112,7 +136,7 @@ export async function runModelCommand(args: string, rl: readline.Interface): Pro
   }
 
   console.log(`\n  Provider: ${chalk.bold(info.label)} — pick a model:\n`);
-  const model = await selectNumbered(rl, info.models, (name) => name);
+  const model = await chooseModel(rl, info);
   config.model = model;
   saveConfig(config as ResolvConfig);
   console.log(`\n  ${chalk.green("✓")} Model set to ${chalk.bold(model)}\n`);

@@ -20,6 +20,11 @@ interface Provider {
 }
 ```
 
+## Recent behavior change
+
+- The OpenAI-compatible provider adapters now keep the request alive while streaming response chunks arrive.
+- This means slow but active streaming responses from OpenRouter, Grok, NIM, and OpenAI are less likely to fail due to a fixed timeout.
+
 `embed` is optional in practice — providers that don't support it should throw `EmbeddingsNotSupportedError`, which the semantic search code catches and handles by falling back to keyword matching.
 
 ## Files

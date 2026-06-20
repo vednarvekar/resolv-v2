@@ -38,7 +38,16 @@ export class NimProvider extends OpenAICompatProvider {
         signal: AbortSignal.timeout(HEALTH_TIMEOUT_MS),
       });
     } catch (cause) {
-      const detail = cause instanceof Error ? cause.message : String(cause);
+      let detail = "";
+      if (cause instanceof Error) {
+        detail = cause.message;
+        const causeCode = (cause as Error & { cause?: unknown }).cause;
+        if (causeCode && typeof causeCode === "object" && "code" in causeCode) {
+          detail += ` (${String((causeCode as { code?: string }).code)})`;
+        }
+      } else {
+        detail = String(cause);
+      }
       throw new ProviderError(
         `Cannot reach NVIDIA NIM (${detail}). Check DNS, VPN/proxy, and access to integrate.api.nvidia.com`,
         "nim"

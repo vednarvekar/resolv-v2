@@ -28,9 +28,18 @@ import {
 
 function printWelcome(provider: string, model: string, sessionId: string) {
   console.log("");
-  console.log(chalk.hex("#7c3aed").bold("  resolv") + chalk.dim(" — style-matching issue resolver"));
-  console.log(chalk.dim(`  Provider: ${provider} · Model: ${model}`));
-  console.log(chalk.dim(`  Session: ${chalk.white(sessionId)} · Type /help for commands`));
+  console.log(chalk.bgHex("#7c3aed").white.bold("  resolv  ") + chalk.dim(" — style-matching issue resolver"));
+  console.log(chalk.dim("  " + "─".repeat(62)));
+  console.log(`  ${chalk.white("Provider:")} ${chalk.bold(provider)}`);
+  console.log(`  ${chalk.white("Model:   ")} ${chalk.bold(model)}`);
+  console.log(`  ${chalk.white("Session: ")} ${chalk.cyan(sessionId)}`);
+  const overrides: string[] = [];
+  if (process.env.RESOLV_PROVIDER) overrides.push("RESOLV_PROVIDER");
+  if (process.env.RESOLV_MODEL) overrides.push("RESOLV_MODEL");
+  if (overrides.length > 0) {
+    console.log(chalk.yellow(`  Note: ${overrides.join(" and ")} override saved configuration.`));
+  }
+  console.log(chalk.dim("  Type /help for commands"));
   console.log("");
 }
 
@@ -64,13 +73,16 @@ export async function startRepl(resumeId?: string): Promise<void> {
   let providerInfo = PROVIDER_INFO[config.provider]!;
   let activeModel = config.model ?? providerInfo.defaultModel;
   let provider = createProviderFromEnv(config);
+  let providerConnected = true;
 
   // Health check
   try {
     await provider.healthCheck?.(activeModel);
   } catch (err) {
-    console.log(chalk.red(`\n  Provider error: ${err instanceof Error ? err.message : String(err)}\n`));
-    return;
+    providerConnected = false;
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(chalk.yellow(`\n  Provider connection failed: ${message}`));
+    console.log(chalk.dim("  You can still use /provider to switch providers, /model to select another model, or /help for commands.\n"));
   }
 
   // Session setup
@@ -97,31 +109,52 @@ export async function startRepl(resumeId?: string): Promise<void> {
 
   const events = new AgentEventBus();
   let thinking: ReturnType<typeof ora> | undefined;
+  let responseStarted = false;
 
   const stopThinking = () => {
     if (thinking) { thinking.stop(); thinking = undefined; }
+  };
+
+  const beginResponse = () => {
+    if (!responseStarted) {
+      responseStarted = true;
+      process.stdout.write(chalk.dim("\n  ── LLM response ───────────────────────────────────────────────\n"));
+    }
   };
 
   events.on((event) => {
     switch (event.type) {
       case "model_start":
         stopThinking();
+        responseStarted = false;
         thinking = ora({ text: "Thinking...", color: "magenta", spinner: "dots" }).start();
         break;
       case "text_delta":
         stopThinking();
-        process.stdout.write(event.text);
+        beginResponse();
+        process.stdout.write(chalk.white(event.text));
         break;
       case "tool_call_start":
         stopThinking();
-        process.stdout.write(chalk.dim(`\n  ⚙  ${event.toolName}`));
+        responseStarted = false;
+        process.stdout.write(chalk.dim("\n  ─────────────────────────────────────────────────────\n"));
+        process.stdout.write(chalk.cyan.bold(`  ▶ Running tool: ${event.toolName}\n`));
         break;
-      case "tool_call_end":
-        if (event.isError) process.stdout.write(chalk.red(" ✗\n"));
-        else process.stdout.write(chalk.dim(" ✓\n"));
+      case "tool_call_end": {
+        const status = event.isError ? chalk.red("✗") : chalk.green("✓");
+        process.stdout.write(chalk.dim("  ─────────────────────────────────────────────────────\n"));
+        process.stdout.write(`  ${status} ${chalk.bold(event.toolName)}\n`);
+        const output = event.output.trim();
+        if (output) {
+          process.stdout.write(chalk.dim("    Output:\n"));
+          process.stdout.write(chalk.dim(output.split("\n").map((line) => `      ${line}`).join("\n")) + "\n");
+        }
+        responseStarted = false;
         break;
+      }
       case "error":
         stopThinking();
+        responseStarted = false;
         process.stdout.write(chalk.red(`\n  Error: ${event.message}\n`));
         break;
       case "turn_end":
@@ -130,7 +163,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
     }
   });
 
-  const promptStr = chalk.hex("#7c3aed").bold("resolv") + chalk.dim(" ❯ ");
+  const promptStr = chalk.bgHex("#7c3aed").white(" resolv ") + chalk.dim(" ❯ ");
 
   const rl = readline.createInterface({
     input,
@@ -167,9 +200,12 @@ export async function startRepl(resumeId?: string): Promise<void> {
       providerInfo = nextInfo;
       activeModel = nextModel;
       provider = nextProvider;
+      providerConnected = true;
       console.log(chalk.green(`  ✓ Active: ${nextInfo.label} / ${nextModel}\n`));
     } catch (err) {
+      providerConnected = false;
       console.log(chalk.red(`  Could not activate provider: ${err instanceof Error ? err.message : String(err)}\n`));
+      console.log(chalk.dim("  Use /provider to choose a different provider or /model to update the active model.\n"));
     }
   };
 
@@ -301,6 +337,11 @@ export async function startRepl(resumeId?: string): Promise<void> {
     }
 
     // Free text → LLM agent
+    if (!providerConnected) {
+      console.log(chalk.yellow("\n  Provider is currently disconnected. Use /provider to switch providers or /model to pick a different model.\n"));
+      continue;
+    }
+
     try {
       process.stdout.write("\n");
       await runLLMChatTurn(line, {
@@ -318,7 +359,9 @@ export async function startRepl(resumeId?: string): Promise<void> {
         saveSession(sessionId, [...session.getHistory()], config.provider, activeModel, process.cwd());
       }
     } catch (err) {
+      providerConnected = false;
       console.log(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
+      console.log(chalk.dim("  Please check /provider or /model before retrying.\n"));
     }
   }
 }

@@ -114,18 +114,18 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
       const tool = tools.get(block.name);
       if (!tool) {
         const errorOutput = `No tool named "${block.name}" is registered.`;
-        events?.emit({ type: "tool_call_end", toolUseId: block.id, output: errorOutput, isError: true });
+        events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: errorOutput, isError: true });
         resultMessages.push(Msg.toolResult(block.id, errorOutput, true));
         continue;
       }
 
       try {
         const result = await tool.execute(block.input);
-        events?.emit({ type: "tool_call_end", toolUseId: block.id, output: result.output, isError: result.isError });
+        events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: result.output, isError: result.isError });
         resultMessages.push(Msg.toolResult(block.id, result.output, result.isError));
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        events?.emit({ type: "tool_call_end", toolUseId: block.id, output: message, isError: true });
+        events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: message, isError: true });
         resultMessages.push(Msg.toolResult(block.id, `Tool threw: ${message}`, true));
       }
     }

@@ -113,6 +113,6 @@ export type AgentEvent =
   | { type: "model_start"; providerName: string }
   | { type: "text_delta"; text: string }
   | { type: "tool_call_start"; toolName: string; toolUseId: string; input: Record<string, unknown> }
-  | { type: "tool_call_end"; toolUseId: string; output: string; isError: boolean }
+  | { type: "tool_call_end"; toolName: string; toolUseId: string; output: string; isError: boolean }
   | { type: "turn_end"; stopReason: ProviderResponse["stopReason"] }
   | { type: "error"; message: string };
