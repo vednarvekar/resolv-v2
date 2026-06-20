@@ -11,9 +11,10 @@ import { UnknownProviderError } from "../core/errors.js";
 import { AnthropicProvider } from "./anthropic/anthropic-provider.js";
 import { GeminiProvider } from "./google/gemini-provider.js";
 import { NimProvider } from "./nim/nim-provider.js";
+import { OllamaProvider } from "./ollama/ollama_provider.js";
 import type { Provider } from "./provider.js";
 
-export type ProviderName = "nim" | "anthropic" | "google";
+export type ProviderName = "nim" | "anthropic" | "google" | "ollama";
 
 export interface ProviderCredentials {
   nimApiKey?: string;
@@ -21,12 +22,17 @@ export interface ProviderCredentials {
   googleApiKey?: string;
 }
 
-const SUPPORTED_PROVIDERS: ProviderName[] = ["nim", "anthropic", "google"];
+const SUPPORTED_PROVIDERS: ProviderName[] = ["nim", "anthropic", "google", "ollama"];
 
 export function isSupportedProvider(name: string): name is ProviderName {
   return (SUPPORTED_PROVIDERS as string[]).includes(name);
 }
 
+/**
+ * Builds a Provider instance by name. Throws UnknownProviderError for
+ * anything not in SUPPORTED_PROVIDERS, and a clear credential error if the
+ * matching API key wasn't supplied.
+ */
 /**
  * Builds a Provider instance by name. Throws UnknownProviderError for
  * anything not in SUPPORTED_PROVIDERS, and a clear credential error if the
@@ -45,6 +51,10 @@ export function createProvider(name: ProviderName, credentials: ProviderCredenti
     case "google":
       if (!credentials.googleApiKey) throw new Error("GOOGLE_API_KEY is required to use the google provider.");
       return new GeminiProvider(credentials.googleApiKey);
+
+    case "ollama":
+      // Ollama runs locally over localhost, so it requires no API key.
+      return new OllamaProvider();
 
     default:
       throw new UnknownProviderError(name);

@@ -24,7 +24,7 @@ import type {
 } from "../../core/types.js";
 import type { Provider } from "../provider.js";
 
-const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "gemini-2.0-flash";
 const DEFAULT_EMBEDDING_MODEL = "text-embedding-004";
 
 // ── translation: resolv JSONSchema -> Gemini SchemaType ─────

@@ -18,7 +18,7 @@ import type { Provider } from "../provider.js"
 
 const NIM_CHAT_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 const NIM_EMBEDDING_ENDPOINT = "https://integrate.api.nvidia.com/v1/embeddings";
-const DEFAULT_MODEL = "deepseek-ai/deepseek-v4-pro";
+const DEFAULT_MODEL = "google/gemma-4-31b-it";
 const DEFAULT_EMBEDDING_MODEL = "nvidia/nv-embedqa-e5-v5";
 const MAX_EMBEDDING_BATCH = 32;
 

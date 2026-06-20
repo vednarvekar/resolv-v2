@@ -3,6 +3,8 @@ import path from "node:path";
 import { extractDNA } from "../dna/extract.js";
 import { runTests } from "../coding-agent/run-tests.js";
 import type { ToolDefinition } from "../core/types.js";
+import { parseIssueUrl } from "../context-agent/github/parse-issue-url.js";
+import { fetchIssue } from "../context-agent/github/fetch-issue.js";
 
 function normalizeRepoPath(repoRoot: string, relativePath: string): string {
   const resolved = path.resolve(repoRoot, relativePath);
@@ -99,5 +101,24 @@ export function createLLMTools(repoRoot: string): ToolDefinition[] {
         }
       },
     },
+    {
+      name: "fetch_issue_from_github",
+      description: "Fetch the issue title & body along with comments from github to understand the issue",
+      inputSchema: {
+        type: "object",
+        properties: {
+          command: { type: "string", description: "Command to get fetch issue" }
+        },
+      },
+      async execute(input) {
+        const { owner, repo, issueNumber } = parseIssueUrl(String(input.command))
+        const issue = await fetchIssue(owner, repo, issueNumber)
+        
+        return {
+          output: JSON.stringify(issue, null, 2),
+          isError: false,
+        };
+      }
+    }
   ];
 }

@@ -126,7 +126,7 @@ export function applyFileChanges(repoRoot: string, changes: FileChange[]): strin
     const absPath = path.resolve(repoRoot, change.filePath);
 
     // safety: never write outside the repo root
-    if (!absPath.startsWith(resolvedRoot)) {
+    if (absPath !== resolvedRoot && !absPath.startsWith(`${resolvedRoot}${path.sep}`)) {
       throw new Error(`Refusing to write outside repo root: ${change.filePath}`);
     }
 

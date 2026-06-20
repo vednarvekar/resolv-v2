@@ -19,8 +19,10 @@ export function runConfigCommand(): void {
     printCheck("ANTHROPIC_API_KEY", !!anthropicKey, "Required for RESOLV_PROVIDER=anthropic.");
   } else if (provider === "google") {
     printCheck("GOOGLE_API_KEY", !!googleKey, "Required for RESOLV_PROVIDER=google.");
+  } else if (provider === "ollama") {
+    printCheck("OLLAMA", true, "Runs locally and does not require an API key.");
   } else {
-    printCheck("RESOLV_PROVIDER", false, 'Supported values: "nim", "anthropic", "google".');
+    printCheck("RESOLV_PROVIDER", false, 'Supported values: "nim", "anthropic", "google", "ollama".');
   }
 
   const ghToken = process.env.GITHUB_TOKEN;
@@ -43,7 +45,8 @@ export function runConfigCommand(): void {
   const ready =
     (provider === "nim" && !!nimKey) ||
     (provider === "anthropic" && !!anthropicKey) ||
-    (provider === "google" && !!googleKey);
+    (provider === "google" && !!googleKey) ||
+    provider === "ollama";
 
   if (!ready) {
     console.log(chalk.red("Cannot run `solve` until the selected provider is configured."));

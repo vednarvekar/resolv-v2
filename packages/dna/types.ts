@@ -94,11 +94,41 @@ export interface DependencyInfo {
   usageCount: number;
 }
 
+export interface CompactRepoFile {
+  relativePath: string;
+  language: Language;
+  lineCount: number;
+}
+
+export interface CompactHelperInfo {
+  name: string;
+  usages: number;
+}
+
+export interface CompactDependencyInfo {
+  name: string;
+  version: string;
+  isDev: boolean;
+  usageCount: number;
+}
+
 export interface FolderNode {
   name: string;
   path: string;
   children: FolderNode[];
   fileCount: number;
+}
+
+export interface CompactDNAProfile {
+  repoRoot: string;
+  scannedAt: string;
+  files: CompactRepoFile[];
+  functionStats: DNAProfile["functionStats"];
+  helpers: CompactHelperInfo[];
+  naming: NamingStats;
+  errorPatterns: ErrorPattern[];
+  asyncPatterns: AsyncPattern[];
+  dependencies: CompactDependencyInfo[];
 }
 
 /** The single, final aggregated DNA object passed to the planner + prompt builder */

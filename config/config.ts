@@ -9,7 +9,7 @@ export interface ResolvConfig {
 }
 
 const DEFAULT_TEST_COMMAND = "npm test";
-const DEFAULT_MAX_ATTEMPTS = 4;
+const DEFAULT_MAX_ATTEMPTS = 20;
 
 export function loadConfig(): ResolvConfig {
   return {
