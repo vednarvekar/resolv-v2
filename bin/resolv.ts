@@ -5,13 +5,16 @@
 // - subcommands: solve, dna, config, setup
 // - interactive REPL when called with no arguments
 
+import dotenv from "dotenv";
 import { Command } from "commander";
-import { isFirstRun } from "../config/config.js";
+import { isConfigured, isFirstRun, loadConfig } from "../config/config.js";
 import { runSetupWizard } from "../apps/tui/setup-wizard.js";
 import { solve } from "../apps/cli-direct/solve-command.js";
 import { runDnaCommand } from "../apps/cli-direct/dna-command.js";
 import { runConfigCommand } from "../apps/cli-direct/config-command.js";
 import { startRepl } from "../apps/cli-direct/repl.js";
+
+dotenv.config({ quiet: true });
 
 const program = new Command();
 
@@ -63,7 +66,8 @@ program
 
 // No subcommand → first run check → REPL
 if (process.argv.length <= 2) {
-  if (isFirstRun()) {
+  const config = loadConfig();
+  if (isFirstRun() || !isConfigured(config) || !config.model) {
     runSetupWizard().then(() => {
       // After setup, offer to start the REPL
       import("../apps/cli-direct/repl.js").then(({ startRepl }) => startRepl());

@@ -121,8 +121,14 @@ export class GeminiProvider implements Provider {
         },
       });
 
-      const result = await model.generateContent({ contents: toGeminiContents(options.messages) });
-      const candidate = result.response.candidates?.[0];
+      const result = await model.generateContentStream({ contents: toGeminiContents(options.messages) });
+      for await (const chunk of result.stream) {
+        for (const part of chunk.candidates?.[0]?.content.parts ?? []) {
+          if (part.text) options.onTextDelta?.(part.text);
+        }
+      }
+      const response = await result.response;
+      const candidate = response.candidates?.[0];
       if (!candidate) throw new ProviderError("Gemini response contained no candidates", "google");
 
       const content: ContentBlock[] = [];
@@ -152,10 +158,10 @@ export class GeminiProvider implements Provider {
       return {
         message: { role: "assistant", content },
         stopReason,
-        usage: result.response.usageMetadata
+        usage: response.usageMetadata
           ? {
-              inputTokens: result.response.usageMetadata.promptTokenCount,
-              outputTokens: result.response.usageMetadata.candidatesTokenCount,
+              inputTokens: response.usageMetadata.promptTokenCount,
+              outputTokens: response.usageMetadata.candidatesTokenCount,
             }
           : undefined,
       };

@@ -44,6 +44,21 @@ interface OpenAiChatResponse {
     usage?: { prompt_tokens: number; completion_tokens: number }; 
 }
 
+interface OpenAiStreamChunk {
+    choices?: Array<{
+        delta?: {
+            content?: string | null
+            tool_calls?: Array<{
+                index?: number
+                id?: string
+                function?: { name?: string; arguments?: string }
+            }>
+        }
+        finish_reason?: string | null
+    }>
+    usage?: { prompt_tokens: number; completion_tokens: number }
+}
+
 // ── translation: resolv Message[] -> OpenAI message[] ───────
 
 function toOpenAiMessage(message: Message[], systemPrompt?: string): OpenAiMessage[] {
@@ -94,7 +109,7 @@ function toOpenAiTools(tools: ToolDefinition[]) {
         function: {
             name: t.name,
             description: t.description,
-            parameter: t.inputSchema
+            parameters: t.inputSchema
         }
     }))
 }
@@ -155,7 +170,8 @@ export class NimProvider implements Provider {
             messages: toOpenAiMessage(options.messages, options.systemPrompt),
             temperature: options.temperature ?? 0.5,
             max_tokens: options.maxTokens ?? 2048,
-            stream: false,
+            stream: true,
+            stream_options: { include_usage: true },
         }
 
         if(options.tools && options.tools.length > 0){
@@ -177,7 +193,78 @@ export class NimProvider implements Provider {
             throw new ProviderError(`NIM request failed: ${errText}`, "nim", response.status)
         }
 
-        const raw = (await response.json()) as OpenAiChatResponse;
+        if (!response.body) {
+            throw new ProviderError("NIM response body is empty or unstreamable", "nim");
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        const toolCalls = new Map<number, { id: string; name: string; arguments: string }>();
+        let responseText = "";
+        let finishReason = "stop";
+        let usage: OpenAiChatResponse["usage"];
+        let buffer = "";
+
+        const consumeLine = (line: string): void => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed === "data: [DONE]") return;
+            const payload = trimmed.startsWith("data:") ? trimmed.slice(5).trimStart() : trimmed;
+
+            let chunk: OpenAiStreamChunk;
+            try {
+                chunk = JSON.parse(payload) as OpenAiStreamChunk;
+            } catch {
+                return;
+            }
+
+            if (chunk.usage) usage = chunk.usage;
+            const choice = chunk.choices?.[0];
+            if (!choice) return;
+            if (choice.finish_reason) finishReason = choice.finish_reason;
+
+            const text = choice.delta?.content ?? "";
+            responseText += text;
+            if (text) options.onTextDelta?.(text);
+
+            for (const [position, call] of (choice.delta?.tool_calls ?? []).entries()) {
+                const index = call.index ?? position;
+                const current = toolCalls.get(index) ?? { id: "", name: "", arguments: "" };
+                if (call.id) current.id += call.id;
+                if (call.function?.name) current.name += call.function.name;
+                if (call.function?.arguments) current.arguments += call.function.arguments;
+                toolCalls.set(index, current);
+            }
+        };
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() ?? "";
+            for (const line of lines) consumeLine(line);
+        }
+        buffer += decoder.decode();
+        if (buffer.trim()) consumeLine(buffer);
+
+        const raw: OpenAiChatResponse = {
+            choices: [{
+                message: {
+                    role: "assistant",
+                    content: responseText,
+                    tool_calls: [...toolCalls.entries()]
+                        .sort(([a], [b]) => a - b)
+                        .filter(([, call]) => call.name)
+                        .map(([index, call]) => ({
+                            id: call.id || `nim-tool-${index}`,
+                            type: "function",
+                            function: { name: call.name, arguments: call.arguments || "{}" },
+                        })),
+                },
+                finish_reason: finishReason,
+            }],
+            usage,
+        };
         return fromOpenAiResponse(raw)
     }
 

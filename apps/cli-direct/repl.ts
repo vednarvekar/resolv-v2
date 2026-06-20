@@ -10,6 +10,7 @@ import { stdin as input, stdout as output } from "node:process";
 import path from "node:path";
 import fs from "node:fs";
 import chalk from "chalk";
+import ora from "ora";
 
 import { SLASH_COMMANDS, completeCommand } from "../tui/slash-commands/registry.js";
 import { runConfigCommand } from "./config-command.js";
@@ -51,20 +52,26 @@ function parseCommand(line: string): { command: string; args: string } {
 }
 
 export async function startRepl(): Promise<void> {
-  const config = loadConfig();
+  let config = loadConfig();
 
   if (!isConfigured(config)) {
     console.log(chalk.yellow("\n  No provider configured. Run: resolv setup\n"));
     process.exit(1);
   }
 
-  const providerInfo = PROVIDER_INFO[config.provider]!;
-  const activeModel = config.model ?? providerInfo.defaultModel;
-
-  printWelcome(providerInfo.label, activeModel);
+  let providerInfo = PROVIDER_INFO[config.provider]!;
+  let activeModel = config.model ?? providerInfo.defaultModel;
 
   // Wire up provider + agent infrastructure
-  const provider = createProviderFromEnv(config);
+  let provider = createProviderFromEnv(config);
+  try {
+    await provider.healthCheck?.(activeModel);
+  } catch (err) {
+    console.log(chalk.red(`\n  ${err instanceof Error ? err.message : String(err)}\n`));
+    return;
+  }
+
+  printWelcome(providerInfo.label, activeModel);
   const session = new AgentSession();
   session.setRepoPath(process.cwd());
 
@@ -72,19 +79,34 @@ export async function startRepl(): Promise<void> {
   toolRegistry.registerAll(createLLMTools(process.cwd()));
 
   const events = new AgentEventBus();
+  let thinking: ReturnType<typeof ora> | undefined;
+  const stopThinking = () => {
+    thinking?.stop();
+    thinking = undefined;
+  };
   events.on((event) => {
     switch (event.type) {
+      case "model_start":
+        stopThinking();
+        thinking = ora({ text: `Thinking with ${event.providerName}...`, color: "magenta" }).start();
+        break;
       case "text_delta":
+        stopThinking();
         process.stdout.write(event.text);
         break;
       case "tool_call_start":
+        stopThinking();
         process.stdout.write(chalk.dim(`\n  ⚙  ${event.toolName}...\n`));
         break;
       case "tool_call_end":
         if (event.isError) process.stdout.write(chalk.red(`  ✗ Tool failed\n`));
         break;
       case "error":
+        stopThinking();
         process.stdout.write(chalk.red(`\n  Error: ${event.message}\n`));
+        break;
+      case "turn_end":
+        stopThinking();
         break;
     }
   });
@@ -94,22 +116,48 @@ export async function startRepl(): Promise<void> {
   const rl = readline.createInterface({
     input,
     output,
-    prompt: promptStr,
     completer: (line: string) => completeCommand(line),
   });
 
+  let closed = false;
   rl.on("close", () => {
+    closed = true;
     console.log(chalk.dim("\n  Goodbye.\n"));
-    process.exit(0);
   });
 
-  rl.prompt();
+  const activateSavedProvider = async (): Promise<boolean> => {
+    try {
+      const nextConfig = loadConfig();
+      const nextInfo = PROVIDER_INFO[nextConfig.provider]!;
+      const nextModel = nextConfig.model ?? nextInfo.defaultModel;
+      const nextProvider = createProviderFromEnv(nextConfig);
+      await nextProvider.healthCheck?.(nextModel);
 
-  for await (const rawLine of rl) {
+      config = nextConfig;
+      providerInfo = nextInfo;
+      activeModel = nextModel;
+      provider = nextProvider;
+      console.log(chalk.green(`  ✓ Active now: ${nextInfo.label} / ${nextModel}\n`));
+      return true;
+    } catch (err) {
+      console.log(chalk.red(
+        `  Saved, but could not activate the new provider: ${err instanceof Error ? err.message : String(err)}`
+      ));
+      console.log(chalk.dim("  The current provider remains active.\n"));
+      return false;
+    }
+  };
+
+  while (!closed) {
+    let rawLine: string;
+    try {
+      rawLine = await rl.question(promptStr);
+    } catch {
+      break;
+    }
     const line = rawLine.trim();
 
     if (!line) {
-      rl.prompt();
       continue;
     }
 
@@ -140,14 +188,13 @@ export async function startRepl(): Promise<void> {
         }
 
         case "/provider":
-          await runProviderCommand(args);
-          // Restart would be needed for full effect — inform user
-          console.log(chalk.dim("  Note: restart resolv for the new provider to take effect.\n"));
+          await runProviderCommand(args, rl);
+          await activateSavedProvider();
           break;
 
         case "/model":
-          await runModelCommand(args);
-          console.log(chalk.dim("  Note: restart resolv for the new model to take effect.\n"));
+          await runModelCommand(args, rl);
+          await activateSavedProvider();
           break;
 
         case "/exit":
@@ -160,7 +207,6 @@ export async function startRepl(): Promise<void> {
           console.log(chalk.dim("  Type /help to see available commands.\n"));
       }
 
-      rl.prompt();
       continue;
     }
 
@@ -178,7 +224,5 @@ export async function startRepl(): Promise<void> {
     } catch (err) {
       console.log(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
     }
-
-    rl.prompt();
   }
 }

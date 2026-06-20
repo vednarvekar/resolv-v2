@@ -62,7 +62,9 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
     const systemPrompt = buildSystemPrompt(tools.list(), session.getContext());
 
     let response;
+    let streamedText = false;
     try {
+      events?.emit({ type: "model_start", providerName: provider.name });
       response = await provider.chat({
         messages: [...session.getHistory()],
         tools: tools.list(),
@@ -70,6 +72,11 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
         model: options.model,
         temperature: options.temperature,
         maxTokens: options.maxTokens,
+        onTextDelta: (text) => {
+          if (!text) return;
+          streamedText = true;
+          events?.emit({ type: "text_delta", text });
+        },
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -88,8 +95,10 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
       (b): b is ToolUseContentBlock => b.type === "tool_use"
     );
 
-    for (const block of textBlocks) {
-      events?.emit({ type: "text_delta", text: block.text });
+    if (!streamedText) {
+      for (const block of textBlocks) {
+        events?.emit({ type: "text_delta", text: block.text });
+      }
     }
 
     if (toolUseBlocks.length === 0) {

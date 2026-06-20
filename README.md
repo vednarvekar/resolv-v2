@@ -65,7 +65,7 @@ Config is stored at `~/.config/resolv/config.json` (owner read/write only).
 
 Run `resolv setup` to reconfigure, or use `/provider` and `/model` inside the REPL.
 
-Optional env overrides (for CI):
+Optional env overrides can be exported by the shell or placed in a `.env` file in the working directory:
 ```bash
 ANTHROPIC_API_KEY=...
 GOOGLE_API_KEY=...
@@ -77,6 +77,28 @@ RESOLV_TEST_COMMAND="npm test"
 RESOLV_MAX_ATTEMPTS=4
 OLLAMA_BASE_URL=http://localhost:11434
 ```
+
+### Ollama on Windows with a WSL client
+
+Ollama listens on Windows loopback by default. With WSL's default NAT networking,
+`127.0.0.1` inside WSL is not Windows loopback. Prefer WSL mirrored networking on
+Windows 11 by adding this to `%UserProfile%\.wslconfig` and then running
+`wsl --shutdown` from PowerShell:
+
+```ini
+[wsl2]
+networkingMode=mirrored
+```
+
+After restarting WSL, verify the connection before starting resolv:
+
+```bash
+curl http://127.0.0.1:11434/api/tags
+```
+
+For remote or NAT-hosted Ollama instances, set `OLLAMA_BASE_URL` to an address
+reachable from the environment where resolv runs. The CLI performs a startup
+health check and reports an actionable connection or missing-model error.
 
 ## Project structure
 

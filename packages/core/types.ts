@@ -101,6 +101,8 @@ export interface ProviderChatOptions {
   systemPrompt?: string;
   temperature?: number;
   maxTokens?: number;
+  /** Receives assistant-visible text as it arrives from the provider. */
+  onTextDelta?: (text: string) => void;
 }
 
 // ── agent loop events ───────────────────────────────────────
@@ -108,6 +110,7 @@ export interface ProviderChatOptions {
 // without the agent loop knowing anything about how it's displayed.
 
 export type AgentEvent =
+  | { type: "model_start"; providerName: string }
   | { type: "text_delta"; text: string }
   | { type: "tool_call_start"; toolName: string; toolUseId: string; input: Record<string, unknown> }
   | { type: "tool_call_end"; toolUseId: string; output: string; isError: boolean }

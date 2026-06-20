@@ -11,6 +11,7 @@ import {
   type ProviderName,
   type ResolvConfig,
   PROVIDER_INFO,
+  isFirstRun,
   loadConfig,
   saveConfig,
 } from "../../config/config.js";
@@ -43,6 +44,10 @@ async function selectFromList<T extends string>(
   options: T[],
   renderFn: (options: T[], selected: number) => void
 ): Promise<T> {
+  if (!process.stdin.isTTY) {
+    throw new Error("Interactive setup requires a TTY.");
+  }
+
   hideCursor();
 
   let selected = 0;
@@ -50,26 +55,35 @@ async function selectFromList<T extends string>(
   // Initial render
   renderFn(options, selected);
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      showCursor();
+      process.stdin.setRawMode(false);
+      process.stdin.removeListener("data", onKey);
+      process.stdin.pause();
+    };
+
     const onKey = (key: Buffer) => {
       const str = key.toString();
 
-      if (str === "\x1b[A" && selected > 0) {
-        // up arrow
+      if (str.includes("\u0003")) {
+        cleanup();
+        reject(new Error("Setup cancelled."));
+        return;
+      }
+
+      const upCount = str.match(/\x1b\[A/g)?.length ?? 0;
+      const downCount = str.match(/\x1b\[B/g)?.length ?? 0;
+      const nextSelected = Math.max(0, Math.min(options.length - 1, selected - upCount + downCount));
+
+      if (nextSelected !== selected) {
         moveCursor(-options.length);
-        selected--;
+        selected = nextSelected;
         renderFn(options, selected);
-      } else if (str === "\x1b[B" && selected < options.length - 1) {
-        // down arrow
-        moveCursor(-options.length);
-        selected++;
-        renderFn(options, selected);
-      } else if (str === "\r" || str === "\n") {
-        // enter
-        showCursor();
-        process.stdin.setRawMode(false);
-        process.stdin.removeListener("data", onKey);
-        process.stdin.pause();
+      }
+
+      if (str.includes("\r") || str.includes("\n")) {
+        cleanup();
         resolve(options[selected]!);
       }
     };
@@ -145,54 +159,79 @@ async function getApiKey(rl: readline.Interface, providerName: ProviderName): Pr
   }
 }
 
-// async function getGithubToken(rl: readline.Interface, providerName: ProviderName): Promise<string> {}
+// async function getGithubToken(rl: readline.Interface, providerName: ProviderName): Promise<string> {
+//   const
+// }
 
 export async function runSetupWizard(): Promise<void> {
-  const rl = readline.createInterface({ input, output });
-
   printBanner();
 
-  console.log(chalk.bold("  Welcome! Let's set up resolv.\n"));
-  console.log("  Choose your AI provider:\n");
+  const firstRun = isFirstRun();
+  const config = loadConfig();
+  let selectedProvider = config.provider;
 
-  const selectedProvider = await selectFromList(PROVIDERS, drawProviderMenu);
+  console.log(chalk.bold(firstRun ? "  Welcome! Let's set up resolv.\n" : "  Resuming setup.\n"));
+
+  if (firstRun) {
+    console.log("  Choose your AI provider:\n");
+    selectedProvider = await selectFromList(PROVIDERS, drawProviderMenu);
+    config.provider = selectedProvider;
+    saveConfig(config);
+  } else {
+    console.log(`  ${chalk.green("✓")} Provider: ${chalk.bold(PROVIDER_INFO[selectedProvider]!.label)}`);
+  }
+
   const providerInfo = PROVIDER_INFO[selectedProvider]!;
 
-  console.log("");
-  console.log(`  ${chalk.green("✓")} Selected: ${chalk.bold(providerInfo.label)}`);
-
-  const config = loadConfig();
-  config.provider = selectedProvider;
+  if (firstRun) {
+    console.log("");
+    console.log(`  ${chalk.green("✓")} Selected: ${chalk.bold(providerInfo.label)}`);
+  }
 
   // Ollama — no API key, just instructions
   if (selectedProvider === "ollama") {
     printOllamaInstructions();
 
-    console.log("\n  Which model do you want to use?\n");
-    const selectedModel = await selectFromList(providerInfo.models, drawModelMenu);
-    console.log(`\n  ${chalk.green("✓")} Model: ${chalk.bold(selectedModel)}`);
-    config.model = selectedModel;
+    if (!config.model || !providerInfo.models.includes(config.model)) {
+      console.log("\n  Which model do you want to use?\n");
+      config.model = await selectFromList(providerInfo.models, drawModelMenu);
+      saveConfig(config);
+    }
+    console.log(`\n  ${chalk.green("✓")} Model: ${chalk.bold(config.model)}`);
   } else {
     // API key collection
-    const apiKey = await getApiKey(rl, selectedProvider);
-    config.apiKeys[selectedProvider] = apiKey;
+    if (!config.apiKeys[selectedProvider]) {
+      const rl = readline.createInterface({ input, output });
+      config.apiKeys[selectedProvider] = await getApiKey(rl, selectedProvider);
+      rl.close();
+      saveConfig(config);
+    } else {
+      console.log(`  ${chalk.green("✓")} ${providerInfo.keyLabel} already saved`);
+    }
 
     // Model selection
-    console.log("\n  Which model do you want to use?\n");
-    const selectedModel = await selectFromList(providerInfo.models, drawModelMenu);
-    console.log(`\n  ${chalk.green("✓")} Model: ${chalk.bold(selectedModel)}`);
-    config.model = selectedModel;
+    if (!config.model || !providerInfo.models.includes(config.model)) {
+      console.log("\n  Which model do you want to use?\n");
+      config.model = await selectFromList(providerInfo.models, drawModelMenu);
+      saveConfig(config);
+    }
+    console.log(`\n  ${chalk.green("✓")} Model: ${chalk.bold(config.model)}`);
   }
 
   // Optional GitHub token
-  console.log("");
-  const addGithub = await rl.question(
-    chalk.dim("  Add GitHub token for PR creation? (y/N): ")
-  );
-  if (addGithub.trim().toLowerCase() === "y") {
-    console.log(chalk.dim("  Generate at: github.com/settings/tokens (needs repo write access)"));
-    const token = await rl.question(chalk.hex("#7c3aed")("  GitHub Token: "));
-    if (token.trim()) config.githubToken = token.trim();
+  if (config.githubToken) {
+    console.log(`  ${chalk.green("✓")} GitHub token already saved`);
+  } else {
+    const rl = readline.createInterface({ input, output });
+    console.log("");
+    const addGithub = await rl.question(chalk.dim("  Add GitHub token for PR creation? (y/N): "));
+
+    if (addGithub.trim().toLowerCase() === "y") {
+      console.log(chalk.dim("  Generate at: https://github.com/settings/tokens (needs repo write access)"));
+      const token = await rl.question(chalk.hex("#7c3aed")("  GitHub Token: "));
+      if (token.trim()) config.githubToken = token.trim();
+    }
+    rl.close();
   }
 
   saveConfig(config as ResolvConfig);
@@ -201,6 +240,4 @@ export async function runSetupWizard(): Promise<void> {
   console.log(chalk.green.bold("  ✓ Setup complete! Config saved to ~/.config/resolv/config.json"));
   console.log(chalk.dim("  Run `resolv` to start the interactive shell."));
   console.log("");
-
-  rl.close();
 }

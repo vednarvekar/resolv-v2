@@ -100,7 +100,7 @@ export class AnthropicProvider implements Provider {
 
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {
     try {
-      const raw = await this.client.messages.create({
+      const stream = this.client.messages.stream({
         model: options.model ?? this.defaultModel,
         max_tokens: options.maxTokens ?? 2048,
         temperature: options.temperature ?? 0.2,
@@ -108,6 +108,8 @@ export class AnthropicProvider implements Provider {
         messages: toAnthropicMessages(options.messages),
         tools: options.tools && options.tools.length > 0 ? toAnthropicTools(options.tools) : undefined,
       });
+      stream.on("text", (text) => options.onTextDelta?.(text));
+      const raw = await stream.finalMessage();
       return fromAnthropicResponse(raw);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);

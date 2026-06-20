@@ -6,6 +6,7 @@
 // ============================================================
 
 import { ProviderError } from "../../core/errors.js";
+import fs from "node:fs";
 import type {
     ContentBlock,
     Message,
@@ -15,10 +16,39 @@ import type {
 } from "../../core/types.js";
 import type { Provider } from "../provider.js";
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
 const DEFAULT_MODEL = "deepseek-r1:8b";
 const DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"; // Common lightweight local embedding model
 const MAX_EMBEDDING_BATCH = 32;
+
+function getOllamaBaseUrl(): string {
+    return (process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434").replace(/\/+$/, "");
+}
+
+function isWsl(): boolean {
+    if (process.platform !== "linux") return false;
+    try {
+        return /microsoft|wsl/i.test(fs.readFileSync("/proc/sys/kernel/osrelease", "utf8"));
+    } catch {
+        return false;
+    }
+}
+
+function connectionError(baseUrl: string, cause: unknown): ProviderError {
+    const detail = cause instanceof Error ? ` (${cause.message})` : "";
+    const wslHelp = isWsl() && /127\.0\.0\.1|localhost/.test(baseUrl)
+        ? " WSL cannot reach a Windows-only localhost listener in NAT mode. Enable WSL mirrored networking, or expose Ollama on the Windows host and set OLLAMA_BASE_URL to that host address."
+        : " Check that Ollama is running and that OLLAMA_BASE_URL points to its reachable address.";
+    return new ProviderError(`Unable to connect to Ollama at ${baseUrl}.${detail}${wslHelp}`, "ollama");
+}
+
+async function ollamaFetch(path: string, init?: RequestInit): Promise<Response> {
+    const baseUrl = getOllamaBaseUrl();
+    try {
+        return await fetch(`${baseUrl}${path}`, init);
+    } catch (cause) {
+        throw connectionError(baseUrl, cause);
+    }
+}
 
 interface OpenAiToolCall {
     id?: string;
@@ -175,6 +205,20 @@ export class OllamaProvider implements Provider {
     readonly name = "ollama";
     readonly defaultModel = DEFAULT_MODEL;
 
+    async healthCheck(model?: string): Promise<void> {
+        const response = await ollamaFetch("/api/tags", { signal: AbortSignal.timeout(3000) });
+        if (!response.ok) {
+            throw new ProviderError(`Ollama health check failed with HTTP ${response.status}`, "ollama", response.status);
+        }
+
+        if (!model) return;
+        const data = (await response.json()) as { models?: Array<{ name?: string; model?: string }> };
+        const installed = data.models?.some((item) => item.name === model || item.model === model) ?? false;
+        if (!installed) {
+            throw new ProviderError(`Ollama model "${model}" is not installed. Run: ollama pull ${model}`, "ollama");
+        }
+    }
+
     async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {
         const body: Record<string, unknown> = {
             model: options.model ?? this.defaultModel,
@@ -189,7 +233,7 @@ export class OllamaProvider implements Provider {
             body.tools = toOpenAiTools(options.tools);
         }
 
-        const response = await fetch(`${OLLAMA_BASE_URL}/v1/chat/completions`, {
+        const response = await ollamaFetch("/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -240,7 +284,9 @@ export class OllamaProvider implements Provider {
             if (!delta) return;
             // DeepSeek may send private reasoning separately. Deliberately do
             // not merge it into content consumed by parsers or conversation history.
-            responseText += delta.content ?? "";
+            const text = delta.content ?? "";
+            responseText += text;
+            if (text) options.onTextDelta?.(text);
 
             for (const [position, call] of (delta.tool_calls ?? []).entries()) {
                 const index = call.index ?? position;
@@ -289,7 +335,7 @@ export class OllamaProvider implements Provider {
             const batch = texts.slice(i, i + MAX_EMBEDDING_BATCH);
 
             // Accessing Ollama's local OpenAI compatible embedding route
-            const response = await fetch(`${OLLAMA_BASE_URL}/v1/embeddings`, {
+            const response = await ollamaFetch("/v1/embeddings", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

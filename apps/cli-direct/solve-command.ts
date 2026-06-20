@@ -33,6 +33,8 @@ export async function solve(options: SolveOptions): Promise<void> {
   const provider = createProviderFromEnv(config);
   const repoPath = path.resolve(options.repoPath);
 
+  await provider.healthCheck?.(appConfig.model);
+
   const guardSpinner = ora("Checking working directory...").start();
   try {
     assertCleanWorkingDirectory();

@@ -15,6 +15,9 @@ export interface Provider {
  
     /** human-readable default model string this provider will use if none is specified */
     readonly defaultModel: string;
+
+    /** Checks that the provider is reachable and, when supplied, the model is available. */
+    healthCheck?(model?: string): Promise<void>;
  
     /**
     * Sends a chat completion request. Implementations are responsible for
