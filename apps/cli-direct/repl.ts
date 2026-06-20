@@ -2,7 +2,6 @@
 // Main interactive REPL with session persistence, tab completion, and all commands.
 
 import readline from "node:readline/promises";
-import { cursorTo } from "node:readline";
 import { stdin as input, stdout as output } from "node:process";
 import path from "node:path";
 import fs from "node:fs";
@@ -15,6 +14,7 @@ import { runDnaCommand } from "./dna-command.js";
 import { runProviderCommand, runModelCommand } from "./provider-command.js";
 import { loadConfig, isConfigured, PROVIDER_INFO } from "../../config/config.js";
 import { createProviderFromEnv } from "../../packages/providers/register.js";
+import { printBanner } from "../tui/setup-wizard.js";
 import { AgentSession } from "../../packages/orchestrator-agent/session.js";
 import { runLLMChatTurn } from "../../packages/llm/llm-calls.js";
 import { createLLMTools } from "../../packages/llm/tools/llm-tools.js";
@@ -106,6 +106,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   }
 
   if (!isResuming) {
+    printBanner();
     printWelcome(providerInfo.label, activeModel, sessionId);
   }
 
@@ -168,19 +169,6 @@ export async function startRepl(resumeId?: string): Promise<void> {
     }
   });
 
-  const columns = process.stdout.columns ?? 80;
-  const promptWidth = Math.max(30, columns - 6);
-  const promptBorder = renderPromptBorder(promptWidth);
-  const promptFooter = renderPromptFooter(promptWidth);
-
-  const promptLabelText = "resolv ❯";
-  const promptLineSpaces = Math.max(0, promptWidth - promptLabelText.length - 1);
-  const promptStr =
-    chalk.dim("  │ ") +
-    chalk.hex("#7c3aed").bold("resolv ") +
-    chalk.dim("❯ ") +
-    " ".repeat(promptLineSpaces);
-
   const rl = readline.createInterface({
     input,
     output,
@@ -228,7 +216,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   while (!closed) {
     let rawLine: string;
     try {
-      rawLine = await rlQuestion();
+      rawLine = await rl.question(chalk.cyan.bold("resolv > "));
     } catch {
       break;
     }

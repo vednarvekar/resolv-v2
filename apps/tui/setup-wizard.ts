@@ -108,7 +108,7 @@ async function selectModelName(info: {
   return selected;
 }
 
-function printBanner() {
+export function printBanner() {
   console.log("");
   console.log(chalk.hex("#7c3aed").bold(" ██████╗ ███████╗███████╗ ██████╗ ██╗    ██╗   ██╗    ██╗ "));
   console.log(chalk.hex("#7c3aed").bold(" ██╔══██╗██╔════╝██╔════╝██╔═══██╗██║    ██║   ██║    ██║ "));
