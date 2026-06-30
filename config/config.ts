@@ -39,7 +39,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
   keyEnv: string | null;
   keyLabel: string | null;
   defaultModel: string;
-  models: string[];
   description: string;
 }> = {
   anthropic: {
@@ -47,7 +46,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "ANTHROPIC_API_KEY",
     keyLabel: "Anthropic API Key",
     defaultModel: "claude-sonnet-4-6",
-    models: ["claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
     description: "Best quality. console.anthropic.com",
   },
   google: {
@@ -55,7 +53,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "GOOGLE_API_KEY",
     keyLabel: "Google AI API Key",
     defaultModel: "gemini-2.5-flash",
-    models: ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash"],
     description: "Fast and capable. aistudio.google.com",
   },
   openai: {
@@ -63,7 +60,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "OPENAI_API_KEY",
     keyLabel: "OpenAI API Key",
     defaultModel: "gpt-4o",
-    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "o1-mini"],
     description: "GPT-4o and more. platform.openai.com",
   },
   grok: {
@@ -71,7 +67,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "XAI_API_KEY",
     keyLabel: "xAI API Key",
     defaultModel: "grok-3-mini",
-    models: ["grok-3", "grok-3-mini", "grok-3-fast"],
     description: "Grok models by xAI. console.x.ai",
   },
   openrouter: {
@@ -79,15 +74,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "OPENROUTER_API_KEY",
     keyLabel: "OpenRouter API Key",
     defaultModel: "anthropic/claude-sonnet-4-6",
-    models: [
-      "anthropic/claude-sonnet-4-6",
-      "openai/gpt-4o",
-      "google/gemini-2.5-flash",
-      "meta-llama/llama-3.3-70b-instruct",
-      "deepseek/deepseek-r1",
-      "mistralai/mistral-large",
-      "qwen/qwen-2.5-72b-instruct",
-    ],
     description: "200+ models, one key. openrouter.ai",
   },
   nim: {
@@ -95,13 +81,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: "NVIDIA_API_KEY",
     keyLabel: "NVIDIA API Key",
     defaultModel: "google/gemma-4-31b-it",
-    models: [
-      "google/gemma-4-31b-it",
-      "deepseek-ai/deepseek-r1",
-      "meta/llama-3.3-70b-instruct",
-      "mistralai/mistral-large-2-instruct",
-      "nvidia/llama-3.1-nemotron-ultra-253b-v1",
-    ],
     description: "NVIDIA hosted models. build.nvidia.com",
   },
   ollama: {
@@ -109,7 +88,6 @@ export const PROVIDER_INFO: Record<ProviderName, {
     keyEnv: null,
     keyLabel: null,
     defaultModel: "qwen3.5:4b",
-    models: ["deepseek-r1:8b", "llama3.2:3b", "mistral:7b", "codellama:13b", "qwen3.5:4b"],
     description: "Run models locally. No API key needed.",
   },
 };

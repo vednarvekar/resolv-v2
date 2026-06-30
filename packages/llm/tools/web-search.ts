@@ -64,8 +64,8 @@ async function duckDuckGoSearch(query: string, count: number): Promise<SearchRes
   const html = await res.text();
   const results: SearchResult[] = [];
 
-  // Extract result blocks: <div class="result__body">
-  const blockRegex = /<div class="result__body">([\s\S]*?)<\/div>\s*<\/div>/g;
+  // Extract result blocks: <div class="result results_links... web-result">
+  const blockRegex = /<div class="result results_links[^>]*>([\s\S]*?)<\/div>\s*<\/div>/g;
   const titleRegex = /<a[^>]+class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/;
   const snippetRegex = /<a[^>]+class="result__snippet"[^>]*>([\s\S]*?)<\/a>/;
 

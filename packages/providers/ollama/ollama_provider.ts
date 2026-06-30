@@ -206,17 +206,25 @@ export class OllamaProvider implements Provider {
     readonly defaultModel = DEFAULT_MODEL;
 
     async healthCheck(model?: string): Promise<void> {
-        const response = await ollamaFetch("/api/tags", { signal: AbortSignal.timeout(3000) });
-        if (!response.ok) {
-            throw new ProviderError(`Ollama health check failed with HTTP ${response.status}`, "ollama", response.status);
-        }
-
+        const models = await this.listModels();
         if (!model) return;
-        const data = (await response.json()) as { models?: Array<{ name?: string; model?: string }> };
-        const installed = data.models?.some((item) => item.name === model || item.model === model) ?? false;
-        if (!installed) {
+        if (!models.includes(model)) {
             throw new ProviderError(`Ollama model "${model}" is not installed. Run: ollama pull ${model}`, "ollama");
         }
+    }
+
+    async listModels(): Promise<string[]> {
+        const response = await ollamaFetch("/api/tags", { signal: AbortSignal.timeout(3000) });
+        if (!response.ok) {
+            throw new ProviderError(`Ollama model list failed with HTTP ${response.status}`, "ollama", response.status);
+        }
+
+        const data = (await response.json()) as { models?: Array<{ name?: string; model?: string }> };
+        return Array.from(new Set(
+            (data.models ?? [])
+                .map((item) => item.name ?? item.model)
+                .filter((name): name is string => Boolean(name))
+        )).sort();
     }
 
     async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {

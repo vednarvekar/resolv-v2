@@ -91,11 +91,35 @@ function fromAnthropicResponse(raw: Anthropic.Message): ProviderResponse {
 
 export class AnthropicProvider implements Provider {
   readonly name = "anthropic";
-  readonly defaultModel = DEFAULT_MODEL;
+  readonly defaultModel: string;
   private readonly client: Anthropic;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, model?: string) {
+    this.defaultModel = model ?? DEFAULT_MODEL;
     this.client = new Anthropic({ apiKey });
+  }
+
+  async healthCheck(model?: string): Promise<void> {
+    try {
+      if (model) await this.client.models.retrieve(model);
+      else await this.client.models.list({ limit: 1 });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new ProviderError(`Anthropic health check failed: ${message}`, "anthropic");
+    }
+  }
+
+  async listModels(): Promise<string[]> {
+    try {
+      const ids: string[] = [];
+      for await (const model of this.client.models.list()) {
+        ids.push(model.id);
+      }
+      return ids;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new ProviderError(`Anthropic model list failed: ${message}`, "anthropic");
+    }
   }
 
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {

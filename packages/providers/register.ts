@@ -31,12 +31,12 @@ export function createProviderFromConfig(config: ResolvConfig): Provider {
     case "anthropic": {
       const key = apiKeys.anthropic;
       if (!key) throw new Error("ANTHROPIC_API_KEY is required. Run /provider to configure.");
-      return new AnthropicProvider(key);
+      return new AnthropicProvider(key, model);
     }
     case "google": {
       const key = apiKeys.google;
       if (!key) throw new Error("GOOGLE_API_KEY is required. Run /provider to configure.");
-      return new GeminiProvider(key);
+      return new GeminiProvider(key, model);
     }
     case "openai": {
       const key = apiKeys.openai;
@@ -56,7 +56,7 @@ export function createProviderFromConfig(config: ResolvConfig): Provider {
     case "nim": {
       const key = apiKeys.nim;
       if (!key) throw new Error("NVIDIA_API_KEY is required. Run /provider to configure.");
-      return new NimProvider(key);
+      return new NimProvider(key, model);
     }
     case "ollama":
       return new OllamaProvider();

@@ -14,12 +14,12 @@ function requestTimeoutMs(): number {
 }
 
 export class NimProvider extends OpenAICompatProvider {
-  constructor(apiKey: string) {
+  constructor(apiKey: string, model?: string) {
     const cfg: OpenAICompatConfig = {
       apiKey,
       baseUrl: NIM_BASE,
       providerName: "nim",
-      defaultModel: "google/gemma-4-31b-it",
+      defaultModel: model ?? "google/gemma-4-31b-it",
       defaultEmbeddingModel: "nvidia/nv-embedqa-e5-v5",
       defaultTemperature: 0.3,
       defaultMaxTokens: 4096,

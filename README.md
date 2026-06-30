@@ -57,13 +57,15 @@ resolv            # first run triggers setup wizard
 
 ## Supported providers
 
-- **Anthropic** (Claude) — `claude-sonnet-4-6`, `claude-opus-4-6`
-- **Google** (Gemini) — `gemini-2.5-pro`, `gemini-2.5-flash`
-- **NVIDIA NIM** — `google/gemma-4-31b-it`, `deepseek-ai/deepseek-r1`, `meta/llama-3.3-70b-instruct`
-- **OpenAI** (GPT) — `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `o1-mini`
-- **xAI Grok** — `grok-3`, `grok-3-mini`, `grok-3-fast`
-- **OpenRouter** — `anthropic/claude-sonnet-4-6`, `openai/gpt-4o`, `google/gemini-2.5-flash`, `meta-llama/llama-3.3-70b-instruct`, `qwen/qwen-2.5-72b-instruct`, and many more
+- **Anthropic** (Claude)
+- **Google** (Gemini)
+- **NVIDIA NIM**
+- **OpenAI** (GPT)
+- **xAI Grok**
+- **OpenRouter**
 - **Ollama** — local models, no API key needed
+
+`/model`, `/provider`, and `resolv setup` fetch available models from the selected provider or local Ollama runtime. If discovery fails, resolv asks for a model name manually instead of relying on hardcoded model menus.
 
 ## Configuration
 
@@ -123,7 +125,7 @@ config/           Config manager (load/save ~/.config/resolv/config.json)
 packages/
   core/           Shared types, errors, event bus
   dna/            Repo analysis (files, functions, helpers, architecture)
-  providers/      LLM provider adapters (Anthropic, Google, NIM, Ollama)
+  providers/      LLM provider adapters + model discovery
   llm/            Prompt builder, agent loop wiring
   orchestrator-agent/  Conversational agent loop, session, tool registry
   context-agent/  GitHub issue fetching, keyword + semantic file mapping

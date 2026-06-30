@@ -65,6 +65,32 @@ interface OAIResponse {
   usage?: { prompt_tokens: number; completion_tokens: number };
 }
 
+function modelId(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (!value || typeof value !== "object") return undefined;
+
+  const item = value as { id?: unknown; name?: unknown; model?: unknown };
+  if (typeof item.id === "string") return item.id;
+  if (typeof item.name === "string") return item.name;
+  if (typeof item.model === "string") return item.model;
+  return undefined;
+}
+
+function extractModelIds(payload: unknown): string[] {
+  if (!payload || typeof payload !== "object") return [];
+
+  const roots = Array.isArray(payload)
+    ? [payload]
+    : [payload as { data?: unknown; models?: unknown }].flatMap((body) => [body.data, body.models]);
+
+  const ids = roots
+    .filter(Array.isArray)
+    .flatMap((items) => items.map(modelId))
+    .filter((id): id is string => Boolean(id));
+
+  return Array.from(new Set(ids)).sort();
+}
+
 // ── Translation helpers ──────────────────────────────────────
 
 function toOAIMessages(messages: Message[], systemPrompt?: string): OAIMessage[] {
@@ -268,50 +294,13 @@ export abstract class OpenAICompatProvider implements Provider {
       throw new ProviderError(`${this.name}: model list response was not valid JSON`, this.name);
     }
 
-    const candidates: string[] = [];
-    const anyPayload = payload as any;
-
-    if (Array.isArray(anyPayload.data)) {
-      for (const item of anyPayload.data) {
-        if (item && typeof item === "object") {
-          const id = typeof item.id === "string"
-            ? item.id
-            : typeof item.name === "string"
-              ? item.name
-              : typeof item.model === "string"
-                ? item.model
-                : undefined;
-          if (id) candidates.push(id);
-        }
-      }
-    }
-
-    if (candidates.length === 0 && Array.isArray(anyPayload.models)) {
-      for (const item of anyPayload.models) {
-        if (item && typeof item === "object") {
-          const id = typeof item.name === "string" ? item.name : typeof item.model === "string" ? item.model : undefined;
-          if (id) candidates.push(id);
-        } else if (typeof item === "string") {
-          candidates.push(item);
-        }
-      }
-    }
-
-    if (candidates.length === 0 && Array.isArray(payload)) {
-      for (const item of payload) {
-        if (typeof item === "string") candidates.push(item);
-        else if (item && typeof item === "object") {
-          const id = typeof item.id === "string" ? item.id : typeof item.name === "string" ? item.name : undefined;
-          if (id) candidates.push(id);
-        }
-      }
-    }
+    const candidates = extractModelIds(payload);
 
     if (candidates.length === 0) {
       throw new ProviderError(`${this.name}: unable to discover available models from provider response`, this.name);
     }
 
-    return Array.from(new Set(candidates)).sort();
+    return candidates;
   }
 
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {

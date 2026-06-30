@@ -11,8 +11,8 @@ import type { FixPlan } from "../planner/planner.js";
 import type { IssueMapping } from "../context-agent/issue-mapper.js";
 
 const MAX_FILES_TO_INCLUDE = 5;
-const MAX_CHARS_PER_FILE = 6000;
-const MAX_TOTAL_SOURCE_CHARS = 20000;
+const MAX_CHARS_PER_FILE = 4000;
+const MAX_TOTAL_SOURCE_CHARS = 15000;
 
 const RESPONSE_FORMAT_INSTRUCTIONS = `
 RESPONSE FORMAT — machine-parsed, follow exactly:

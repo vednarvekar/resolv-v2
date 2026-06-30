@@ -16,8 +16,8 @@ Runs automatically on first launch (no config file at `~/.config/resolv/config.j
 Flow:
 1. ASCII banner
 2. Arrow-key provider selection
-3. API key input (hidden, saved with `chmod 600`)
-4. Arrow-key model selection
+3. API key input when the provider needs one
+4. Provider-backed model selection, or manual model entry if discovery fails
 5. Optional GitHub token
 6. Saves config and starts REPL
 

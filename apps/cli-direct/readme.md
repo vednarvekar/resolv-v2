@@ -25,3 +25,9 @@ The REPL in `repl.ts` handles:
 - *free text* → passed to `runLLMChatTurn` in `packages/llm/llm-calls.ts`
 
 Tab completion is powered by `apps/tui/slash-commands/registry.ts` via readline's `completer` option.
+
+## Provider and model commands
+
+`/provider` changes the active provider, collects or updates the API key when needed, then selects a model. `/model` only changes the model for the current provider.
+
+Both commands ask the active provider for available models through `Provider.listModels()`. If that request fails or the provider returns no models, the command prompts for a manual model name using the provider default as the placeholder.

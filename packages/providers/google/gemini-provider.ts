@@ -24,8 +24,9 @@ import type {
 } from "../../core/types.js";
 import type { Provider } from "../provider.js";
 
-const DEFAULT_MODEL = "gemini-2.0-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 const DEFAULT_EMBEDDING_MODEL = "text-embedding-004";
+const MODELS_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 // ── translation: resolv JSONSchema -> Gemini SchemaType ─────
 
@@ -102,11 +103,49 @@ function toGeminiContents(messages: Message[]): Content[] {
 
 export class GeminiProvider implements Provider {
   readonly name = "google";
-  readonly defaultModel = DEFAULT_MODEL;
+  readonly defaultModel: string;
   private readonly client: GoogleGenerativeAI;
 
-  constructor(private readonly apiKey: string) {
+  constructor(private readonly apiKey: string, model?: string) {
+    this.defaultModel = model ?? DEFAULT_MODEL;
     this.client = new GoogleGenerativeAI(apiKey);
+  }
+
+  async healthCheck(model?: string): Promise<void> {
+    const models = await this.listModels();
+    if (model && !models.includes(model)) {
+      throw new ProviderError(`Gemini model "${model}" is not available for this API key.`, "google");
+    }
+  }
+
+  async listModels(): Promise<string[]> {
+    const url = `${MODELS_URL}?key=${encodeURIComponent(this.apiKey)}`;
+    let response: Response;
+    try {
+      response = await fetch(url, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(10_000) });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new ProviderError(`Cannot reach Gemini model list: ${message}`, "google");
+    }
+
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new ProviderError(
+        `Gemini model list failed (HTTP ${response.status})${detail ? `: ${detail}` : ""}`,
+        "google",
+        response.status
+      );
+    }
+
+    const payload = (await response.json()) as {
+      models?: Array<{ name?: string; supportedGenerationMethods?: string[] }>;
+    };
+
+    return (payload.models ?? [])
+      .filter((model) => model.supportedGenerationMethods?.includes("generateContent"))
+      .map((model) => model.name?.replace(/^models\//, ""))
+      .filter((name): name is string => Boolean(name))
+      .sort();
   }
 
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {

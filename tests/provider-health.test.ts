@@ -101,7 +101,38 @@ describe("provider registration and health checks", () => {
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("google");
-    expect(provider.defaultModel).toBe("gemini-2.0-flash");
+    expect(provider.defaultModel).toBe("gemini-2.5-flash");
+  });
+
+  it("lists Google Gemini models from the provider endpoint", async () => {
+    vi.stubGlobal("fetch", mockFetchOk({
+      models: [
+        { name: "models/gemini-2.5-flash", supportedGenerationMethods: ["generateContent"] },
+        { name: "models/text-embedding-004", supportedGenerationMethods: ["embedContent"] },
+      ],
+    }));
+    const provider = createProviderFromConfig({
+      provider: "google",
+      apiKeys: { google: "test-key" },
+      testCommand: "npm test",
+      maxHealAttempts: 4,
+    });
+
+    await expect(provider.listModels?.()).resolves.toEqual(["gemini-2.5-flash"]);
+  });
+
+  it("lists Ollama models from the local runtime", async () => {
+    vi.stubGlobal("fetch", mockFetchOk({
+      models: [{ name: "deepseek-r1:8b" }, { model: "qwen3.5:4b" }],
+    }));
+    const provider = createProviderFromConfig({
+      provider: "ollama",
+      apiKeys: {},
+      testCommand: "npm test",
+      maxHealAttempts: 4,
+    });
+
+    await expect(provider.listModels?.()).resolves.toEqual(["deepseek-r1:8b", "qwen3.5:4b"]);
   });
 
   it("creates Ollama provider without API key", () => {

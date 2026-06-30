@@ -28,9 +28,15 @@ function clearLine(): void {
 async function selectFromList<T extends string>(
   items: T[],
   label: (item: T) => string,
-  promptLabel = "Select"
+  promptLabel = "Select",
+  rl?: readline.Interface
 ): Promise<T> {
-  if (!process.stdin.isTTY) throw new Error("Interactive selection requires a TTY.");
+  if (!rl) throw new Error("Interactive selection requires readline interface.");
+
+  const rlInput = (rl as any).input;
+  rl.pause();
+  rlInput.setRawMode(true);
+  rlInput.resume();
 
   let selected = 0;
   let pageStart = 0;
@@ -38,7 +44,15 @@ async function selectFromList<T extends string>(
   let renderedLines = 0;
 
   const draw = () => {
-    if (renderedLines) moveCursorUp(renderedLines);
+    if (renderedLines > 0) {
+      moveCursorUp(renderedLines);
+      // Clear all lines
+      for (let i = 0; i < renderedLines; i++) {
+        process.stdout.write("\x1b[2K\n");
+      }
+      moveCursorUp(renderedLines);
+    }
+
     const pageEnd = Math.min(items.length, pageStart + pageSize);
     const lines: string[] = [];
     lines.push(chalk.dim(`  ${promptLabel} ${pageStart + 1}-${pageEnd} of ${items.length}. Use ↑/↓ and Enter.`));
@@ -51,64 +65,94 @@ async function selectFromList<T extends string>(
       lines.push(line);
     }
     lines.push(chalk.dim("  Esc to cancel."));
+    
     process.stdout.write(lines.map((line) => `\x1b[2K${line}`).join("\n") + "\n");
     renderedLines = lines.length;
   };
 
   return new Promise((resolve, reject) => {
-    const onKey = (chunk: Buffer) => {
-      const str = chunk.toString("utf8");
-      if (str === "\u0003" || str === "\x1b") {
+    const onKey = (_: any, key: { name?: string, ctrl?: boolean, meta?: boolean, shift?: boolean }) => {
+      if (key.ctrl && key.name === 'c') {
         cleanup();
         reject(new Error("Selection cancelled."));
         return;
       }
-      if (str === "\r" || str === "\n") {
+      if (key.name === 'escape') {
+        cleanup();
+        reject(new Error("Selection cancelled."));
+        return;
+      }
+      if (key.name === 'return') {
         cleanup();
         resolve(items[selected]!);
         return;
       }
-      const up = str.includes("\x1b[A");
-      const down = str.includes("\x1b[B");
-      if (!up && !down) return;
-      if (up && selected > 0) selected -= 1;
-      if (down && selected < items.length - 1) selected += 1;
+      if (key.name === 'up' && selected > 0) selected -= 1;
+      if (key.name === 'down' && selected < items.length - 1) selected += 1;
       if (selected < pageStart) pageStart = selected;
       if (selected >= pageStart + pageSize) pageStart = selected - pageSize + 1;
       draw();
     };
 
     const cleanup = () => {
-      process.stdin.off("data", onKey);
-      process.stdin.setRawMode(false);
-      process.stdin.pause();
-      if (renderedLines) moveCursorUp(renderedLines);
-      for (let i = 0; i < renderedLines; i++) {
-        clearLine();
-        if (i < renderedLines - 1) process.stdout.write("\n");
+      rlInput.removeListener("keypress", onKey);
+      rlInput.setRawMode(false);
+      rl.resume();
+      if (renderedLines > 0) {
+        moveCursorUp(renderedLines);
+        for (let i = 0; i < renderedLines; i++) {
+          process.stdout.write("\x1b[2K\n");
+        }
+        moveCursorUp(renderedLines);
       }
-      if (renderedLines) process.stdout.write("\n");
     };
 
-    nodeReadline.emitKeypressEvents(process.stdin);
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.on("data", onKey);
+    nodeReadline.emitKeypressEvents(rlInput);
+    rlInput.on("keypress", onKey);
     draw();
   });
 }
 
 async function tryFetchModelList(config: ResolvConfig): Promise<string[] | undefined> {
-  try {
-    const provider = createProviderFromEnv(config);
-    if (typeof provider.listModels !== "function") return undefined;
-    const models = await provider.listModels();
-    return models.length > 0 ? models : undefined;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.log(chalk.yellow(`  Could not fetch provider model list: ${message}`));
-    return undefined;
+  let lastError = "";
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const provider = createProviderFromEnv(config);
+
+      if (typeof provider.listModels !== "function") {
+        return undefined;
+      }
+
+      const models = await provider.listModels();
+
+      if (models.length > 0) {
+        return models;
+      }
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : String(err);
+
+      if (attempt < 3) {
+        console.log(
+          chalk.yellow(
+            `  Failed to fetch models (attempt ${attempt}/3). Retrying...`
+          )
+        );
+
+        await new Promise((r) =>
+          setTimeout(r, 1000 * attempt)
+        );
+      }
+    }
   }
+
+  console.log(
+    chalk.yellow(
+      `  Could not fetch provider model list: ${lastError}`
+    )
+  );
+
+  return undefined;
 }
 
 async function chooseModel(
@@ -119,30 +163,15 @@ async function chooseModel(
   const remoteModels = await tryFetchModelList(config);
   if (remoteModels?.length) {
     console.log(chalk.dim("\n  Fetched available models from provider. Use the arrow keys to select one."));
-    return await selectFromList(remoteModels, (m) => m, "Choose model:");
+    const model = await selectFromList(remoteModels, (m) => m, "Choose model:", rl);
+    return model;
   }
 
-  const options = [...info.models, "Custom model..."];
-  console.log("");
-  options.forEach((item, index) => console.log(`  ${chalk.cyan(`${index + 1}.`)} ${item}`));
-
-  while (true) {
-    const answer = await rl.question(chalk.hex("#7c3aed")(`  Select [1-${options.length}]: `));
-    const index = Number.parseInt(answer.trim(), 10) - 1;
-    if (!Number.isInteger(index) || index < 0 || index >= options.length) {
-      console.log(chalk.red(`  Enter a number from 1 to ${options.length}.`));
-      continue;
-    }
-
-    if (index === options.length - 1) {
-      const custom = await rl.question(chalk.hex("#7c3aed")("  Enter custom model name: "));
-      if (custom.trim()) return custom.trim();
-      console.log(chalk.red("  Model name cannot be empty."));
-      continue;
-    }
-
-    return options[index]!;
-  }
+  console.log(chalk.yellow("  Could not fetch models interactively. Please enter model name manually."));
+  const custom = await rl.question(chalk.hex("#7c3aed")(`  Enter model name [${info.defaultModel}]: `))
+  process.stdout.write("\x1b[1A");
+  process.stdout.write("\x1b[2K\r");;
+  return custom.trim() || info.defaultModel;
 }
 
 export async function runProviderCommand(args: string, rl: readline.Interface): Promise<void> {
@@ -158,7 +187,7 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
     provider = await selectFromList(PROVIDERS, (name) => {
       const info = PROVIDER_INFO[name]!;
       return `${info.label} ${chalk.dim(info.description)}`;
-    }, "Choose provider:");
+    }, "Choose provider:", rl);
   }
 
   const info = PROVIDER_INFO[provider]!;
@@ -171,8 +200,12 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
     console.log(chalk.dim(`\n  ${info.description}`));
     while (true) {
       const key = await rl.question(chalk.hex("#7c3aed")(`  Enter ${info.keyLabel}: `));
+      process.stdout.write("\x1b[1A");
+      process.stdout.write("\x1b[2K\r");
       if (key.trim().length > 10) {
         config.apiKeys[provider] = key.trim();
+        saveConfig(config);
+        console.log(chalk.green("  ✓ API key saved."));
         break;
       }
       console.log(chalk.red("  Key looks too short — try again."));
@@ -185,7 +218,15 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
     if (update.trim().toLowerCase() === "y") {
       while (true) {
         const key = await rl.question(chalk.hex("#7c3aed")(`  New ${info.keyLabel}: `));
-        if (key.trim().length > 10) { config.apiKeys[provider] = key.trim(); break; }
+        process.stdout.write("\x1b[1A");
+        process.stdout.write("\x1b[2K\r");
+        process.stdout.write("\x1b[1A");
+        process.stdout.write("\x1b[2K\r");
+        if (key.trim().length > 10) { 
+          config.apiKeys[provider] = key.trim();
+          saveConfig(config);
+          console.log(chalk.green("  ✓ API key saved.")); 
+          break; }
         console.log(chalk.red("  Key looks too short."));
       }
     }

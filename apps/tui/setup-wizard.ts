@@ -12,6 +12,7 @@ import {
   loadConfig,
   saveConfig,
 } from "../../config/config.js";
+import { createProviderFromConfig } from "../../packages/providers/register.js";
 
 const PROVIDERS: ProviderName[] = ["anthropic", "openai", "google", "grok", "openrouter", "nim", "ollama"];
 
@@ -88,24 +89,24 @@ async function selectModelName(info: {
   keyEnv: string | null;
   keyLabel: string | null;
   defaultModel: string;
-  models: string[];
   description: string;
-}): Promise<string> {
-  const options = [...info.models, "Custom model..."];
-  const selected = await selectFromList(options, (m) => m);
-  if (selected === "Custom model...") {
-    const rl = readline.createInterface({ input, output });
-    while (true) {
-      const custom = await rl.question(chalk.hex("#7c3aed")("  Enter model name: "));
-      if (custom.trim()) {
-        rl.close();
-        return custom.trim();
-      }
-      console.log(chalk.red("  Model name cannot be empty."));
-    }
+}, config: ResolvConfig): Promise<string> {
+  const provider = createProviderFromConfig(config);
+  const models = await provider.listModels?.().catch((err) => {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(chalk.yellow(`  Could not fetch provider model list: ${message}`));
+    return undefined;
+  });
+
+  if (models?.length) {
+    console.log(chalk.dim("  Fetched available models from provider. Use the arrow keys to select one."));
+    return await selectFromList(models, (m) => m);
   }
 
-  return selected;
+  const rl = readline.createInterface({ input, output });
+  const custom = await rl.question(chalk.hex("#7c3aed")(`  Enter model name [${info.defaultModel}]: `));
+  rl.close();
+  return custom.trim() || info.defaultModel;
 }
 
 export function printBanner() {
@@ -179,9 +180,9 @@ export async function runSetupWizard(): Promise<void> {
   }
 
   // Model selection
-  if (!config.model || !info.models.includes(config.model)) {
+  if (!config.model) {
     console.log("\n  Choose a model:\n");
-    config.model = await selectModelName(info);
+    config.model = await selectModelName(info, config as ResolvConfig);
     saveConfig(config as ResolvConfig);
   }
   console.log(`  ${chalk.green("✓")} Model: ${chalk.bold(config.model ?? info.defaultModel)}\n`);

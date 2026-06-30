@@ -217,6 +217,8 @@ export async function startRepl(resumeId?: string): Promise<void> {
     let rawLine: string;
     try {
       rawLine = await rl.question(chalk.cyan.bold("resolv > "));
+      process.stdout.write("\x1b[1A");
+      process.stdout.write("\x1b[2K\r");
     } catch {
       break;
     }
@@ -248,13 +250,26 @@ export async function startRepl(resumeId?: string): Promise<void> {
         }
 
         case "/provider":
-          await runProviderCommand(args, rl);
-          await reactivateProvider();
+          try {
+            await runProviderCommand(args, rl);
+            await reactivateProvider();
+          } catch (err) {
+            console.error(chalk.red(`\n  [DEBUG] Error in /provider: ${err}\n`));
+            rl.resume();
+          }
           break;
 
         case "/model":
-          await runModelCommand(args, rl);
-          await reactivateProvider();
+          try {
+            console.error(chalk.dim("\n  [DEBUG] Running model command..."));
+            await runModelCommand(args, rl);
+            console.error(chalk.dim("  [DEBUG] Model command finished. Reactivating provider..."));
+            await reactivateProvider();
+            console.error(chalk.dim("  [DEBUG] Provider reactivated. Continuing loop."));
+          } catch (err) {
+            console.error(chalk.red(`\n  [DEBUG] Error in /model: ${err}\n`));
+            rl.resume();
+          }
           break;
 
         case "/dna": {
@@ -355,7 +370,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
         events,
         model: config.model,
       });
-      process.stdout.write("\n\n");
+      // process.stdout.write("\n\n"); // Removed to stop redundant echo
 
       // Auto-save every 5 user turns
       const userMsgCount = session.getHistory().filter((m) => m.role === "user").length;

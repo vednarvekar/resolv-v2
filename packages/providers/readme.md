@@ -7,7 +7,7 @@ LLM provider adapters. Each adapter translates between resolv's internal `Messag
 1. Create `packages/providers/<name>/<name>-provider.ts`
 2. Implement the `Provider` interface from `provider.ts`
 3. Register it in `register.ts`
-4. Add it to `PROVIDER_INFO` in `config/config.ts`
+4. Add stable provider metadata to `PROVIDER_INFO` in `config/config.ts`
 
 ## Provider interface
 
@@ -15,15 +15,29 @@ LLM provider adapters. Each adapter translates between resolv's internal `Messag
 interface Provider {
   readonly name: string;
   readonly defaultModel: string;
+  healthCheck?(model?: string): Promise<void>;
+  listModels?(): Promise<string[]>;
   chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse>;
   embed(texts: string[], model?: string): Promise<number[][]>;
 }
 ```
 
-## Recent behavior change
+## Model discovery
 
-- The OpenAI-compatible provider adapters now keep the request alive while streaming response chunks arrive.
-- This means slow but active streaming responses from OpenRouter, Grok, NIM, and OpenAI are less likely to fail due to a fixed timeout.
+Providers should implement `listModels()` when the upstream API or local runtime exposes a catalog. The CLI uses that for `/model`, `/provider`, and setup. If discovery fails, the CLI asks for a manual model name instead of showing a hardcoded list.
+
+Current discovery paths:
+
+| Provider family | Source |
+|-----------------|--------|
+| OpenAI, Grok, OpenRouter, NIM | OpenAI-compatible `/models` response |
+| Anthropic | Anthropic SDK Models API |
+| Google Gemini | Google Generative Language models endpoint |
+| Ollama | Local `/api/tags` |
+
+## Streaming behavior
+
+The OpenAI-compatible provider adapters keep the request alive while streaming response chunks arrive. Slow but active streaming responses from OpenRouter, Grok, NIM, and OpenAI are less likely to fail due to a fixed timeout.
 
 `embed` is optional in practice — providers that don't support it should throw `EmbeddingsNotSupportedError`, which the semantic search code catches and handles by falling back to keyword matching.
 
@@ -35,6 +49,7 @@ interface Provider {
 | `google/gemini-provider.ts` | Google Gemini via `@google/generative-ai` |
 | `nim/nim-provider.ts` | NVIDIA NIM (OpenAI-compatible endpoint) |
 | `ollama/ollama_provider.ts` | Ollama local LLM (streaming, OpenAI-compatible) |
+| `openai-compat/base-provider.ts` | Shared OpenAI-compatible chat, health, and model listing |
 | `provider.ts` | The `Provider` interface + `EmbeddingsNotSupportedError` |
 | `register.ts` | Factory: builds a provider from config or env vars |
 
