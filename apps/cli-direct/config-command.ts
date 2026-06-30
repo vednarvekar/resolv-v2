@@ -1,7 +1,7 @@
 // apps/cli-direct/config-command.ts
 // Prints a clean summary of the current resolv configuration.
 
-import type readline from "node:readline/promises";
+import inquirer from "inquirer";
 import chalk from "chalk";
 import {
   loadConfig,
@@ -48,6 +48,7 @@ export function runConfigCommand(): void {
   console.log(`  ${chalk.cyan("GitHub:")}    ${ghStatus}`);
   console.log(`  ${chalk.cyan("Tests:")}     ${chalk.dim(config.testCommand)}`);
   console.log(`  ${chalk.cyan("Max retries:")} ${chalk.dim(String(config.maxHealAttempts))}`);
+  console.log(`  ${chalk.cyan("Tool rounds:")} ${chalk.dim(String(config.maxToolCallRounds))}`);
   console.log("");
 
   if (!isConfigured(config)) {
@@ -58,24 +59,31 @@ export function runConfigCommand(): void {
   console.log("");
 }
 
-async function chooseSetting(rl: readline.Interface): Promise<string> {
+async function chooseSetting(): Promise<string> {
   console.log("");
-  console.log(`  ${chalk.cyan("1.")} API key for active provider`);
-  console.log(`  ${chalk.cyan("2.")} GitHub token`);
-  console.log(`  ${chalk.cyan("3.")} Test command`);
-  console.log(`  ${chalk.cyan("4.")} Maximum retry count`);
-  return rl.question(chalk.hex("#7c3aed")("  Select [1-4]: "));
+  const { choice } = await inquirer.prompt([
+    {
+      type: "select",
+      name: "choice",
+      message: "Select a setting to change:",
+      choices: [
+        { name: "API key for active provider", value: "1" },
+        { name: "GitHub token", value: "2" },
+        { name: "Test command", value: "3" },
+        { name: "Maximum retry count", value: "4" },
+        { name: "Maximum tool-call rounds", value: "5" },
+      ],
+    },
+  ]);
+  return choice;
 }
 
-export async function runConfigChangeCommand(
-  args: string,
-  rl: readline.Interface
-): Promise<ConfigChangeResult> {
+export async function runConfigChangeCommand(args: string): Promise<ConfigChangeResult> {
   const config = loadConfig();
   const info = PROVIDER_INFO[config.provider]!;
   let setting = args.trim().toLowerCase();
 
-  if (!setting || setting === "change" || setting === "chnage") setting = await chooseSetting(rl);
+  if (!setting || setting === "change" || setting === "chnage") setting = await chooseSetting();
   const providerCredentialsChanged = setting === "key" || setting === "api-key" || setting === "1";
 
   if (providerCredentialsChanged) {
@@ -84,14 +92,21 @@ export async function runConfigChangeCommand(
       return { providerCredentialsChanged: false };
     }
 
-    const key = (await rl.question(chalk.hex("#7c3aed")(`  New ${info.keyLabel}: `))).trim();
-    if (key.length <= 10) {
-      console.log(chalk.red("  Key looks too short; configuration was not changed.\n"));
-      return { providerCredentialsChanged: false };
+    while (true) {
+      const { key } = await inquirer.prompt([{
+        type: "password",
+        name: "key",
+        message: `  New ${info.keyLabel}:`,
+        mask: "*",
+      }]);
+      if (key.trim().length > 10) {
+        config.apiKeys[config.provider] = key.trim();
+        saveConfig(config);
+        console.log(chalk.green(`  ✓ ${info.keyLabel} updated (ends in ${key.trim().slice(-4)}).`));
+        break;
+      }
+      console.log(chalk.red("  Key looks too short — try again."));
     }
-    config.apiKeys[config.provider] = key;
-    saveConfig(config);
-    console.log(chalk.green(`  ✓ ${info.keyLabel} updated (ends in ${key.slice(-4)}).`));
     if (info.keyEnv && process.env[info.keyEnv]) {
       console.log(chalk.yellow(
         `  Warning: ${info.keyEnv} is set and overrides the saved key. Update or remove it from your environment or .env.`
@@ -102,10 +117,14 @@ export async function runConfigChangeCommand(
   }
 
   if (setting === "github" || setting === "github-token" || setting === "2") {
-    const token = (await rl.question(chalk.hex("#7c3aed")("  New GitHub token (leave blank to remove): "))).trim();
-    config.githubToken = token || undefined;
+    const { token } = await inquirer.prompt([{
+      type: "input",
+      name: "token",
+      message: "  New GitHub token (leave blank to remove):",
+    }]);
+    config.githubToken = token.trim() || undefined;
     saveConfig(config);
-    console.log(chalk.green(`  ✓ GitHub token ${token ? `updated (ends in ${token.slice(-4)})` : "removed"}.\n`));
+    console.log(chalk.green(`  ✓ GitHub token ${token.trim() ? `updated (ends in ${token.trim().slice(-4)})` : "removed"}.\n`));
     if (process.env.GITHUB_TOKEN) {
       console.log(chalk.yellow("  Warning: GITHUB_TOKEN overrides the saved value. Update or remove it from your environment or .env.\n"));
     }
@@ -113,16 +132,25 @@ export async function runConfigChangeCommand(
   }
 
   if (setting === "test" || setting === "test-command" || setting === "3") {
-    const command = (await rl.question(chalk.hex("#7c3aed")(`  Test command [${config.testCommand}]: `))).trim();
-    if (command) config.testCommand = command;
+    const { command } = await inquirer.prompt([{
+      type: "input",
+      name: "command",
+      message: `  Test command [${config.testCommand}]:`,
+    }]);
+    if (command.trim()) config.testCommand = command.trim();
     saveConfig(config);
     console.log(chalk.green(`  ✓ Test command: ${config.testCommand}\n`));
     return { providerCredentialsChanged: false };
   }
 
   if (setting === "retries" || setting === "max-retries" || setting === "4") {
-    const answer = await rl.question(chalk.hex("#7c3aed")(`  Maximum retries [${config.maxHealAttempts}]: `));
+    const { answer } = await inquirer.prompt([{
+      type: "input",
+      name: "answer",
+      message: `  Maximum retries [${config.maxHealAttempts}]:`,
+    }]);
     const retries = Number.parseInt(answer.trim(), 10);
+    if (!answer.trim()) return { providerCredentialsChanged: false };
     if (!Number.isInteger(retries) || retries < 1 || retries > 20) {
       console.log(chalk.red("  Enter a whole number from 1 to 20; configuration was not changed.\n"));
       return { providerCredentialsChanged: false };
@@ -133,6 +161,24 @@ export async function runConfigChangeCommand(
     return { providerCredentialsChanged: false };
   }
 
-  console.log(chalk.red("  Unknown setting. Use /config change, key, github, test, or retries.\n"));
+  if (setting === "tool-rounds" || setting === "max-tool-rounds" || setting === "5") {
+    const { answer } = await inquirer.prompt([{
+      type: "input",
+      name: "answer",
+      message: `  Maximum tool-call rounds [${config.maxToolCallRounds}]:`,
+    }]);
+    const rounds = Number.parseInt(answer.trim(), 10);
+    if (!answer.trim()) return { providerCredentialsChanged: false };
+    if (!Number.isInteger(rounds) || rounds < 1 || rounds > 100) {
+      console.log(chalk.red("  Enter a whole number from 1 to 100; configuration was not changed.\n"));
+      return { providerCredentialsChanged: false };
+    }
+    config.maxToolCallRounds = rounds;
+    saveConfig(config);
+    console.log(chalk.green(`  ✓ Maximum tool-call rounds: ${rounds}\n`));
+    return { providerCredentialsChanged: false };
+  }
+
+  console.log(chalk.red("  Unknown setting. Use /config change, key, github, test, retries, or tool-rounds.\n"));
   return { providerCredentialsChanged: false };
 }

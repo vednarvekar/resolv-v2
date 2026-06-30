@@ -37,9 +37,9 @@ export async function runDnaCommand(options: DnaCommandOptions): Promise<void> {
   console.log(`  ${chalk.cyan("Helpers:")}       ${dna.helpers.length} cross-file utilities`);
   console.log(`  ${chalk.cyan("Dependencies:")}  ${dna.dependencies.length}`);
   console.log("");
-  console.log(`  ${chalk.cyan("Naming:")}        ${dna.dominantNaming}`);
-  console.log(`  ${chalk.cyan("Async style:")}   ${dna.dominantAsyncStyle}`);
-  console.log(`  ${chalk.cyan("Error style:")}   ${dna.dominantErrorStyle}`);
+  console.log(`  ${chalk.cyan("Naming:")}        ${dna.dominantNaming} ${chalk.dim(`(${Math.round(dna.namingConfidence * 100)}%)`)}`);
+  console.log(`  ${chalk.cyan("Async style:")}   ${dna.dominantAsyncStyle} ${chalk.dim(`(${Math.round(dna.asyncConfidence * 100)}%)`)}`);
+  console.log(`  ${chalk.cyan("Error style:")}   ${dna.dominantErrorStyle} ${chalk.dim(`(${Math.round(dna.errorConfidence * 100)}%)`)}`);
   console.log("");
 
   if (dna.helpers.length > 0) {

@@ -1,7 +1,10 @@
 // Core conversational agent loop.
-// - System prompt sent ONCE (first turn only). Provider APIs maintain their own
-//   conversation memory server-side; resending the system prompt every turn
-//   wastes tokens and can cause context drift.
+// - The system prompt is rebuilt and sent on every turn. The Anthropic,
+//   OpenAI-compatible, and Gemini APIs used here are all stateless per
+//   request — none of them remember a system prompt from a previous call.
+//   Omitting it after turn 1 silently drops all operating rules and
+//   tool-use guidance for the rest of the conversation. It's a small
+//   string (a few hundred tokens), so resending it is cheap insurance.
 // - Emits AgentEvents for the TUI to render without coupling to it.
 // - Tool-call round-trips continue until the model produces plain text or the cap is hit.
 
@@ -22,6 +25,8 @@ export interface AgentLoopOptions {
   maxToolCallRounds?: number;
   temperature?: number;
   maxTokens?: number;
+  /** Cap on conversation history sent per request, to bound token usage on long sessions. */
+  maxHistoryMessages?: number;
 }
 
 export interface AgentTurnResult {
@@ -31,20 +36,17 @@ export interface AgentTurnResult {
 }
 
 const DEFAULT_MAX_ROUNDS = 12;
+const DEFAULT_MAX_HISTORY_MESSAGES = 60;
 
 export async function runAgentTurn(userMessage: string, options: AgentLoopOptions): Promise<AgentTurnResult> {
   const { provider, tools, session, events } = options;
   const maxRounds = options.maxToolCallRounds ?? DEFAULT_MAX_ROUNDS;
+  const maxHistory = options.maxHistoryMessages ?? DEFAULT_MAX_HISTORY_MESSAGES;
 
   session.addMessage(Msg.user(userMessage));
 
-  // System prompt: only build and send on the first turn.
-  // After that, the provider's conversation history already includes it.
-  const systemPrompt = session.isFirstTurn()
-    ? buildSystemPrompt(tools.list(), session.getContext())
-    : undefined;
-
-  session.markFirstTurnDone();
+  // Built fresh every turn — see note above on why this can't be sent once.
+  const systemPrompt = buildSystemPrompt(tools.list(), session.getContext());
 
   let rounds = 0;
   let finalText = "";
@@ -52,6 +54,12 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
   while (true) {
     let streamedText = false;
     let response;
+
+    // Bound how much history we resend each call. Keeps token usage (and
+    // cost/latency) from growing unboundedly over a long session — older
+    // turns are dropped from the wire payload, not from the saved session
+    // file, so /resume still has the full history.
+    session.truncateHistory(maxHistory);
 
     try {
       events?.emit({ type: "model_start", providerName: provider.name });
@@ -76,22 +84,41 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
       return { responseText: finalText, toolCallRounds: rounds, hitRoundLimit: false };
     }
 
-    session.addMessage(response.message);
-
     const textBlocks = response.message.content.filter((b) => b.type === "text");
     const toolUseBlocks = response.message.content.filter(
       (b): b is ToolUseContentBlock => b.type === "tool_use"
     );
 
+    // Some models — especially small ones not reliably fine-tuned for tool
+    // calling — return an empty or whitespace-only response when handed a
+    // full tool schema. If that happens, don't silently store an empty
+    // message: several provider APIs reject empty content arrays on the
+    // *next* request, which would corrupt the rest of the session. Replace
+    // it with a visible placeholder so (a) you actually see something
+    // happened and (b) the session stays valid.
+    const hasRealContent =
+      toolUseBlocks.length > 0 || textBlocks.some((b) => b.text.trim().length > 0);
+
+    if (!hasRealContent) {
+      const reason = response.stopReason ? ` (stop reason: ${response.stopReason})` : "";
+      const placeholder = `[No response content received from the model${reason}. Small models often don't support tool calling reliably — try a larger model, or check /provider.]`;
+      response.message.content = [{ type: "text", text: placeholder }];
+    }
+
+    session.addMessage(response.message);
+
     // Emit any text that wasn't already streamed
     if (!streamedText) {
-      for (const block of textBlocks) {
-        if (block.text) events?.emit({ type: "text_delta", text: block.text });
+      for (const block of response.message.content) {
+        if (block.type === "text" && block.text) events?.emit({ type: "text_delta", text: block.text });
       }
     }
 
     if (toolUseBlocks.length === 0) {
-      finalText = textBlocks.map((b) => b.text).join("\n");
+      finalText = response.message.content
+        .filter((b): b is { type: "text"; text: string } => b.type === "text")
+        .map((b) => b.text)
+        .join("\n");
       events?.emit({ type: "turn_end", stopReason: response.stopReason });
       break;
     }

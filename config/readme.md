@@ -24,6 +24,7 @@ interface ResolvConfig {
   githubToken?: string;
   testCommand: string;      // default: "npm test"
   maxHealAttempts: number;  // default: 4
+  maxToolCallRounds: number; // default: 24
 }
 ```
 

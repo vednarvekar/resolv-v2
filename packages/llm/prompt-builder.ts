@@ -99,10 +99,10 @@ ${filesToShow.join("\n") || "(none matched — inspect repo structure)"}
 FILE CONTENTS (use this exact text for SEARCH blocks):
 ${sourceContext}
 
-REPO STYLE:
-- Naming: ${dna.dominantNaming}
-- Async: ${dna.dominantAsyncStyle}
-- Error handling: ${dna.dominantErrorStyle}
+REPO STYLE (confidence = how much of the repo actually follows this — below 70% means it's not a strict convention, use judgment rather than forcing it):
+- Naming: ${dna.dominantNaming} (${Math.round(dna.namingConfidence * 100)}% confidence)
+- Async: ${dna.dominantAsyncStyle} (${Math.round(dna.asyncConfidence * 100)}% confidence)
+- Error handling: ${dna.dominantErrorStyle} (${Math.round(dna.errorConfidence * 100)}% confidence)
 - Shared helpers (prefer reusing these): ${topHelpers || "(none detected)"}
 
 PLAN:
@@ -110,7 +110,7 @@ ${plan.steps.map((s) => `${s.order}. ${s.action}`).join("\n")}
 
 RULES:
 - Reuse existing helpers above — do not reimplement them.
-- Match naming (${dna.dominantNaming}), error (${dna.dominantErrorStyle}), async (${dna.dominantAsyncStyle}) styles exactly.
+- Match the repo's naming, error handling, and async styles where confidence is high (≥70%). Where confidence is low, follow the convention already used in the specific file(s) you're editing instead of the repo-wide average.
 - No new external dependencies.
 - Minimal changes — only what the fix requires.
 

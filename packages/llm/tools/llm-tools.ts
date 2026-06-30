@@ -173,13 +173,14 @@ export function createLLMTools(repoRoot: string): ToolDefinition[] {
       async execute() {
         const dna = await extractDNA(repoRoot);
         const topHelpers = dna.helpers.slice(0, 8).map((h) => `${h.name} (${h.usages}x)`).join(", ");
+        const pct = (c: number) => `${Math.round(c * 100)}%`;
         const output = [
           `Files: ${dna.files.length}`,
           `Functions: ${dna.functions.length} (avg ${dna.functionStats.avgFunctionSize} lines, ${dna.functionStats.asyncPercentage}% async)`,
           `Helpers: ${dna.helpers.length} cross-file utilities`,
-          `Naming: ${dna.dominantNaming}`,
-          `Async style: ${dna.dominantAsyncStyle}`,
-          `Error style: ${dna.dominantErrorStyle}`,
+          `Naming: ${dna.dominantNaming} (${pct(dna.namingConfidence)} of names — ${dna.namingConfidence < 0.7 ? "not a strict convention, mixed styles exist" : "consistent convention"})`,
+          `Async style: ${dna.dominantAsyncStyle} (${pct(dna.asyncConfidence)} of files)`,
+          `Error style: ${dna.dominantErrorStyle} (${pct(dna.errorConfidence)} of files)`,
           `Top helpers: ${topHelpers || "(none)"}`,
           `Architecture: routes=${dna.architecture.routes.length} services=${dna.architecture.services.length} repos=${dna.architecture.repositories.length}`,
         ].join("\n");

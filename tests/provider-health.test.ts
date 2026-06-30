@@ -9,6 +9,7 @@ const jsonResponse = (body: unknown, status = 200) =>
   });
 
 const mockFetchOk = (body: unknown) => vi.fn().mockResolvedValue(jsonResponse(body));
+const maxToolCallRounds = 24;
 
 describe("provider registration and health checks", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -27,6 +28,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { openai: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("openai");
@@ -41,6 +43,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { grok: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("grok");
@@ -55,6 +58,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { nim: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("nim");
@@ -72,6 +76,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { openrouter: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("openrouter");
@@ -85,6 +90,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { anthropic: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("anthropic");
@@ -98,6 +104,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { google: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("google");
@@ -116,6 +123,7 @@ describe("provider registration and health checks", () => {
       apiKeys: { google: "test-key" },
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     });
 
     await expect(provider.listModels?.()).resolves.toEqual(["gemini-2.5-flash"]);
@@ -130,6 +138,7 @@ describe("provider registration and health checks", () => {
       apiKeys: {},
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     });
 
     await expect(provider.listModels?.()).resolves.toEqual(["deepseek-r1:8b", "qwen3.5:4b"]);
@@ -141,6 +150,7 @@ describe("provider registration and health checks", () => {
       apiKeys: {},
       testCommand: "npm test",
       maxHealAttempts: 4,
+      maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
     expect(provider.name).toBe("ollama");

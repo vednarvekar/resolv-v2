@@ -15,6 +15,7 @@ export interface ResolvConfig {
   githubToken?: string;
   testCommand: string;
   maxHealAttempts: number;
+  maxToolCallRounds: number;
 }
 
 export interface AppConfig {
@@ -22,6 +23,7 @@ export interface AppConfig {
   model?: string;
   testCommand: string;
   maxHealAttempts: number;
+  maxToolCallRounds: number;
 }
 
 const CONFIG_DIR = path.join(os.homedir(), ".config", "resolv");
@@ -32,6 +34,7 @@ const DEFAULTS: ResolvConfig = {
   apiKeys: {},
   testCommand: "npm test",
   maxHealAttempts: 4,
+  maxToolCallRounds: 24,
 };
 
 export const PROVIDER_INFO: Record<ProviderName, {
@@ -118,6 +121,10 @@ export function loadConfig(): ResolvConfig {
   if (process.env.RESOLV_PROVIDER) merged.provider = process.env.RESOLV_PROVIDER as ProviderName;
   if (process.env.RESOLV_MODEL) merged.model = process.env.RESOLV_MODEL;
   if (process.env.GITHUB_TOKEN) merged.githubToken = process.env.GITHUB_TOKEN;
+  if (process.env.RESOLV_MAX_TOOL_CALL_ROUNDS) {
+    const rounds = Number.parseInt(process.env.RESOLV_MAX_TOOL_CALL_ROUNDS, 10);
+    if (Number.isFinite(rounds) && rounds > 0) merged.maxToolCallRounds = rounds;
+  }
 
   return merged;
 }
@@ -148,5 +155,6 @@ export function loadAppConfig(): AppConfig {
     model: c.model,
     testCommand: c.testCommand,
     maxHealAttempts: c.maxHealAttempts,
+    maxToolCallRounds: c.maxToolCallRounds,
   };
 }

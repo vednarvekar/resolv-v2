@@ -2,8 +2,7 @@
 // /provider and /model commands — let users switch providers and models
 // from inside the REPL without editing env files.
 
-import * as readline from "node:readline/promises";
-import * as nodeReadline from "node:readline";
+import inquirer from "inquirer";
 import chalk from "chalk";
 import { createProviderFromEnv } from "../../packages/providers/register.js";
 import type { Provider } from "../../packages/providers/provider.js";
@@ -17,164 +16,79 @@ import {
 
 const PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama", "grok", "openai", "openrouter"];
 
-function moveCursorUp(lines: number): void {
-  if (lines > 0) process.stdout.write(`\x1b[${lines}A`);
-}
-
-function clearLine(): void {
-  process.stdout.write("\x1b[2K");
-}
-
 async function selectFromList<T extends string>(
   items: T[],
   label: (item: T) => string,
-  promptLabel = "Select",
-  rl?: readline.Interface
+  promptLabel = "Select"
 ): Promise<T> {
-  if (!rl) throw new Error("Interactive selection requires readline interface.");
-
-  const rlInput = (rl as any).input;
-  rl.pause();
-  rlInput.setRawMode(true);
-  rlInput.resume();
-
-  let selected = 0;
-  let pageStart = 0;
-  const pageSize = Math.min(12, items.length);
-  let renderedLines = 0;
-
-  const draw = () => {
-    if (renderedLines > 0) {
-      moveCursorUp(renderedLines);
-      // Clear all lines
-      for (let i = 0; i < renderedLines; i++) {
-        process.stdout.write("\x1b[2K\n");
-      }
-      moveCursorUp(renderedLines);
+  const { choice } = await inquirer.prompt([
+    {
+      type: 'select',
+      name: 'choice',
+      message: promptLabel,
+      choices: items.map(item => ({ name: label(item), value: item })),
     }
-
-    const pageEnd = Math.min(items.length, pageStart + pageSize);
-    const lines: string[] = [];
-    lines.push(chalk.dim(`  ${promptLabel} ${pageStart + 1}-${pageEnd} of ${items.length}. Use ↑/↓ and Enter.`));
-    for (let index = pageStart; index < pageEnd; index++) {
-      const prefix = index === selected ? chalk.hex("#7c3aed").white(" > ") : "   ";
-      const labelText = label(items[index]!);
-      const line = index === selected
-        ? `${prefix}${chalk.hex("#7c3aed").white(labelText)}`
-        : `${prefix}${chalk.white(labelText)}`;
-      lines.push(line);
-    }
-    lines.push(chalk.dim("  Esc to cancel."));
-    
-    process.stdout.write(lines.map((line) => `\x1b[2K${line}`).join("\n") + "\n");
-    renderedLines = lines.length;
-  };
-
-  return new Promise((resolve, reject) => {
-    const onKey = (_: any, key: { name?: string, ctrl?: boolean, meta?: boolean, shift?: boolean }) => {
-      if (key.ctrl && key.name === 'c') {
-        cleanup();
-        reject(new Error("Selection cancelled."));
-        return;
-      }
-      if (key.name === 'escape') {
-        cleanup();
-        reject(new Error("Selection cancelled."));
-        return;
-      }
-      if (key.name === 'return') {
-        cleanup();
-        resolve(items[selected]!);
-        return;
-      }
-      if (key.name === 'up' && selected > 0) selected -= 1;
-      if (key.name === 'down' && selected < items.length - 1) selected += 1;
-      if (selected < pageStart) pageStart = selected;
-      if (selected >= pageStart + pageSize) pageStart = selected - pageSize + 1;
-      draw();
-    };
-
-    const cleanup = () => {
-      rlInput.removeListener("keypress", onKey);
-      rlInput.setRawMode(false);
-      rl.resume();
-      if (renderedLines > 0) {
-        moveCursorUp(renderedLines);
-        for (let i = 0; i < renderedLines; i++) {
-          process.stdout.write("\x1b[2K\n");
-        }
-        moveCursorUp(renderedLines);
-      }
-    };
-
-    nodeReadline.emitKeypressEvents(rlInput);
-    rlInput.on("keypress", onKey);
-    draw();
-  });
+  ]);
+  return choice;
 }
 
+const modelCache = new Map<string, string[]>();
+
 async function tryFetchModelList(config: ResolvConfig): Promise<string[] | undefined> {
+  const cacheKey = `${config.provider}:${JSON.stringify(config.apiKeys[config.provider] ?? "")}`;
+  if (modelCache.has(cacheKey)) {
+    return modelCache.get(cacheKey);
+  }
+
+  const provider = createProviderFromEnv(config);
+  if (typeof provider.listModels !== "function") {
+    return undefined;
+  }
+
   let lastError = "";
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const provider = createProviderFromEnv(config);
-
-      if (typeof provider.listModels !== "function") {
-        return undefined;
-      }
-
       const models = await provider.listModels();
 
       if (models.length > 0) {
+        modelCache.set(cacheKey, models);
         return models;
       }
     } catch (err) {
       lastError = err instanceof Error ? err.message : String(err);
 
       if (attempt < 3) {
-        console.log(
-          chalk.yellow(
-            `  Failed to fetch models (attempt ${attempt}/3). Retrying...`
-          )
-        );
-
-        await new Promise((r) =>
-          setTimeout(r, 1000 * attempt)
-        );
+        console.log(chalk.yellow(`  Couldn't reach provider. Retrying... (${attempt}/3)`));
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
       }
     }
   }
 
-  console.log(
-    chalk.yellow(
-      `  Could not fetch provider model list: ${lastError}`
-    )
-  );
-
+  console.log(chalk.yellow(`  Could not fetch provider model list: ${lastError}`));
   return undefined;
 }
 
 async function chooseModel(
-  rl: readline.Interface,
   info: typeof PROVIDER_INFO[keyof typeof PROVIDER_INFO],
   config: ResolvConfig
 ): Promise<string> {
   const remoteModels = await tryFetchModelList(config);
   if (remoteModels?.length) {
     console.log(chalk.dim("\n  Fetched available models from provider. Use the arrow keys to select one."));
-    const model = await selectFromList(remoteModels, (m) => m, "Choose model:", rl);
-    return model;
+    return await selectFromList(remoteModels, (m) => m, "Choose model:");
   }
 
   console.log(chalk.yellow("  Could not fetch models interactively. Please enter model name manually."));
-  const custom = await rl.question(chalk.hex("#7c3aed")(`  Enter model name [${info.defaultModel}]: `))
-  process.stdout.write("\x1b[1A");
-  process.stdout.write("\x1b[2K\r");;
+  const { custom } = await inquirer.prompt([{
+    type: 'input',
+    name: 'custom',
+    message: `  Enter model name [${info.defaultModel}]: `,
+  }]);
   return custom.trim() || info.defaultModel;
 }
 
-export async function runProviderCommand(args: string, rl: readline.Interface): Promise<void> {
+export async function runProviderCommand(args: string): Promise<void> {
   const config = loadConfig();
   const targetProvider = args.trim() as ProviderName | "";
 
@@ -187,7 +101,7 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
     provider = await selectFromList(PROVIDERS, (name) => {
       const info = PROVIDER_INFO[name]!;
       return `${info.label} ${chalk.dim(info.description)}`;
-    }, "Choose provider:", rl);
+    }, "Choose provider:");
   }
 
   const info = PROVIDER_INFO[provider]!;
@@ -199,9 +113,12 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
   if (provider !== "ollama" && !config.apiKeys[provider]) {
     console.log(chalk.dim(`\n  ${info.description}`));
     while (true) {
-      const key = await rl.question(chalk.hex("#7c3aed")(`  Enter ${info.keyLabel}: `));
-      process.stdout.write("\x1b[1A");
-      process.stdout.write("\x1b[2K\r");
+      const { key } = await inquirer.prompt([{
+        type: 'password',
+        name: 'key',
+        message: `  Enter ${info.keyLabel}: `,
+        mask: '*',
+      }]);
       if (key.trim().length > 10) {
         config.apiKeys[provider] = key.trim();
         saveConfig(config);
@@ -212,21 +129,27 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
     }
   } else if (provider !== "ollama") {
     const existing = config.apiKeys[provider]!;
-    const update = await rl.question(
-      chalk.dim(`  Key already set (ends in ${existing.slice(-4)}). Update? (y/N): `)
-    );
-    if (update.trim().toLowerCase() === "y") {
+    const { update } = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'update',
+      message: `  Key already set (ends in ${existing.slice(-4)}). Update?`,
+      default: false,
+    }]);
+
+    if (update) {
       while (true) {
-        const key = await rl.question(chalk.hex("#7c3aed")(`  New ${info.keyLabel}: `));
-        process.stdout.write("\x1b[1A");
-        process.stdout.write("\x1b[2K\r");
-        process.stdout.write("\x1b[1A");
-        process.stdout.write("\x1b[2K\r");
+        const { key } = await inquirer.prompt([{
+          type: 'password',
+          name: 'key',
+          message: `  New ${info.keyLabel}: `,
+          mask: '*',
+        }]);
         if (key.trim().length > 10) { 
           config.apiKeys[provider] = key.trim();
           saveConfig(config);
           console.log(chalk.green("  ✓ API key saved.")); 
-          break; }
+          break; 
+        }
         console.log(chalk.red("  Key looks too short."));
       }
     }
@@ -234,7 +157,7 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
 
   // Model selection
   console.log("\n  Select model:\n");
-  const model = await chooseModel(rl, info, config);
+  const model = await chooseModel(info, config);
   config.model = model;
 
   saveConfig(config as ResolvConfig);
@@ -252,7 +175,7 @@ export async function runProviderCommand(args: string, rl: readline.Interface): 
   console.log(chalk.dim("  Config saved.\n"));
 }
 
-export async function runModelCommand(args: string, rl: readline.Interface): Promise<void> {
+export async function runModelCommand(args: string): Promise<void> {
   const config = loadConfig();
   const info = PROVIDER_INFO[config.provider]!;
 
@@ -270,7 +193,7 @@ export async function runModelCommand(args: string, rl: readline.Interface): Pro
   }
 
   console.log(`\n  Provider: ${chalk.bold(info.label)} — pick a model:\n`);
-  const model = await chooseModel(rl, info, config);
+  const model = await chooseModel(info, config);
   config.model = model;
   saveConfig(config as ResolvConfig);
   console.log(`\n  ${chalk.green("✓")} Model set to ${chalk.bold(model)}\n`);

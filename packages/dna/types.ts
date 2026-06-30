@@ -91,10 +91,16 @@ export interface DNAProfile {
   // architecture layer classification (file paths only)
   architecture: ArchitectureInfo;
  
-  // dominant style per file — just the dominant label, no raw counts
+  // dominant style per file — label plus how dominant it actually is (0-1).
+  // A repo with a 55/45 split and one with a 95/5 split both used to collapse
+  // to the same single label; the LLM had no way to tell a real convention
+  // from a coin-flip, which is part of why fixes ignored real mixed style.
   dominantNaming: NamingStyle;
+  namingConfidence: number;
   dominantAsyncStyle: "async-await" | "promise-chain" | "callbacks" | "mixed";
+  asyncConfidence: number;
   dominantErrorStyle: "try-catch" | "promise-catch" | "result-type" | "callback-err" | "none";
+  errorConfidence: number;
  
   // third-party deps with usage counts
   dependencies: DependencyInfo[];

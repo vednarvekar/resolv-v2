@@ -6,13 +6,12 @@ import { stdin as input, stdout as output } from "node:process";
 import path from "node:path";
 import fs from "node:fs";
 import chalk from "chalk";
-import ora from "ora";
 
 import { SLASH_COMMANDS, completeCommand } from "../tui/slash-commands/registry.js";
 import { runConfigChangeCommand, runConfigCommand } from "./config-command.js";
 import { runDnaCommand } from "./dna-command.js";
 import { runProviderCommand, runModelCommand } from "./provider-command.js";
-import { loadConfig, isConfigured, PROVIDER_INFO } from "../../config/config.js";
+import { loadAppConfig, loadConfig, isConfigured, PROVIDER_INFO } from "../../config/config.js";
 import { createProviderFromEnv } from "../../packages/providers/register.js";
 import { printBanner } from "../tui/setup-wizard.js";
 import { AgentSession } from "../../packages/orchestrator-agent/session.js";
@@ -20,6 +19,7 @@ import { runLLMChatTurn } from "../../packages/llm/llm-calls.js";
 import { createLLMTools } from "../../packages/llm/tools/llm-tools.js";
 import { ToolRegistry } from "../../packages/orchestrator-agent/tool-registry.js";
 import { AgentEventBus } from "../../packages/core/events.js";
+import { AgentLoopLimitError } from "../../packages/core/errors.js";
 import {
   saveSession,
   loadSession,
@@ -31,9 +31,9 @@ function printWelcome(provider: string, model: string, sessionId: string) {
   console.log("");
   console.log(chalk.bgHex("#7c3aed").white.bold("  Welcome to resolv  "));
   console.log(chalk.dim("  " + "─".repeat(62)));
-  console.log(`  ${chalk.white("Provider:")} ${chalk.bold(provider)}`);
-  console.log(`  ${chalk.white("Model:   ")} ${chalk.bold(model)}`);
-  console.log(`  ${chalk.white("Session: ")} ${chalk.cyan(sessionId)}`);
+  console.log(`  ${chalk.bold("Provider:")} ${chalk.bold(provider)}`);
+  console.log(`  ${chalk.bold("Model:   ")} ${chalk.bold(model)}`);
+  console.log(`  ${chalk.bold("Session: ")} ${chalk.cyan(sessionId)}`);
   const overrides: string[] = [];
   if (process.env.RESOLV_PROVIDER) overrides.push("RESOLV_PROVIDER");
   if (process.env.RESOLV_MODEL) overrides.push("RESOLV_MODEL");
@@ -75,6 +75,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   let activeModel = config.model ?? providerInfo.defaultModel;
   let provider = createProviderFromEnv(config);
   let providerConnected = true;
+  let appConfig = loadAppConfig();
 
   // Health check
   try {
@@ -114,57 +115,67 @@ export async function startRepl(resumeId?: string): Promise<void> {
   toolRegistry.registerAll(createLLMTools(process.cwd()));
 
   const events = new AgentEventBus();
-  let thinking: ReturnType<typeof ora> | undefined;
   let responseStarted = false;
+  let responseEndsWithNewline = true;
 
-  const stopThinking = () => {
-    if (thinking) { thinking.stop(); thinking = undefined; }
+  const writeProgress = (message: string) => {
+    process.stdout.write(`${chalk.magenta("•")} ${message}\n`);
+  };
+
+  const outputPreview = (value: string, maxLength = 400) => {
+    const trimmed = value.trim();
+    if (trimmed.length <= maxLength) return trimmed;
+    return `${trimmed.slice(0, maxLength).trimEnd()}\n... output truncated`;
   };
 
   const beginResponse = () => {
     if (!responseStarted) {
       responseStarted = true;
-      process.stdout.write(chalk.dim("\n  ── LLM response ───────────────────────────────────────────────\n"));
+      responseEndsWithNewline = true;
+      process.stdout.write(chalk.dim("\n── LLM response ───────────────────────────────────────────────\n"));
     }
   };
 
   events.on((event) => {
     switch (event.type) {
       case "model_start":
-        stopThinking();
         responseStarted = false;
-        thinking = ora({ text: "Thinking...", color: "magenta", spinner: "dots" }).start();
+        responseEndsWithNewline = true;
+        writeProgress(chalk.dim("Thinking..."));
         break;
       case "text_delta":
-        stopThinking();
         beginResponse();
-        process.stdout.write(chalk.white(event.text));
+        process.stdout.write(event.text);
+        responseEndsWithNewline = event.text.endsWith("\n");
         break;
       case "tool_call_start":
-        stopThinking();
+        if (responseStarted && !responseEndsWithNewline) process.stdout.write("\n");
         responseStarted = false;
-        process.stdout.write(chalk.dim("\n  ─────────────────────────────────────────────────────\n"));
-        process.stdout.write(chalk.cyan.bold(`  ▶ Running tool: ${event.toolName}\n`));
+        responseEndsWithNewline = true;
+        writeProgress(`${chalk.cyan("Running tool:")} ${chalk.bold(event.toolName)}`);
         break;
       case "tool_call_end": {
         const status = event.isError ? chalk.red("✗") : chalk.green("✓");
-        process.stdout.write(chalk.dim("  ─────────────────────────────────────────────────────\n"));
-        process.stdout.write(`  ${status} ${chalk.bold(event.toolName)}\n`);
-        const output = event.output.trim();
-        if (output) {
-          process.stdout.write(chalk.dim("    Output:\n"));
-          process.stdout.write(chalk.dim(output.split("\n").map((line) => `      ${line}`).join("\n")) + "\n");
+        process.stdout.write(`${status} ${chalk.bold(event.toolName)}\n`);
+        const output = outputPreview(event.output);
+        if (event.isError && output) {
+          process.stdout.write(output.split("\n").map((line) => `  ${line}`).join("\n") + "\n");
         }
         responseStarted = false;
+        responseEndsWithNewline = true;
         break;
       }
       case "error":
-        stopThinking();
         responseStarted = false;
-        process.stdout.write(chalk.red(`\n  Error: ${event.message}\n`));
+        responseEndsWithNewline = true;
+        process.stdout.write(chalk.red(`\nError: ${event.message}\n`));
         break;
       case "turn_end":
-        stopThinking();
+        if (responseStarted && !responseEndsWithNewline) {
+          process.stdout.write("\n");
+          responseEndsWithNewline = true;
+        }
+        process.stdout.write("\n");
         break;
     }
   });
@@ -201,6 +212,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
       const nextProvider = createProviderFromEnv(nextConfig);
       await nextProvider.healthCheck?.(nextModel);
       config = nextConfig;
+      appConfig = loadAppConfig();
       providerInfo = nextInfo;
       activeModel = nextModel;
       provider = nextProvider;
@@ -217,8 +229,6 @@ export async function startRepl(resumeId?: string): Promise<void> {
     let rawLine: string;
     try {
       rawLine = await rl.question(chalk.cyan.bold("resolv > "));
-      process.stdout.write("\x1b[1A");
-      process.stdout.write("\x1b[2K\r");
     } catch {
       break;
     }
@@ -238,36 +248,47 @@ export async function startRepl(resumeId?: string): Promise<void> {
           if (!args) {
             runConfigCommand();
           } else {
-            const result = await runConfigChangeCommand(args, rl);
-            if (result.providerCredentialsChanged) await reactivateProvider();
+            try {
+              rl.pause();
+              const result = await runConfigChangeCommand(args);
+              if (result.providerCredentialsChanged) await reactivateProvider();
+            } finally {
+              rl.resume();
+            }
           }
           break;
 
         case "/config-change": {
-          const result = await runConfigChangeCommand("change", rl);
-          if (result.providerCredentialsChanged) await reactivateProvider();
+          try {
+            rl.pause();
+            const result = await runConfigChangeCommand("change");
+            if (result.providerCredentialsChanged) await reactivateProvider();
+          } finally {
+            rl.resume();
+          }
           break;
         }
 
         case "/provider":
           try {
-            await runProviderCommand(args, rl);
+            rl.pause();
+            await runProviderCommand(args);
             await reactivateProvider();
           } catch (err) {
-            console.error(chalk.red(`\n  [DEBUG] Error in /provider: ${err}\n`));
+            console.error(chalk.red(`\n  Error in /provider: ${err}\n`));
+          } finally {
             rl.resume();
           }
           break;
 
         case "/model":
           try {
-            console.error(chalk.dim("\n  [DEBUG] Running model command..."));
-            await runModelCommand(args, rl);
-            console.error(chalk.dim("  [DEBUG] Model command finished. Reactivating provider..."));
+            rl.pause();
+            await runModelCommand(args);
             await reactivateProvider();
-            console.error(chalk.dim("  [DEBUG] Provider reactivated. Continuing loop."));
           } catch (err) {
-            console.error(chalk.red(`\n  [DEBUG] Error in /model: ${err}\n`));
+            console.error(chalk.red(`\n  Error in /model: ${err}\n`));
+          } finally {
             rl.resume();
           }
           break;
@@ -290,7 +311,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
             for (const s of sessions.slice(0, 10)) {
               const active = s.id === sessionId ? chalk.green(" ← current") : "";
               const when = new Date(s.updatedAt).toLocaleString();
-              console.log(`  ${chalk.cyan(s.id)}  ${chalk.white(s.title.slice(0, 40).padEnd(40))}  ${chalk.dim(when)}${active}`);
+              console.log(`  ${chalk.cyan(s.id)}  ${s.title.slice(0, 40).padEnd(40)}  ${chalk.dim(when)}${active}`);
             }
             console.log(chalk.dim("\n  Use /resume <id> to restore a session.\n"));
           }
@@ -363,14 +384,19 @@ export async function startRepl(resumeId?: string): Promise<void> {
 
     try {
       process.stdout.write("\n");
-      await runLLMChatTurn(line, {
-        provider,
-        tools: toolRegistry,
-        session,
-        events,
-        model: config.model,
-      });
-      // process.stdout.write("\n\n"); // Removed to stop redundant echo
+      rl.pause();
+      try {
+        await runLLMChatTurn(line, {
+          provider,
+          tools: toolRegistry,
+          session,
+          events,
+          model: config.model,
+          maxToolCallRounds: appConfig.maxToolCallRounds,
+        });
+      } finally {
+        rl.resume();
+      }
 
       // Auto-save every 5 user turns
       const userMsgCount = session.getHistory().filter((m) => m.role === "user").length;
@@ -378,6 +404,11 @@ export async function startRepl(resumeId?: string): Promise<void> {
         saveSession(sessionId, [...session.getHistory()], config.provider, activeModel, process.cwd());
       }
     } catch (err) {
+      if (err instanceof AgentLoopLimitError) {
+        console.log(chalk.yellow(`Limit reached after ${appConfig.maxToolCallRounds} tool calls in one turn.`));
+        console.log(chalk.yellow("The provider is still connected. Continue in the same session with a narrower follow-up if needed.\n"));
+        continue;
+      }
       providerConnected = false;
       console.log(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
       console.log(chalk.dim("  Please check /provider or /model before retrying.\n"));

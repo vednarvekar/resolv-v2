@@ -1,8 +1,11 @@
 // apps/tui/setup-wizard.ts
 // Interactive first-run setup wizard with all providers.
+// Uses inquirer for ALL interactive input (consistent with the rest of the
+// app) — never mix inquirer with a raw readline.Interface or hand-rolled
+// stdin listeners in the same process; that's what was causing the broken
+// styling and hangs.
 
-import readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
+import inquirer from "inquirer";
 import chalk from "chalk";
 import {
   type ProviderName,
@@ -16,72 +19,24 @@ import { createProviderFromConfig } from "../../packages/providers/register.js";
 
 const PROVIDERS: ProviderName[] = ["anthropic", "openai", "google", "grok", "openrouter", "nim", "ollama"];
 
-const clearLine = () => process.stdout.write("\r\x1b[K");
-const moveCursor = (n: number) => process.stdout.write(`\x1b[${Math.abs(n)}${n < 0 ? "A" : "B"}`);
-const hideCursor = () => process.stdout.write("\x1b[?25l");
-const showCursor = () => process.stdout.write("\x1b[?25h");
-
-function drawMenu<T extends string>(
-  items: T[],
-  selected: number,
-  labelFn: (item: T) => string,
-  dimFn?: (item: T) => string
-) {
-  for (let i = 0; i < items.length; i++) {
-    clearLine();
-    const label = labelFn(items[i]!);
-    const dim = dimFn?.(items[i]!) ?? "";
-    if (i === selected) {
-      process.stdout.write(`  ${chalk.hex("#7c3aed").white.bold(` ❯ ${label} `)}  ${chalk.dim(dim)}\n`);
-    } else {
-      process.stdout.write(`    ${chalk.white(label)}  ${chalk.dim(dim)}\n`);
-    }
-  }
-}
-
 async function selectFromList<T extends string>(
   items: T[],
   labelFn: (item: T) => string,
-  dimFn?: (item: T) => string
+  dimFn?: (item: T) => string,
+  message = "Select:"
 ): Promise<T> {
-  if (!process.stdin.isTTY) throw new Error("Interactive setup requires a TTY.");
-
-  hideCursor();
-  let selected = 0;
-  drawMenu(items, selected, labelFn, dimFn);
-
-  return new Promise((resolve, reject) => {
-    const cleanup = () => {
-      showCursor();
-      process.stdin.setRawMode(false);
-      process.stdin.removeListener("data", onKey);
-      process.stdin.pause();
-    };
-
-    const onKey = (key: Buffer) => {
-      const str = key.toString();
-      if (str.includes("\u0003")) { cleanup(); reject(new Error("Setup cancelled.")); return; }
-
-      const up = (str.match(/\x1b\[A/g) ?? []).length;
-      const down = (str.match(/\x1b\[B/g) ?? []).length;
-      const next = Math.max(0, Math.min(items.length - 1, selected - up + down));
-
-      if (next !== selected) {
-        moveCursor(-items.length);
-        selected = next;
-        drawMenu(items, selected, labelFn, dimFn);
-      }
-
-      if (str.includes("\r") || str.includes("\n")) {
-        cleanup();
-        resolve(items[selected]!);
-      }
-    };
-
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.on("data", onKey);
-  });
+  const { choice } = await inquirer.prompt([
+    {
+      type: "select",
+      name: "choice",
+      message,
+      choices: items.map((item) => ({
+        name: dimFn ? `${labelFn(item)}  ${chalk.dim(dimFn(item))}` : labelFn(item),
+        value: item,
+      })),
+    },
+  ]);
+  return choice;
 }
 
 async function selectModelName(info: {
@@ -100,12 +55,14 @@ async function selectModelName(info: {
 
   if (models?.length) {
     console.log(chalk.dim("  Fetched available models from provider. Use the arrow keys to select one."));
-    return await selectFromList(models, (m) => m);
+    return await selectFromList(models, (m) => m, undefined, "Choose model:");
   }
 
-  const rl = readline.createInterface({ input, output });
-  const custom = await rl.question(chalk.hex("#7c3aed")(`  Enter model name [${info.defaultModel}]: `));
-  rl.close();
+  const { custom } = await inquirer.prompt([{
+    type: "input",
+    name: "custom",
+    message: `  Enter model name [${info.defaultModel}]:`,
+  }]);
   return custom.trim() || info.defaultModel;
 }
 
@@ -150,7 +107,8 @@ export async function runSetupWizard(): Promise<void> {
   const selected = await selectFromList(
     PROVIDERS,
     (p) => PROVIDER_INFO[p]!.label,
-    (p) => PROVIDER_INFO[p]!.description
+    (p) => PROVIDER_INFO[p]!.description,
+    "Choose provider:"
   );
 
   config.provider = selected;
@@ -167,14 +125,17 @@ export async function runSetupWizard(): Promise<void> {
     if (existingKey) {
       console.log(`  ${chalk.green("✓")} API key already saved (ends in ${existingKey.slice(-4)})`);
     } else {
-      const rl = readline.createInterface({ input, output });
       console.log(chalk.dim(`  ${info.description}`));
       while (true) {
-        const key = await rl.question(chalk.hex("#7c3aed")(`  Enter ${info.keyLabel}: `));
+        const { key } = await inquirer.prompt([{
+          type: "password",
+          name: "key",
+          message: `  Enter ${info.keyLabel}:`,
+          mask: "*",
+        }]);
         if (key.trim().length > 10) { config.apiKeys[selected] = key.trim(); break; }
         console.log(chalk.red("  Key too short — try again."));
       }
-      rl.close();
       saveConfig(config as ResolvConfig);
     }
   }
@@ -189,14 +150,22 @@ export async function runSetupWizard(): Promise<void> {
 
   // GitHub token (optional)
   if (!config.githubToken) {
-    const rl = readline.createInterface({ input, output });
-    const addGh = await rl.question(chalk.dim("  Add GitHub token for PR creation? (y/N): "));
-    if (addGh.trim().toLowerCase() === "y") {
+    const { addGh } = await inquirer.prompt([{
+      type: "confirm",
+      name: "addGh",
+      message: "  Add GitHub token for PR creation?",
+      default: false,
+    }]);
+    if (addGh) {
       console.log(chalk.dim("  github.com/settings/tokens → New token → repo scope"));
-      const token = await rl.question(chalk.hex("#7c3aed")("  GitHub Token: "));
+      const { token } = await inquirer.prompt([{
+        type: "password",
+        name: "token",
+        message: "  GitHub Token:",
+        mask: "*",
+      }]);
       if (token.trim()) { config.githubToken = token.trim(); saveConfig(config as ResolvConfig); }
     }
-    rl.close();
   } else {
     console.log(`  ${chalk.green("✓")} GitHub token already saved`);
   }
