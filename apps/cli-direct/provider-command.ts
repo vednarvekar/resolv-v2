@@ -1,108 +1,19 @@
-// apps/cli-direct/provider-command.ts
+import chalk from "chalk";
 // /provider and /model commands — let users switch providers and models
 // from inside the REPL without editing env files.
 
 import inquirer from "inquirer";
-import chalk from "chalk";
-import { createProviderFromEnv } from "../../packages/providers/register.js";
-import type { Provider } from "../../packages/providers/provider.js";
 import {
-  type ProviderName,
   type ResolvConfig,
   PROVIDER_INFO,
   loadConfig,
   saveConfig,
 } from "../../config/config.js";
-
-const PROVIDERS: ProviderName[] = ["anthropic", "google", "nim", "ollama", "grok", "openai", "openrouter"];
-
-async function selectFromList<T extends string>(
-  items: T[],
-  label: (item: T) => string,
-  promptLabel = "Select"
-): Promise<T> {
-  const { choice } = await inquirer.prompt([
-    {
-      type: 'select',
-      name: 'choice',
-      message: promptLabel,
-      choices: items.map(item => ({ name: label(item), value: item })),
-    }
-  ]);
-  return choice;
-}
-
-const modelCache = new Map<string, string[]>();
-
-async function tryFetchModelList(config: ResolvConfig): Promise<string[] | undefined> {
-  const cacheKey = `${config.provider}:${JSON.stringify(config.apiKeys[config.provider] ?? "")}`;
-  if (modelCache.has(cacheKey)) {
-    return modelCache.get(cacheKey);
-  }
-
-  const provider = createProviderFromEnv(config);
-  if (typeof provider.listModels !== "function") {
-    return undefined;
-  }
-
-  let lastError = "";
-
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      const models = await provider.listModels();
-
-      if (models.length > 0) {
-        modelCache.set(cacheKey, models);
-        return models;
-      }
-    } catch (err) {
-      lastError = err instanceof Error ? err.message : String(err);
-
-      if (attempt < 3) {
-        console.log(chalk.yellow(`  Couldn't reach provider. Retrying... (${attempt}/3)`));
-        await new Promise((r) => setTimeout(r, 1000 * attempt));
-      }
-    }
-  }
-
-  console.log(chalk.yellow(`  Could not fetch provider model list: ${lastError}`));
-  return undefined;
-}
-
-async function chooseModel(
-  info: typeof PROVIDER_INFO[keyof typeof PROVIDER_INFO],
-  config: ResolvConfig
-): Promise<string> {
-  const remoteModels = await tryFetchModelList(config);
-  if (remoteModels?.length) {
-    console.log(chalk.dim("\n  Fetched available models from provider. Use the arrow keys to select one."));
-    return await selectFromList(remoteModels, (m) => m, "Choose model:");
-  }
-
-  console.log(chalk.yellow("  Could not fetch models interactively. Please enter model name manually."));
-  const { custom } = await inquirer.prompt([{
-    type: 'input',
-    name: 'custom',
-    message: `  Enter model name [${info.defaultModel}]: `,
-  }]);
-  return custom.trim() || info.defaultModel;
-}
+import { chooseModelName, chooseProvider } from "./provider-workflow.js";
 
 export async function runProviderCommand(args: string): Promise<void> {
   const config = loadConfig();
-  const targetProvider = args.trim() as ProviderName | "";
-
-  let provider: ProviderName;
-
-  if (targetProvider && PROVIDERS.includes(targetProvider as ProviderName)) {
-    provider = targetProvider as ProviderName;
-  } else {
-    console.log("\n  Select provider:\n");
-    provider = await selectFromList(PROVIDERS, (name) => {
-      const info = PROVIDER_INFO[name]!;
-      return `${info.label} ${chalk.dim(info.description)}`;
-    }, "Choose provider:");
-  }
+  const provider = await chooseProvider(args);
 
   const info = PROVIDER_INFO[provider]!;
   console.log(`\n  ${chalk.green("✓")} ${chalk.bold(info.label)}`);
@@ -134,7 +45,7 @@ export async function runProviderCommand(args: string): Promise<void> {
       name: 'update',
       message: `  Key already set (ends in ${existing.slice(-4)}). Update?`,
       default: false,
-    }]);
+      }]);
 
     if (update) {
       while (true) {
@@ -157,7 +68,7 @@ export async function runProviderCommand(args: string): Promise<void> {
 
   // Model selection
   console.log("\n  Select model:\n");
-  const model = await chooseModel(info, config);
+  const model = await chooseModelName(info, config);
   config.model = model;
 
   saveConfig(config as ResolvConfig);
