@@ -7,6 +7,7 @@ import {
   type Schema,
 } from "@google/generative-ai";
 
+import { ProviderError } from "../../core/errors.js";
 import type { ContentBlock, JSONSchemaProperty, Message, ProviderResponse, ToolDefinition } from "../../core/types.js";
 
 const DEFAULT_EMBEDDING_MODEL = "text-embedding-004";
@@ -87,7 +88,7 @@ export function fromGeminiResponse(response: {
   };
 }): ProviderResponse {
   const candidate = response.candidates?.[0];
-  if (!candidate) throw new Error("Gemini response contained no candidates");
+  if (!candidate) throw new ProviderError("Gemini response contained no candidates", "google");
 
   const content: ContentBlock[] = [];
   let callIndex = 0;

@@ -4,6 +4,7 @@ import { AgentEventBus } from "../../packages/core/events.js";
 
 const RESPONSE_INDENT = "  ";
 const THINKING_FRAMES = ["·", "⋅", "•", "⋅"];
+const MIN_RESPONSE_WIDTH = 24;
 const PATH_TOKEN_RE =
   /(?<![A-Za-z0-9_])(?:\.{1,2}\/)?(?:[A-Za-z0-9_.-]+\/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9]+(?::\d+(?::\d+)?)?/g;
 
@@ -70,6 +71,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
   let responseEndsWithNewline = true;
   let responseLineStart = true;
   let responseLineHasContent = false;
+  let responseLineColumns = 0;
   let responseInCodeBlock = false;
   let thinkingTimer: ReturnType<typeof setInterval> | undefined;
   let thinkingFrame = 0;
@@ -107,6 +109,46 @@ export function attachReplTranscript(events: AgentEventBus): void {
     }, 250);
   };
 
+  const responseTextWidth = () => Math.max(MIN_RESPONSE_WIDTH, (process.stdout.columns ?? 100) - RESPONSE_INDENT.length);
+
+  const writeResponseSegment = (segment: string, formatter: (value: string) => string) => {
+    let remaining = segment;
+    while (remaining.length > 0) {
+      if (responseLineStart) {
+        process.stdout.write(RESPONSE_INDENT);
+        responseLineStart = false;
+      }
+
+      const available = responseTextWidth() - responseLineColumns;
+      if (available <= 0) {
+        process.stdout.write("\n");
+        responseLineStart = true;
+        responseLineColumns = 0;
+        remaining = remaining.replace(/^ /, "");
+        continue;
+      }
+
+      if (remaining.length <= available) {
+        process.stdout.write(formatter(remaining));
+        responseLineColumns += remaining.length;
+        responseLineHasContent = true;
+        break;
+      }
+
+      const window = remaining.slice(0, available + 1);
+      const whitespaceIndex = Math.max(window.lastIndexOf(" "), window.lastIndexOf("\t"));
+      const wrapAt = whitespaceIndex > 0 ? whitespaceIndex : available;
+      const chunk = remaining.slice(0, wrapAt);
+      process.stdout.write(formatter(chunk));
+      responseLineColumns += chunk.length;
+      responseLineHasContent = true;
+      process.stdout.write("\n");
+      responseLineStart = true;
+      responseLineColumns = 0;
+      remaining = remaining.slice(wrapAt).replace(/^[ \t]/, "");
+    }
+  };
+
   const writeResponseText = (text: string) => {
     const segments = text.split(/(\n)/);
     for (const segment of segments) {
@@ -119,21 +161,17 @@ export function attachReplTranscript(events: AgentEventBus): void {
         }
         responseLineStart = true;
         responseLineHasContent = false;
+        responseLineColumns = 0;
         continue;
       }
       if (segment.trimStart().startsWith("```")) {
-        if (responseLineStart) process.stdout.write(RESPONSE_INDENT);
-        process.stdout.write(chalk.magenta(segment));
+        writeResponseSegment(segment, chalk.magenta);
         responseInCodeBlock = !responseInCodeBlock;
       } else if (responseInCodeBlock) {
-        if (responseLineStart) process.stdout.write(RESPONSE_INDENT);
-        process.stdout.write(chalk.cyan(segment));
+        writeResponseSegment(segment, chalk.cyan);
       } else {
-        if (responseLineStart) process.stdout.write(RESPONSE_INDENT);
-        process.stdout.write(formatAssistantSegment(segment));
+        writeResponseSegment(segment, formatAssistantSegment);
       }
-      responseLineStart = false;
-      responseLineHasContent = true;
     }
   };
 
@@ -149,6 +187,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
       responseEndsWithNewline = true;
       responseLineStart = true;
       responseLineHasContent = false;
+      responseLineColumns = 0;
       responseInCodeBlock = false;
       clearThinking();
       process.stdout.write(chalk.hex("#7c3aed").bold("\n── LLM response ───────────────────────────────────────────────\n"));
@@ -178,6 +217,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
         responseEndsWithNewline = true;
         responseLineStart = true;
         responseLineHasContent = false;
+        responseLineColumns = 0;
         responseInCodeBlock = false;
         writeInsight(describeToolCall(event.toolName, event.input));
         break;
@@ -191,6 +231,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
         responseStarted = false;
         responseEndsWithNewline = true;
         responseLineStart = true;
+        responseLineColumns = 0;
         break;
       }
       case "error":
@@ -199,6 +240,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
         responseEndsWithNewline = true;
         responseLineStart = true;
         responseLineHasContent = false;
+        responseLineColumns = 0;
         responseInCodeBlock = false;
         process.stdout.write(chalk.red(`\nError: ${event.message}\n`));
         break;
@@ -210,6 +252,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
         }
         responseLineStart = true;
         responseLineHasContent = false;
+        responseLineColumns = 0;
         responseInCodeBlock = false;
         process.stdout.write("\n");
         break;

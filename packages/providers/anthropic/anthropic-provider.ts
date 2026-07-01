@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { ProviderError } from "../../core/errors.js";
-import type { ProviderChatOptions } from "../../core/types.js";
+import type { ProviderChatOptions, ProviderResponse } from "../../core/types.js";
 import { EmbeddingsNotSupportedError, type Provider } from "../provider.js";
 import { fromAnthropicResponse, toAnthropicMessages, toAnthropicTools } from "./anthropic-wire.js";
 

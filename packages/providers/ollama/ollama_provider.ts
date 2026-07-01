@@ -6,6 +6,7 @@ import {
     OLLAMA_DEFAULT_EMBEDDING_MODEL,
     OLLAMA_DEFAULT_MODEL,
     ollamaFetch,
+    type OllamaChatResponse,
     type OllamaStreamChunk,
     toOllamaMessage,
     toOllamaTools,
@@ -125,7 +126,7 @@ export class OllamaProvider implements Provider {
         buffer += decoder.decode();
         if (buffer.trim()) consumeLine(buffer);
 
-        const raw = {
+        const raw: OllamaChatResponse = {
             choices: [{
                 message: {
                     role: "assistant",

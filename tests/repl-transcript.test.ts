@@ -59,4 +59,37 @@ describe("repl transcript rendering", () => {
     expect(output).toContain("  hello\n  \n  world");
     expect(output).not.toContain("  hello\n\nworld");
   });
+
+  it("keeps assistant indentation on terminal-wrapped lines", async () => {
+    const columns = Object.getOwnPropertyDescriptor(process.stdout, "columns");
+    Object.defineProperty(process.stdout, "columns", { configurable: true, value: 26 });
+
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+
+      events.emit({ type: "model_start", providerName: "test-provider" });
+      events.emit({ type: "text_delta", text: "alpha beta gamma delta epsilon zeta" });
+      events.emit({ type: "turn_end", stopReason: "end_turn" });
+    } finally {
+      writeSpy.mockRestore();
+      if (columns) {
+        Object.defineProperty(process.stdout, "columns", columns);
+      } else {
+        delete (process.stdout as { columns?: number }).columns;
+      }
+    }
+
+    const output = stripAnsi(writes.join(""));
+    expect(output).toContain("  alpha beta gamma delta\n  epsilon zeta");
+    expect(output).not.toContain("  alpha beta gamma delta\nepsilon zeta");
+  });
 });

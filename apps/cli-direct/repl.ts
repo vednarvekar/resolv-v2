@@ -11,10 +11,11 @@ import { AgentLoopLimitError } from "../../packages/core/errors.js";
 import { isTransientProviderError } from "../../packages/providers/retry.js";
 import { attachReplTranscript } from "./repl-transcript.js";
 import { runLLMChatTurn } from "../../packages/llm/llm-calls.js";
-import { printBanner, printWelcome } from "../tui/setup-wizard.js";
+import { printBanner } from "../tui/setup-wizard.js";
 import { handleSlashCommand } from "./repl-commands.js";
 import { createReplState } from "./repl-state.js";
 import { ensureProviderConnected, persistCurrentSession, saveSessionIfNeeded } from "./repl-session.js";
+import { printWelcome } from "./repl-ui.js";
 
 export async function startRepl(resumeId?: string): Promise<void> {
   const state = await createReplState(resumeId);

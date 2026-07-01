@@ -104,7 +104,7 @@ export async function runModelCommand(args: string): Promise<void> {
   }
 
   console.log(`\n  Provider: ${chalk.bold(info.label)} — pick a model:\n`);
-  const model = await chooseModel(info, config);
+  const model = await chooseModelName(info, config);
   config.model = model;
   saveConfig(config as ResolvConfig);
   console.log(`\n  ${chalk.green("✓")} Model set to ${chalk.bold(model)}\n`);
