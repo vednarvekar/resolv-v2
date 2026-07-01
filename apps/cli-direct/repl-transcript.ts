@@ -226,7 +226,9 @@ export function attachReplTranscript(events: AgentEventBus): void {
         process.stdout.write(chalk.dim(`${RESPONSE_INDENT}${status} ${event.toolName}\n`));
         const output = outputPreview(event.output);
         if (event.isError && output) {
-          process.stdout.write(output.split("\n").map((line) => `  ${line}`).join("\n") + "\n");
+          process.stdout.write(`${output.split("\n").map((line) => `  ${line}`).join("\n")}\n\n`);
+        } else {
+          process.stdout.write("\n");
         }
         responseStarted = false;
         responseEndsWithNewline = true;

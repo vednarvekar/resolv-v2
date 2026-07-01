@@ -212,7 +212,11 @@ export abstract class OpenAICompatProvider implements Provider {
         if (!trimmed || trimmed === "data: [DONE]") return;
         const payload = trimmed.startsWith("data:") ? trimmed.slice(5).trimStart() : trimmed;
         let chunk: OAIStreamChunk;
-        try { chunk = JSON.parse(payload) as OAIStreamChunk; } catch { return; }
+        try {
+          chunk = JSON.parse(payload) as OAIStreamChunk;
+        } catch {
+          return;
+        }
 
         if (chunk.usage) usage = chunk.usage;
         const choice = chunk.choices?.[0];

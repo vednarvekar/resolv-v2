@@ -8,12 +8,18 @@ function stripAnsi(text: string): string {
 
 describe("repl transcript rendering", () => {
   const originalForceColor = process.env.FORCE_COLOR;
+  const originalColumns = Object.getOwnPropertyDescriptor(process.stdout, "columns");
 
   afterEach(() => {
     if (originalForceColor === undefined) {
       delete process.env.FORCE_COLOR;
     } else {
       process.env.FORCE_COLOR = originalForceColor;
+    }
+    if (originalColumns) {
+      Object.defineProperty(process.stdout, "columns", originalColumns);
+    } else {
+      delete (process.stdout as { columns?: number }).columns;
     }
     vi.resetModules();
   });
@@ -56,12 +62,12 @@ describe("repl transcript rendering", () => {
     const output = stripAnsi(writes.join(""));
     expect(output).toContain("retry 1/3: fetch failed");
     expect(output).toContain("reading repl.ts");
+    expect(output).toContain("  ✓ read_file\n\n");
     expect(output).toContain("  hello\n  \n  world");
     expect(output).not.toContain("  hello\n\nworld");
   });
 
   it("keeps assistant indentation on terminal-wrapped lines", async () => {
-    const columns = Object.getOwnPropertyDescriptor(process.stdout, "columns");
     Object.defineProperty(process.stdout, "columns", { configurable: true, value: 26 });
 
     const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
@@ -81,15 +87,63 @@ describe("repl transcript rendering", () => {
       events.emit({ type: "turn_end", stopReason: "end_turn" });
     } finally {
       writeSpy.mockRestore();
-      if (columns) {
-        Object.defineProperty(process.stdout, "columns", columns);
-      } else {
-        delete (process.stdout as { columns?: number }).columns;
-      }
     }
 
     const output = stripAnsi(writes.join(""));
     expect(output).toContain("  alpha beta gamma delta\n  epsilon zeta");
     expect(output).not.toContain("  alpha beta gamma delta\nepsilon zeta");
+  });
+
+  it("adds spacing after successful tools and indents error output lines", async () => {
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+
+      events.emit({ type: "tool_call_start", toolName: "scan_repo_dna", toolUseId: "1", input: {} });
+      events.emit({ type: "tool_call_end", toolName: "scan_repo_dna", toolUseId: "1", output: "ok", isError: false });
+      events.emit({ type: "tool_call_start", toolName: "run_tests", toolUseId: "2", input: { command: "npm test" } });
+      events.emit({ type: "tool_call_end", toolName: "run_tests", toolUseId: "2", output: "line one\nline two", isError: true });
+    } finally {
+      writeSpy.mockRestore();
+    }
+
+    const output = stripAnsi(writes.join(""));
+    expect(output).toContain("  scanning repo\n  ✓ scan_repo_dna\n\n  tests: \"npm test\"");
+    expect(output).toContain("  ✗ run_tests\n  line one\n  line two\n\n");
+  });
+
+  it("keeps code block lines indented while streaming across multiple deltas", async () => {
+    Object.defineProperty(process.stdout, "columns", { configurable: true, value: 28 });
+
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+
+      events.emit({ type: "model_start", providerName: "test-provider" });
+      events.emit({ type: "text_delta", text: "```ts\nconst value = \"alpha beta gamma delta\";\n" });
+      events.emit({ type: "text_delta", text: "```\nDone" });
+      events.emit({ type: "turn_end", stopReason: "end_turn" });
+    } finally {
+      writeSpy.mockRestore();
+    }
+
+    const output = stripAnsi(writes.join(""));
+    expect(output).toContain("  ```ts\n  const value = \"alpha beta\n  gamma delta\";\n  ```\n  Done");
   });
 });

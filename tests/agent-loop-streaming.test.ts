@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { AgentEventBus } from "../packages/core/events.js";
+import { AgentLoopLimitError } from "../packages/core/errors.js";
 import type { AgentEvent, Message, ProviderResponse } from "../packages/core/types.js";
 import { runAgentTurn } from "../packages/orchestrator-agent/agent-loop.js";
 import { AgentSession } from "../packages/orchestrator-agent/session.js";
@@ -189,5 +190,189 @@ describe("agent response streaming", () => {
       text: result.responseText,
     }]);
     expect(seen.find((event) => event.type === "text_delta")?.text).toContain("[No response content received from the model");
+  });
+
+  it("returns an error tool result when the model asks for an unknown tool", async () => {
+    const providerMessages: Message[][] = [];
+
+    const result = await runAgentTurn("call missing tool", {
+      provider: {
+        name: "missing-tool-test",
+        defaultModel: "test",
+        embed: async () => [],
+        chat: async (options) => {
+          providerMessages.push(options.messages);
+          if (providerMessages.length === 1) {
+            return {
+              message: {
+                role: "assistant",
+                content: [{
+                  type: "tool_use",
+                  id: "missing-1",
+                  name: "missing_tool",
+                  input: {},
+                }],
+              },
+              stopReason: "tool_use",
+            };
+          }
+
+          return response("recovered");
+        },
+      },
+      session: new AgentSession(),
+      tools: new ToolRegistry(),
+    });
+
+    expect(result.responseText).toBe("recovered");
+    expect(providerMessages[1]).toContainEqual({
+      role: "tool",
+      content: [{
+        type: "tool_result",
+        toolUseId: "missing-1",
+        content: 'No tool named "missing_tool" is registered.',
+        isError: true,
+      }],
+    });
+  });
+
+  it("captures thrown tool errors as tool results without crashing the turn", async () => {
+    const providerMessages: Message[][] = [];
+    const tools = new ToolRegistry();
+    tools.register({
+      name: "explode",
+      description: "Throw an error",
+      inputSchema: { type: "object", properties: {} },
+      execute: async () => {
+        throw new Error("boom");
+      },
+    });
+
+    const result = await runAgentTurn("call broken tool", {
+      provider: {
+        name: "tool-error-test",
+        defaultModel: "test",
+        embed: async () => [],
+        chat: async (options) => {
+          providerMessages.push(options.messages);
+          if (providerMessages.length === 1) {
+            return {
+              message: {
+                role: "assistant",
+                content: [{
+                  type: "tool_use",
+                  id: "explode-1",
+                  name: "explode",
+                  input: {},
+                }],
+              },
+              stopReason: "tool_use",
+            };
+          }
+
+          return response("handled");
+        },
+      },
+      session: new AgentSession(),
+      tools,
+    });
+
+    expect(result.responseText).toBe("handled");
+    expect(providerMessages[1]).toContainEqual({
+      role: "tool",
+      content: [{
+        type: "tool_result",
+        toolUseId: "explode-1",
+        content: "Tool threw: boom",
+        isError: true,
+      }],
+    });
+  });
+
+  it("throws a round-limit error before executing more tool calls than allowed", async () => {
+    const tools = new ToolRegistry();
+    let executions = 0;
+    tools.register({
+      name: "again",
+      description: "Ask again",
+      inputSchema: { type: "object", properties: {} },
+      execute: async () => {
+        executions++;
+        return { output: "again", isError: false };
+      },
+    });
+
+    const session = new AgentSession();
+    const events = new AgentEventBus();
+    const seen: AgentEvent[] = [];
+    events.on((event) => seen.push(event));
+
+    await expect(runAgentTurn("loop", {
+      provider: {
+        name: "limit-test",
+        defaultModel: "test",
+        embed: async () => [],
+        chat: async () => ({
+          message: {
+            role: "assistant",
+            content: [{
+              type: "tool_use",
+              id: `again-${executions}`,
+              name: "again",
+              input: {},
+            }],
+          },
+          stopReason: "tool_use",
+        }),
+      },
+      events,
+      session,
+      tools,
+      maxToolCallRounds: 1,
+    })).rejects.toBeInstanceOf(AgentLoopLimitError);
+
+    expect(executions).toBe(1);
+    expect(session.getHistory().at(-1)).toEqual({
+      role: "assistant",
+      content: [{
+        type: "text",
+        text: "Stopped after 1 tool-call rounds. Tell me how to proceed.",
+      }],
+    });
+    expect(seen.at(-1)).toEqual({ type: "turn_end", stopReason: "max_tokens" });
+  });
+
+  it("only sends the configured amount of recent history to the provider", async () => {
+    const session = new AgentSession();
+    session.restoreHistory([
+      { role: "user", content: [{ type: "text", text: "old-1" }] },
+      { role: "assistant", content: [{ type: "text", text: "old-2" }] },
+      { role: "user", content: [{ type: "text", text: "old-3" }] },
+    ]);
+
+    const providerMessages: Message[][] = [];
+    await runAgentTurn("fresh", {
+      provider: {
+        name: "history-test",
+        defaultModel: "test",
+        embed: async () => [],
+        chat: async (options) => {
+          providerMessages.push(options.messages);
+          return response("ok");
+        },
+      },
+      session,
+      tools: new ToolRegistry(),
+      maxHistoryMessages: 2,
+    });
+
+    const firstProviderCall = providerMessages[0];
+    expect(firstProviderCall).toBeDefined();
+
+    expect(firstProviderCall!.map((message) => {
+      const block = message.content[0];
+      if (!block) return "empty";
+      return block.type === "text" ? block.text : block.type;
+    })).toEqual(["old-3", "fresh"]);
   });
 });

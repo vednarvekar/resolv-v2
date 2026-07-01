@@ -12,7 +12,10 @@ const isScreaming = (s: string) => /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)+$/.test(s);
  * pollute the count.
  */
 export function analyzeNaming(project: Project): NamingStats {
-  let camel = 0, snake = 0, pascal = 0, screaming = 0;
+  let camel = 0;
+  let snake = 0;
+  let pascal = 0;
+  let screaming = 0;
 
   for (const sourceFile of project.getSourceFiles()) {
     const filePath = sourceFile.getFilePath();
@@ -20,10 +23,26 @@ export function analyzeNaming(project: Project): NamingStats {
 
     for (const idNode of sourceFile.getDescendantsOfKind(SyntaxKind.Identifier)) {
       const name = idNode.getText();
-      if (isScreaming(name)) { screaming++; continue; }
-      if (isPascal(name)) { pascal++; continue; }
-      if (isSnake(name)) { snake++; continue; }
-      if (isCamel(name)) { camel++; continue; }
+
+      if (isScreaming(name)) {
+        screaming++;
+        continue;
+      }
+
+      if (isPascal(name)) {
+        pascal++;
+        continue;
+      }
+
+      if (isSnake(name)) {
+        snake++;
+        continue;
+      }
+
+      if (isCamel(name)) {
+        camel++;
+        continue;
+      }
     }
   }
 

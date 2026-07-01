@@ -33,14 +33,23 @@ function readGitignorePatterns(repoRoot: string): string[] {
  *  Returns both the label and how dominant it is, since a 55/45 split and a
  *  95/5 split are very different signals for "should I match this style strictly." */
 function detectNamingStyle(names: string[]): { style: NamingStyle; confidence: number } {
-  let camel = 0, snake = 0, pascal = 0;
-  for (const n of names) {
-    if (/^[a-z][a-zA-Z0-9]*$/.test(n) && /[A-Z]/.test(n)) camel++;
-    else if (/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/.test(n)) snake++;
-    else if (/^[A-Z][a-zA-Z0-9]+$/.test(n)) pascal++;
+  let camel = 0;
+  let snake = 0;
+  let pascal = 0;
+
+  for (const name of names) {
+    if (/^[a-z][a-zA-Z0-9]*$/.test(name) && /[A-Z]/.test(name)) {
+      camel++;
+    } else if (/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/.test(name)) {
+      snake++;
+    } else if (/^[A-Z][a-zA-Z0-9]+$/.test(name)) {
+      pascal++;
+    }
   }
+
   const total = camel + snake + pascal;
   if (total === 0) return { style: "camelCase", confidence: 0 };
+
   const top = Math.max(camel, snake, pascal);
   const ratio = top / total;
   if (ratio <= 0.5) return { style: "mixed", confidence: ratio };
@@ -51,8 +60,12 @@ function detectNamingStyle(names: string[]): { style: NamingStyle; confidence: n
 
 function dominantWithConfidence<T extends string>(values: T[]): { value: T | undefined; confidence: number } {
   if (!values.length) return { value: undefined, confidence: 0 };
+
   const counts = new Map<T, number>();
-  for (const v of values) counts.set(v, (counts.get(v) ?? 0) + 1);
+  for (const value of values) {
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
   const [value, count] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]!;
   return { value, confidence: count / values.length };
 }

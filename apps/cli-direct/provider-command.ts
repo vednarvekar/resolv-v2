@@ -25,11 +25,12 @@ export async function runProviderCommand(args: string): Promise<void> {
     console.log(chalk.dim(`\n  ${info.description}`));
     while (true) {
       const { key } = await inquirer.prompt([{
-        type: 'password',
-        name: 'key',
+        type: "password",
+        name: "key",
         message: `  Enter ${info.keyLabel}: `,
-        mask: '*',
+        mask: "*",
       }]);
+
       if (key.trim().length > 10) {
         config.apiKeys[provider] = key.trim();
         saveConfig(config);
@@ -41,26 +42,28 @@ export async function runProviderCommand(args: string): Promise<void> {
   } else if (provider !== "ollama") {
     const existing = config.apiKeys[provider]!;
     const { update } = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'update',
+      type: "confirm",
+      name: "update",
       message: `  Key already set (ends in ${existing.slice(-4)}). Update?`,
       default: false,
-      }]);
+    }]);
 
     if (update) {
       while (true) {
         const { key } = await inquirer.prompt([{
-          type: 'password',
-          name: 'key',
+          type: "password",
+          name: "key",
           message: `  New ${info.keyLabel}: `,
-          mask: '*',
+          mask: "*",
         }]);
-        if (key.trim().length > 10) { 
+
+        if (key.trim().length > 10) {
           config.apiKeys[provider] = key.trim();
           saveConfig(config);
-          console.log(chalk.green("  ✓ API key saved.")); 
-          break; 
+          console.log(chalk.green("  ✓ API key saved."));
+          break;
         }
+
         console.log(chalk.red("  Key looks too short."));
       }
     }

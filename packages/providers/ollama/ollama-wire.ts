@@ -135,6 +135,8 @@ export function toOllamaMessage(messages: Message[], systemPrompt?: string): Oll
   if (systemPrompt) out.push({ role: "system", content: systemPrompt });
 
   for (const msg of messages) {
+    if (msg.role === "system") continue;
+
     if (msg.role === "tool") {
       for (const block of msg.content) {
         if (block.type === "tool_result") {

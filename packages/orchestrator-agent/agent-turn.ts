@@ -1,5 +1,11 @@
 import { AgentEventBus } from "../core/events.js";
-import { Msg, type Message, type ProviderChatOptions, type ProviderResponse, type ToolUseContentBlock } from "../core/types.js";
+import {
+  Msg,
+  type Message,
+  type ProviderChatOptions,
+  type ProviderResponse,
+  type ToolUseContentBlock,
+} from "../core/types.js";
 import { chatWithTransientRetries } from "../llm/chat-with-retries.js";
 import type { Provider } from "../providers/provider.js";
 import { ToolRegistry } from "./tool-registry.js";
@@ -109,23 +115,46 @@ export async function executeToolCalls(
   const resultMessages: Message[] = [];
 
   for (const block of toolUseBlocks) {
-    events?.emit({ type: "tool_call_start", toolName: block.name, toolUseId: block.id, input: block.input });
+    events?.emit({
+      type: "tool_call_start",
+      toolName: block.name,
+      toolUseId: block.id,
+      input: block.input,
+    });
 
     const tool = tools.get(block.name);
     if (!tool) {
       const errorOutput = `No tool named "${block.name}" is registered.`;
-      events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: errorOutput, isError: true });
+      events?.emit({
+        type: "tool_call_end",
+        toolName: block.name,
+        toolUseId: block.id,
+        output: errorOutput,
+        isError: true,
+      });
       resultMessages.push(Msg.toolResult(block.id, errorOutput, true));
       continue;
     }
 
     try {
       const result = await tool.execute(block.input);
-      events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: result.output, isError: result.isError });
+      events?.emit({
+        type: "tool_call_end",
+        toolName: block.name,
+        toolUseId: block.id,
+        output: result.output,
+        isError: result.isError,
+      });
       resultMessages.push(Msg.toolResult(block.id, result.output, result.isError));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      events?.emit({ type: "tool_call_end", toolName: block.name, toolUseId: block.id, output: message, isError: true });
+      events?.emit({
+        type: "tool_call_end",
+        toolName: block.name,
+        toolUseId: block.id,
+        output: message,
+        isError: true,
+      });
       resultMessages.push(Msg.toolResult(block.id, `Tool threw: ${message}`, true));
     }
   }

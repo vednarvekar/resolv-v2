@@ -101,7 +101,12 @@ export async function runSetupWizard(): Promise<void> {
           message: `  Enter ${info.keyLabel}:`,
           mask: "*",
         }]);
-        if (key.trim().length > 10) { config.apiKeys[selected] = key.trim(); break; }
+
+        if (key.trim().length > 10) {
+          config.apiKeys[selected] = key.trim();
+          break;
+        }
+
         console.log(chalk.red("  Key too short — try again."));
       }
       saveConfig(config as ResolvConfig);
@@ -130,7 +135,11 @@ export async function runSetupWizard(): Promise<void> {
         message: "  GitHub Token:",
         mask: "*",
       }]);
-      if (token.trim()) { config.githubToken = token.trim(); saveConfig(config as ResolvConfig); }
+
+      if (token.trim()) {
+        config.githubToken = token.trim();
+        saveConfig(config as ResolvConfig);
+      }
     }
   } else {
     console.log(`  ${chalk.green("✓")} GitHub token already saved`);
