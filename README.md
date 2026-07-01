@@ -29,6 +29,8 @@ npm link          # optional, adds `resolv` to PATH
 resolv            # first run triggers setup wizard
 ```
 
+If you want the linked `resolv` command to track source edits while you work in another repo, keep `npm run watch` running in this repo. `npm run dev` runs the source directly, but only from inside this checkout.
+
 ## Commands
 
 | Command | Description |

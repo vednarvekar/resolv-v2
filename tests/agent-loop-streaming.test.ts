@@ -62,4 +62,32 @@ describe("agent response streaming", () => {
       text: "hello",
     });
   });
+
+  it("retries transient provider failures before any streamed text", async () => {
+    let attempts = 0;
+    const events = await run({
+      name: "retry-test",
+      defaultModel: "test",
+      embed: async () => [],
+      chat: async (options) => {
+        attempts++;
+        if (attempts < 3) {
+          throw new TypeError("fetch failed", { cause: { code: "ENOTFOUND" } });
+        }
+        options.onTextDelta?.("hello");
+        return response("hello");
+      },
+    });
+
+    expect(attempts).toBe(3);
+    expect(events.map((event) => event.type)).toEqual([
+      "model_start",
+      "provider_retry",
+      "model_start",
+      "provider_retry",
+      "model_start",
+      "text_delta",
+      "turn_end",
+    ]);
+  });
 });

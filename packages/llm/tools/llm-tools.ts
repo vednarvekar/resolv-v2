@@ -5,7 +5,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { extractDNA } from "../../dna/extract.js";
 import { runTests } from "../../coding-agent/run-tests.js";
 import type { ToolDefinition } from "../../core/types.js";
@@ -42,6 +42,37 @@ function isIgnored(relativePath: string, gitignorePatterns: Set<string>): boolea
 }
 
 const ALWAYS_SKIP = new Set(["node_modules", ".git", "dist", "build", ".next"]);
+const DEFAULT_SOURCE_GLOBS = ["*.ts", "*.tsx", "*.js", "*.jsx", "*.py", "*.json", "*.md"];
+
+function expandFileGlobs(fileGlob: string): string[] {
+  const match = fileGlob.match(/^(.*)\{([^}]+)\}(.*)$/);
+  if (!match) return [fileGlob];
+
+  const prefix = match[1] ?? "";
+  const variants = match[2] ?? "";
+  const suffix = match[3] ?? "";
+  return variants.split(",").map((variant) => `${prefix}${variant}${suffix}`);
+}
+
+function searchCodebase(repoRoot: string, pattern: string, fileGlob: string): string {
+  const globs = fileGlob ? expandFileGlobs(fileGlob) : DEFAULT_SOURCE_GLOBS;
+
+  try {
+    return execFileSync(
+      "git",
+      ["-C", repoRoot, "grep", "-n", "-i", "-m", "3", pattern, "--", ...globs],
+      { encoding: "utf-8", timeout: 10_000 },
+    ).trim();
+  } catch {
+    const includeArgs = globs.flatMap((glob) => ["--include", glob]);
+    const result = execFileSync(
+      "grep",
+      ["-r", "-n", "-i", "-m", "3", pattern, ...includeArgs, repoRoot],
+      { encoding: "utf-8", timeout: 10_000 },
+    ).trim();
+    return result;
+  }
+}
 
 export function createLLMTools(repoRoot: string): ToolDefinition[] {
   const gitignorePatterns = readGitignorePatterns(repoRoot);
@@ -151,9 +182,7 @@ export function createLLMTools(repoRoot: string): ToolDefinition[] {
         if (!pattern) return { output: "No pattern provided", isError: true };
 
         try {
-          const glob = fileGlob || "*.{ts,tsx,js,jsx,py,json,md}";
-          const cmd = `git -C "${repoRoot}" grep -n --include="${glob}" -i -m 3 "${pattern.replace(/"/g, '\\"')}" 2>/dev/null || grep -r -n --include="${glob}" -i -m 3 "${pattern.replace(/"/g, '\\"')}" "${repoRoot}" 2>/dev/null | head -50`;
-          const result = execSync(cmd, { encoding: "utf-8", timeout: 10_000 }).trim();
+          const result = searchCodebase(repoRoot, pattern, fileGlob);
           if (!result) return { output: `No matches found for: ${pattern}`, isError: false };
 
           // Make paths relative

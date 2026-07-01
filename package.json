@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc && chmod +x dist/bin/resolv.js",
+    "prepare": "npm run build",
     "watch": "tsc --watch",
     "dev": "tsx bin/resolv.ts",
     "start": "node dist/bin/resolv.js",

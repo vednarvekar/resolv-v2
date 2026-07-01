@@ -179,6 +179,16 @@ function fromOAIResponse(raw: OAIResponse, providerName: string): ProviderRespon
   };
 }
 
+function shouldRetryWithMaxCompletionTokens(errText: string): boolean {
+  return /unsupported parameter/i.test(errText)
+    && /max_tokens/i.test(errText)
+    && /max_completion_tokens/i.test(errText);
+}
+
+function shouldRetryWithoutTemperature(errText: string): boolean {
+  return /unsupported value/i.test(errText) && /temperature/i.test(errText);
+}
+
 // ── Base class ───────────────────────────────────────────────
 
 export abstract class OpenAICompatProvider implements Provider {
@@ -306,105 +316,132 @@ export abstract class OpenAICompatProvider implements Provider {
   async chat(options: ProviderChatOptions & { model?: string }): Promise<ProviderResponse> {
     const timeoutMs = this.cfg.requestTimeoutMs ?? 120_000;
     const url = `${this.cfg.baseUrl}/chat/completions`;
-
-    const body: Record<string, unknown> = {
+    const bodyBase: Record<string, unknown> = {
       model: options.model ?? this.defaultModel,
       messages: toOAIMessages(options.messages, options.systemPrompt),
-      temperature: options.temperature ?? (this.cfg.defaultTemperature ?? 0.3),
-      max_tokens: options.maxTokens ?? (this.cfg.defaultMaxTokens ?? 4096),
       stream: true,
       stream_options: { include_usage: true },
     };
 
     if (options.tools && options.tools.length > 0) {
-      body.tools = toOAITools(options.tools);
+      bodyBase.tools = toOAITools(options.tools);
     }
 
-    const controllerInfo = this.createAbortController(timeoutMs);
-    const res = await fetch(url, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
-      signal: controllerInfo.controller.signal,
-    });
+    const send = async (
+      tokenField: "max_tokens" | "max_completion_tokens",
+      includeTemperature: boolean,
+    ): Promise<ProviderResponse> => {
+      const controllerInfo = this.createAbortController(timeoutMs);
+      const temperature = options.temperature ?? this.cfg.defaultTemperature;
+      const body = {
+        ...bodyBase,
+        [tokenField]: options.maxTokens ?? (this.cfg.defaultMaxTokens ?? 4096),
+        ...(includeTemperature && temperature !== undefined ? { temperature } : {}),
+      };
 
-    if (!res.ok) {
-      const errText = await this.formatResponseDetail(res);
-      controllerInfo.clear();
-      throw new ProviderError(`${this.name} request failed (HTTP ${res.status}): ${errText}`, this.name, res.status);
-    }
+      const res = await fetch(url, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify(body),
+        signal: controllerInfo.controller.signal,
+      });
 
-    if (!res.body) {
-      controllerInfo.clear();
-      throw new ProviderError(`${this.name}: empty response body`, this.name);
-    }
-
-    // Stream processing
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    const pendingToolCalls = new Map<number, { id: string; name: string; arguments: string }>();
-    let responseText = "";
-    let finishReason = "stop";
-    let usage: OAIResponse["usage"];
-    let buffer = "";
-
-    const processLine = (line: string) => {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed === "data: [DONE]") return;
-      const payload = trimmed.startsWith("data:") ? trimmed.slice(5).trimStart() : trimmed;
-      let chunk: OAIStreamChunk;
-      try { chunk = JSON.parse(payload) as OAIStreamChunk; } catch { return; }
-
-      if (chunk.usage) usage = chunk.usage;
-      const choice = chunk.choices?.[0];
-      if (!choice) return;
-      if (choice.finish_reason) finishReason = choice.finish_reason;
-
-      const text = choice.delta?.content ?? "";
-      responseText += text;
-      if (text) options.onTextDelta?.(text);
-
-      for (const [pos, call] of (choice.delta?.tool_calls ?? []).entries()) {
-        const idx = call.index ?? pos;
-        const cur = pendingToolCalls.get(idx) ?? { id: "", name: "", arguments: "" };
-        if (call.id) cur.id += call.id;
-        if (call.function?.name) cur.name += call.function.name;
-        if (call.function?.arguments) cur.arguments += call.function.arguments;
-        pendingToolCalls.set(idx, cur);
+      if (!res.ok) {
+        const errText = await this.formatResponseDetail(res);
+        controllerInfo.clear();
+        throw new ProviderError(`${this.name} request failed (HTTP ${res.status}): ${errText}`, this.name, res.status);
       }
+
+      if (!res.body) {
+        controllerInfo.clear();
+        throw new ProviderError(`${this.name}: empty response body`, this.name);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      const pendingToolCalls = new Map<number, { id: string; name: string; arguments: string }>();
+      let responseText = "";
+      let finishReason = "stop";
+      let usage: OAIResponse["usage"];
+      let buffer = "";
+
+      const processLine = (line: string) => {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === "data: [DONE]") return;
+        const payload = trimmed.startsWith("data:") ? trimmed.slice(5).trimStart() : trimmed;
+        let chunk: OAIStreamChunk;
+        try { chunk = JSON.parse(payload) as OAIStreamChunk; } catch { return; }
+
+        if (chunk.usage) usage = chunk.usage;
+        const choice = chunk.choices?.[0];
+        if (!choice) return;
+        if (choice.finish_reason) finishReason = choice.finish_reason;
+
+        const text = choice.delta?.content ?? "";
+        responseText += text;
+        if (text) options.onTextDelta?.(text);
+
+        for (const [pos, call] of (choice.delta?.tool_calls ?? []).entries()) {
+          const idx = call.index ?? pos;
+          const cur = pendingToolCalls.get(idx) ?? { id: "", name: "", arguments: "" };
+          if (call.id) cur.id += call.id;
+          if (call.function?.name) cur.name += call.function.name;
+          if (call.function?.arguments) cur.arguments += call.function.arguments;
+          pendingToolCalls.set(idx, cur);
+        }
+      };
+
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          controllerInfo.reset();
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split(/\r?\n/);
+          buffer = lines.pop() ?? "";
+          for (const line of lines) processLine(line);
+        }
+        if (buffer.trim()) processLine(buffer);
+      } finally {
+        controllerInfo.clear();
+      }
+
+      const raw: OAIResponse = {
+        choices: [{
+          message: {
+            role: "assistant",
+            content: responseText,
+            tool_calls: [...pendingToolCalls.entries()]
+              .sort(([a], [b]) => a - b)
+              .filter(([, c]) => c.name)
+              .map(([i, c]) => ({ id: c.id || `${this.name}-tool-${i}`, type: "function", function: { name: c.name, arguments: c.arguments || "{}" } })),
+          },
+          finish_reason: finishReason,
+        }],
+        usage,
+      };
+
+      return fromOAIResponse(raw, this.name);
     };
 
     try {
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        controllerInfo.reset();
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split(/\r?\n/);
-        buffer = lines.pop() ?? "";
-        for (const line of lines) processLine(line);
+      return await send("max_tokens", true);
+    } catch (err) {
+      if (err instanceof ProviderError && err.statusCode === 400 && shouldRetryWithMaxCompletionTokens(err.message)) {
+        return await send("max_completion_tokens", true);
       }
-      if (buffer.trim()) processLine(buffer);
-    } finally {
-      controllerInfo.clear();
+      if (err instanceof ProviderError && err.statusCode === 400 && shouldRetryWithoutTemperature(err.message)) {
+        try {
+          return await send("max_tokens", false);
+        } catch (retryErr) {
+          if (retryErr instanceof ProviderError && retryErr.statusCode === 400 && shouldRetryWithMaxCompletionTokens(retryErr.message)) {
+            return await send("max_completion_tokens", false);
+          }
+          throw retryErr;
+        }
+      }
+      throw err;
     }
-
-    const raw: OAIResponse = {
-      choices: [{
-        message: {
-          role: "assistant",
-          content: responseText,
-          tool_calls: [...pendingToolCalls.entries()]
-            .sort(([a], [b]) => a - b)
-            .filter(([, c]) => c.name)
-            .map(([i, c]) => ({ id: c.id || `${this.name}-tool-${i}`, type: "function", function: { name: c.name, arguments: c.arguments || "{}" } })),
-        },
-        finish_reason: finishReason,
-      }],
-      usage,
-    };
-
-    return fromOAIResponse(raw, this.name);
   }
 
   async embed(texts: string[], model?: string): Promise<number[][]> {

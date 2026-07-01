@@ -20,6 +20,7 @@ import { checkoutBranch, getCurrentBranch } from "../../packages/coding-agent/gi
 import { commitChanges } from "../../packages/coding-agent/git/commit.js";
 import { openPullRequest, getDefaultBranch } from "../../packages/coding-agent/git/push-and-pr.js";
 import { runSelfHealLoop } from "../../packages/coding-agent/self-heal-loop.js";
+import { retryTransientProviderOperation } from "../../packages/providers/retry.js";
 
 export interface SolveOptions {
   issueUrl: string;
@@ -33,7 +34,10 @@ export async function solve(options: SolveOptions): Promise<void> {
   const provider = createProviderFromEnv(config);
   const repoPath = path.resolve(options.repoPath);
 
-  await provider.healthCheck?.(appConfig.model);
+  await retryTransientProviderOperation(
+    () => provider.healthCheck?.(appConfig.model) ?? Promise.resolve(),
+    { retries: 1 },
+  );
 
   const guardSpinner = ora("Checking working directory...").start();
   try {

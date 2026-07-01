@@ -7,6 +7,7 @@ import type { SemanticMatch } from "../context-agent/semantic/file-index.js";
 import type { IssueMapping } from "../context-agent/issue-mapper.js";
 import type { Provider } from "../providers/provider.js";
 import { Msg } from "../core/types.js";
+import { chatWithTransientRetries } from "../llm/chat-with-retries.js";
 
 export interface AgentPlan {
   targetFiles: string[];
@@ -59,7 +60,11 @@ Respond ONLY with valid JSON:
 {"targetFiles": ["path1"], "targetFunctions": ["fn1"], "reasoning": "one sentence"}`;
 
   try {
-    const result = await provider.chat({ messages: [Msg.user(prompt)], model, temperature: 0.1, maxTokens: 600 });
+    const result = await chatWithTransientRetries(
+      provider,
+      { messages: [Msg.user(prompt)], model, temperature: 0.1, maxTokens: 600 },
+      { retries: 1 },
+    );
     const textBlock = result.message.content.find((b) => b.type === "text");
     const parsed = textBlock?.type === "text" ? parsePlanResponse(textBlock.text) : null;
     if (parsed) return { ...parsed, usedFallback: false };

@@ -11,7 +11,7 @@ export class OpenAIProvider extends OpenAICompatProvider {
       providerName: "openai",
       defaultModel: model ?? "gpt-4o",
       defaultEmbeddingModel: "text-embedding-3-small",
-      defaultTemperature: 0.3,
+      defaultTemperature: undefined,
       defaultMaxTokens: 4096,
       requestTimeoutMs: 120_000,
     });

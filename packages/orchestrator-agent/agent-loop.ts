@@ -15,6 +15,7 @@ import type { Provider } from "../providers/provider.js";
 import { AgentSession } from "./session.js";
 import { buildSystemPrompt } from "./system-prompt.js";
 import { ToolRegistry } from "./tool-registry.js";
+import { chatWithTransientRetries } from "../llm/chat-with-retries.js";
 
 export interface AgentLoopOptions {
   provider: Provider;
@@ -62,20 +63,36 @@ export async function runAgentTurn(userMessage: string, options: AgentLoopOption
     session.truncateHistory(maxHistory);
 
     try {
-      events?.emit({ type: "model_start", providerName: provider.name });
-      response = await provider.chat({
-        messages: [...session.getHistory()],
-        tools: tools.list(),
-        systemPrompt,
-        model: options.model,
-        temperature: options.temperature,
-        maxTokens: options.maxTokens,
-        onTextDelta: (text) => {
-          if (!text) return;
-          streamedText = true;
-          events?.emit({ type: "text_delta", text });
+      response = await chatWithTransientRetries(
+        provider,
+        {
+          messages: [...session.getHistory()],
+          tools: tools.list(),
+          systemPrompt,
+          model: options.model,
+          temperature: options.temperature,
+          maxTokens: options.maxTokens,
+          onTextDelta: (text) => {
+            if (!text) return;
+            streamedText = true;
+            events?.emit({ type: "text_delta", text });
+          },
         },
-      });
+        {
+          retries: 2,
+          onAttempt: () => {
+            events?.emit({ type: "model_start", providerName: provider.name });
+          },
+          onRetry: (attempt, error) => {
+            events?.emit({
+              type: "provider_retry",
+              attempt,
+              maxAttempts: 3,
+              message: error.message,
+            });
+          },
+        },
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       events?.emit({ type: "error", message });

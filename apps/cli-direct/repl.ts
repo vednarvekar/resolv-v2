@@ -20,6 +20,8 @@ import { createLLMTools } from "../../packages/llm/tools/llm-tools.js";
 import { ToolRegistry } from "../../packages/orchestrator-agent/tool-registry.js";
 import { AgentEventBus } from "../../packages/core/events.js";
 import { AgentLoopLimitError } from "../../packages/core/errors.js";
+import { isTransientProviderError, retryTransientProviderOperation } from "../../packages/providers/retry.js";
+import { attachReplTranscript } from "./repl-transcript.js";
 import {
   saveSession,
   loadSession,
@@ -79,7 +81,10 @@ export async function startRepl(resumeId?: string): Promise<void> {
 
   // Health check
   try {
-    await provider.healthCheck?.(activeModel);
+    await retryTransientProviderOperation(
+      () => provider.healthCheck?.(activeModel) ?? Promise.resolve(),
+      { retries: 1 },
+    );
   } catch (err) {
     providerConnected = false;
     const message = err instanceof Error ? err.message : String(err);
@@ -115,70 +120,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   toolRegistry.registerAll(createLLMTools(process.cwd()));
 
   const events = new AgentEventBus();
-  let responseStarted = false;
-  let responseEndsWithNewline = true;
-
-  const writeProgress = (message: string) => {
-    process.stdout.write(`${chalk.magenta("•")} ${message}\n`);
-  };
-
-  const outputPreview = (value: string, maxLength = 400) => {
-    const trimmed = value.trim();
-    if (trimmed.length <= maxLength) return trimmed;
-    return `${trimmed.slice(0, maxLength).trimEnd()}\n... output truncated`;
-  };
-
-  const beginResponse = () => {
-    if (!responseStarted) {
-      responseStarted = true;
-      responseEndsWithNewline = true;
-      process.stdout.write(chalk.dim("\n── LLM response ───────────────────────────────────────────────\n"));
-    }
-  };
-
-  events.on((event) => {
-    switch (event.type) {
-      case "model_start":
-        responseStarted = false;
-        responseEndsWithNewline = true;
-        writeProgress(chalk.dim("Thinking..."));
-        break;
-      case "text_delta":
-        beginResponse();
-        process.stdout.write(event.text);
-        responseEndsWithNewline = event.text.endsWith("\n");
-        break;
-      case "tool_call_start":
-        if (responseStarted && !responseEndsWithNewline) process.stdout.write("\n");
-        responseStarted = false;
-        responseEndsWithNewline = true;
-        writeProgress(`${chalk.cyan("Running tool:")} ${chalk.bold(event.toolName)}`);
-        break;
-      case "tool_call_end": {
-        const status = event.isError ? chalk.red("✗") : chalk.green("✓");
-        process.stdout.write(`${status} ${chalk.bold(event.toolName)}\n`);
-        const output = outputPreview(event.output);
-        if (event.isError && output) {
-          process.stdout.write(output.split("\n").map((line) => `  ${line}`).join("\n") + "\n");
-        }
-        responseStarted = false;
-        responseEndsWithNewline = true;
-        break;
-      }
-      case "error":
-        responseStarted = false;
-        responseEndsWithNewline = true;
-        process.stdout.write(chalk.red(`\nError: ${event.message}\n`));
-        break;
-      case "turn_end":
-        if (responseStarted && !responseEndsWithNewline) {
-          process.stdout.write("\n");
-          responseEndsWithNewline = true;
-        }
-        process.stdout.write("\n");
-        break;
-    }
-  });
+  attachReplTranscript(events);
 
   const rl = readline.createInterface({
     input,
@@ -210,7 +152,10 @@ export async function startRepl(resumeId?: string): Promise<void> {
       const nextInfo = PROVIDER_INFO[nextConfig.provider]!;
       const nextModel = nextConfig.model ?? nextInfo.defaultModel;
       const nextProvider = createProviderFromEnv(nextConfig);
-      await nextProvider.healthCheck?.(nextModel);
+      await retryTransientProviderOperation(
+        () => nextProvider.healthCheck?.(nextModel) ?? Promise.resolve(),
+        { retries: 1 },
+      );
       config = nextConfig;
       appConfig = loadAppConfig();
       providerInfo = nextInfo;
@@ -378,8 +323,16 @@ export async function startRepl(resumeId?: string): Promise<void> {
 
     // Free text → LLM agent
     if (!providerConnected) {
-      console.log(chalk.yellow("\n  Provider is currently disconnected. Use /provider to switch providers or /model to pick a different model.\n"));
-      continue;
+      try {
+        await retryTransientProviderOperation(
+          () => provider.healthCheck?.(activeModel) ?? Promise.resolve(),
+          { retries: 1 },
+        );
+        providerConnected = true;
+      } catch {
+        console.log(chalk.yellow("\n  Provider is currently disconnected. Use /provider to switch providers or /model to pick a different model.\n"));
+        continue;
+      }
     }
 
     try {
@@ -409,9 +362,15 @@ export async function startRepl(resumeId?: string): Promise<void> {
         console.log(chalk.yellow("The provider is still connected. Continue in the same session with a narrower follow-up if needed.\n"));
         continue;
       }
-      providerConnected = false;
+      if (isTransientProviderError(err)) {
+        providerConnected = false;
+      }
       console.log(chalk.red(`\n  Error: ${err instanceof Error ? err.message : String(err)}\n`));
-      console.log(chalk.dim("  Please check /provider or /model before retrying.\n"));
+      console.log(chalk.dim(
+        isTransientProviderError(err)
+          ? "  Please check /provider or /model before retrying.\n"
+          : "  The provider is still connected; adjust the prompt or model and retry.\n"
+      ));
     }
   }
 }
