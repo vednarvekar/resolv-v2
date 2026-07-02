@@ -34,7 +34,8 @@ const DEFAULTS: ResolvConfig = {
   apiKeys: {},
   testCommand: "npm test",
   maxHealAttempts: 4,
-  maxToolCallRounds: 24,
+  // changed fallback
+  maxToolCallRounds: 20,
 };
 
 export const PROVIDER_INFO: Record<ProviderName, {
