@@ -11,6 +11,7 @@ import {
 } from "../../config/config.js";
 import { createProviderFromConfig } from "../../packages/providers/register.js";
 import { printBanner, printOllamaInstructions } from "./setup-ui.js";
+import { promptEscapableSecret } from "../cli-direct/prompt-utils.js";
 
 const PROVIDERS: ProviderName[] = ["anthropic", "openai", "google", "grok", "openrouter", "nim", "ollama"];
 
@@ -129,14 +130,9 @@ export async function runSetupWizard(): Promise<void> {
     }]);
     if (addGh) {
       console.log(chalk.dim("  github.com/settings/tokens → New token → repo scope"));
-      const { token } = await inquirer.prompt([{
-        type: "password",
-        name: "token",
-        message: "  GitHub Token:",
-        mask: "*",
-      }]);
-
-      if (token.trim()) {
+      console.log(chalk.dim("  Press Esc to skip and return to the normal prompt."));
+      const { value: token, escaped } = await promptEscapableSecret("  GitHub Token: ");
+      if (!escaped && token.trim()) {
         config.githubToken = token.trim();
         saveConfig(config as ResolvConfig);
       }

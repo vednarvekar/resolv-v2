@@ -55,6 +55,10 @@ export function describeToolCall(toolName: string, input: Record<string, unknown
       return `fetching ${chalk.cyan(extractIssueRef(String(input.url ?? "")))}`;
     case "search_web":
       return `searching ${shortQuoted(input.query ?? "")}`;
+    case "apply_fix":
+      return "applying code changes";
+    case "open_pull_request":
+      return "pushing branch and opening PR";
     default:
       return `running ${chalk.cyan(toolName)}`;
   }
@@ -90,7 +94,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
   };
 
   const writeInsight = (message: string) => {
-    process.stdout.write(chalk.dim(`${RESPONSE_INDENT}${message}\n`));
+    process.stdout.write(chalk.whiteBright(`${RESPONSE_INDENT}${message}\n`));
   };
 
   const renderThinking = () => {
@@ -175,12 +179,6 @@ export function attachReplTranscript(events: AgentEventBus): void {
     }
   };
 
-  const outputPreview = (value: string, maxLength = 400) => {
-    const trimmed = value.trim();
-    if (trimmed.length <= maxLength) return trimmed;
-    return `${trimmed.slice(0, maxLength).trimEnd()}\n... output truncated`;
-  };
-
   const beginResponse = () => {
     if (!responseStarted) {
       responseStarted = true;
@@ -190,8 +188,22 @@ export function attachReplTranscript(events: AgentEventBus): void {
       responseLineColumns = 0;
       responseInCodeBlock = false;
       clearThinking();
-      process.stdout.write(chalk.hex("#7c3aed").bold("\n── LLM response ───────────────────────────────────────────────\n"));
+      process.stdout.write(chalk.hex("#9b7bff").bold("\n── LLM response ───────────────────────────────────────────────\n"));
     }
+  };
+
+  const previewOutput = (value: string, maxLines = 4, maxChars = 220) => {
+    const lines = value.trim().split("\n");
+    const slice = lines.slice(0, maxLines).map((line) => line.slice(0, maxChars));
+    if (lines.length > maxLines) slice.push("... output truncated");
+    return slice.join("\n");
+  };
+
+  const colorizeToolOutputLine = (line: string): string => {
+    if (line.startsWith("+ ")) return chalk.greenBright(`+ ${line.slice(2)}`);
+    if (line.startsWith("- ")) return chalk.redBright(`- ${line.slice(2)}`);
+    if (line.startsWith("Updated: ")) return chalk.whiteBright(line);
+    return chalk.gray(line);
   };
 
   events.on((event) => {
@@ -223,13 +235,12 @@ export function attachReplTranscript(events: AgentEventBus): void {
         break;
       case "tool_call_end": {
         const status = event.isError ? chalk.red("✗") : chalk.green("✓");
-        process.stdout.write(chalk.dim(`${RESPONSE_INDENT}${status} ${event.toolName}\n`));
-        const output = outputPreview(event.output);
-        if (event.isError && output) {
-          process.stdout.write(`${output.split("\n").map((line) => `  ${line}`).join("\n")}\n\n`);
-        } else {
-          process.stdout.write("\n");
+        process.stdout.write(chalk.whiteBright(`${RESPONSE_INDENT}${status} ${chalk.bold(event.toolName)}\n`));
+        const output = previewOutput(event.output);
+        if (output) {
+          process.stdout.write(output.split("\n").map((line) => `${RESPONSE_INDENT}${colorizeToolOutputLine(line)}`).join("\n") + "\n");
         }
+        process.stdout.write("\n");
         responseStarted = false;
         responseEndsWithNewline = true;
         responseLineStart = true;

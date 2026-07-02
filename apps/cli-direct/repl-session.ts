@@ -43,10 +43,7 @@ export async function reactivateProvider(state: ReplState): Promise<void> {
 }
 
 export function saveSessionIfNeeded(state: ReplState): void {
-  const userMsgCount = state.session.getHistory().filter((m) => m.role === "user").length;
-  if (userMsgCount % 5 === 0) {
-    saveSession(state.sessionId, [...state.session.getHistory()], state.config.provider, state.activeModel, process.cwd());
-  }
+  saveSession(state.sessionId, [...state.session.getHistory()], state.config.provider, state.activeModel, process.cwd());
 }
 
 export function saveSessionBeforeSwap(state: ReplState): void {

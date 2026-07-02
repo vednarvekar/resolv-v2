@@ -46,7 +46,7 @@ If you want the linked `resolv` command to track source edits while you work in 
 | Command | Description |
 |---------|-------------|
 | `/config` | Show provider, model, and masked key status |
-| `/config change` | Interactively change API key, GitHub token, test command, or retries |
+| `/config change` | Interactively change API key or GitHub token |
 | `/config-change` | Alias for `/config change` |
 | `/config key` | Replace the active provider's API key |
 | `/dna` | Scan current repo, save to `.resolv/analysis.json` |
@@ -88,8 +88,6 @@ GITHUB_TOKEN=...
 RESOLV_PROVIDER=openrouter
 RESOLV_MODEL=qwen/qwen-2.5-72b-instruct
 RESOLV_TEST_COMMAND="npm test"
-RESOLV_MAX_ATTEMPTS=4
-RESOLV_MAX_TOOL_CALL_ROUNDS=24
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 

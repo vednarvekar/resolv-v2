@@ -9,6 +9,7 @@ import {
 import { chatWithTransientRetries } from "../llm/chat-with-retries.js";
 import type { Provider } from "../providers/provider.js";
 import { ToolRegistry } from "./tool-registry.js";
+import { DEFAULT_MAX_HEAL_ATTEMPTS } from "../../config/config.js";
 
 export interface ModelTurnOptions {
   provider: Provider;
@@ -56,7 +57,7 @@ export async function requestModelTurn(options: ModelTurnOptions): Promise<{
         options.events?.emit({
           type: "provider_retry",
           attempt,
-          maxAttempts: 3,
+          maxAttempts: DEFAULT_MAX_HEAL_ATTEMPTS,
           message: error.message,
         });
       },

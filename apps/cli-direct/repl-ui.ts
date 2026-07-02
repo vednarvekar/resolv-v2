@@ -28,8 +28,15 @@ export function printHelp(): void {
     console.log(`  ${name} ${chalk.dim(cmd.description)}`);
   }
   console.log("");
-  console.log(chalk.dim("  Anything else is sent to the AI agent."));
-  console.log(chalk.dim("  Set BRAVE_SEARCH_API_KEY for better web search (search_web tool)."));
+  console.log(chalk.bold("  /config quick guide"));
+  console.log(chalk.dim("  " + "─".repeat(52)));
+  console.log(`  ${chalk.cyan("/config")} ${chalk.dim("              show current settings")}`);
+  console.log(`  ${chalk.cyan("/config change")} ${chalk.dim("       choose what to edit from a menu")}`);
+  console.log(`  ${chalk.cyan("/config key")} ${chalk.dim("          change the active provider API key")}`);
+  console.log(`  ${chalk.cyan("/config github")} ${chalk.dim("       set or remove the GitHub token")}`);
+  console.log("");
+  // console.log(chalk.dim("  Anything else is sent to the AI agent."));
+  // console.log(chalk.dim("  Set BRAVE_SEARCH_API_KEY for better web search (search_web tool)."));
   console.log("");
 }
 

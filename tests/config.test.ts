@@ -31,8 +31,8 @@ describe("config manager", () => {
       model: "gpt-4o",
       apiKeys: { openai: "saved-key" },
       testCommand: "npm test",
-      maxHealAttempts: 6,
-      maxToolCallRounds: 30,
+      maxHealAttempts: 5,
+      maxToolCallRounds: 32,
     }));
 
     const { loadConfig } = await loadConfigModule();
@@ -42,8 +42,8 @@ describe("config manager", () => {
     expect(config.model).toBe("gpt-4o");
     expect(config.apiKeys.openai).toBe("saved-key");
     expect(config.testCommand).toBe("npm test");
-    expect(config.maxHealAttempts).toBe(6);
-    expect(config.maxToolCallRounds).toBe(30);
+    expect(config.maxHealAttempts).toBe(5);
+    expect(config.maxToolCallRounds).toBe(32);
   });
 
   it("honors environment overrides for provider and keys", async () => {
@@ -57,14 +57,12 @@ describe("config manager", () => {
     process.env.OPENAI_API_KEY = "env-openai-key";
     process.env.RESOLV_PROVIDER = "openai";
     process.env.RESOLV_MODEL = "gpt-4o";
-    process.env.RESOLV_MAX_TOOL_CALL_ROUNDS = "40";
-
     const { loadConfig } = await loadConfigModule();
     const config = loadConfig();
 
     expect(config.provider).toBe("openai");
     expect(config.apiKeys.openai).toBe("env-openai-key");
     expect(config.model).toBe("gpt-4o");
-    expect(config.maxToolCallRounds).toBe(40);
+    expect(config.maxToolCallRounds).toBe(32);
   });
 });

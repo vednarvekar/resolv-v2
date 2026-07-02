@@ -10,18 +10,18 @@ export interface SlashCommand {
 export const SLASH_COMMANDS: SlashCommand[] = [
   {
     name: "/config",
-    description: "Show or change settings",
-    usage: "/config [change|key|github|test|retries]",
+    description: "View settings or change API keys and GitHub token",
+    usage: "/config [ change | key | github ]",
   },
   {
     name: "/provider",
-    description: "Switch AI provider interactively",
-    usage: "/provider [name]",
+    description: "Switch AI provider interactively or by name",
+    usage: "/provider",
   },
   {
     name: "/model",
-    description: "Switch model for current provider",
-    usage: "/model [model-name]",
+    description: "Switch model for the current provider",
+    usage: "/model",
   },
   {
     name: "/dna",
@@ -34,7 +34,7 @@ export const SLASH_COMMANDS: SlashCommand[] = [
   {
     name: "/resume",
     description: "Resume a previous chat session by ID",
-    usage: "/resume <session-id>",
+    usage: "/resume < session-id >",
   },
   {
     name: "/new",

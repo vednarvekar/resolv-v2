@@ -15,6 +15,7 @@ import type { Provider } from "../providers/provider.js";
 import { AgentSession } from "./session.js";
 import { buildSystemPrompt } from "./system-prompt.js";
 import { ToolRegistry } from "./tool-registry.js";
+import { DEFAULT_MAX_TOOL_CALL_ROUNDS } from "../../config/config.js";
 import {
   collectAssistantText,
   emitBufferedAssistantText,
@@ -43,12 +44,11 @@ export interface AgentTurnResult {
   hitRoundLimit: boolean;
 }
 
-const DEFAULT_MAX_ROUNDS = 12;
 const DEFAULT_MAX_HISTORY_MESSAGES = 60;
 
 export async function runAgentTurn(userMessage: string, options: AgentLoopOptions): Promise<AgentTurnResult> {
   const { provider, tools, session, events } = options;
-  const maxRounds = options.maxToolCallRounds ?? DEFAULT_MAX_ROUNDS;
+  const maxRounds = options.maxToolCallRounds ?? DEFAULT_MAX_TOOL_CALL_ROUNDS;
   const maxHistory = options.maxHistoryMessages ?? DEFAULT_MAX_HISTORY_MESSAGES;
 
   session.addMessage(Msg.user(userMessage));

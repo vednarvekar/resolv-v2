@@ -58,9 +58,10 @@ export function createFilesystemTools(
           return { output: `Refusing to write to a .gitignore path: ${filePath}`, isError: true };
         }
         const absPath = safeResolvePath(repoRoot, filePath);
+        const previous = fs.existsSync(absPath) ? fs.readFileSync(absPath, "utf-8") : "";
         fs.mkdirSync(path.dirname(absPath), { recursive: true });
         fs.writeFileSync(absPath, content, "utf-8");
-        return { output: `Written: ${filePath} (${content.length} chars)`, isError: false };
+        return { output: formatWriteDiff(filePath, previous, content), isError: false };
       },
     },
     {
@@ -116,4 +117,35 @@ export function createFilesystemTools(
       },
     },
   ];
+}
+
+function formatWriteDiff(filePath: string, before: string, after: string): string {
+  if (before === after) {
+    return `Written: ${filePath} (no content change)`;
+  }
+
+  const beforeLines = before.split("\n");
+  const afterLines = after.split("\n");
+  let start = 0;
+  while (start < beforeLines.length && start < afterLines.length && beforeLines[start] === afterLines[start]) start++;
+
+  let beforeEnd = beforeLines.length;
+  let afterEnd = afterLines.length;
+  while (beforeEnd > start && afterEnd > start && beforeLines[beforeEnd - 1] === afterLines[afterEnd - 1]) {
+    beforeEnd--;
+    afterEnd--;
+  }
+
+  const removed = beforeLines.slice(start, beforeEnd);
+  const added = afterLines.slice(start, afterEnd);
+  const lines = [`Updated: ${filePath}`];
+
+  for (const line of removed) {
+    lines.push(`- ${line}`);
+  }
+  for (const line of added) {
+    lines.push(`+ ${line}`);
+  }
+
+  return lines.join("\n");
 }

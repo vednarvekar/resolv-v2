@@ -50,7 +50,7 @@ describe("repl transcript rendering", () => {
       attachReplTranscript(events);
 
       events.emit({ type: "model_start", providerName: "test-provider" });
-      events.emit({ type: "provider_retry", attempt: 1, maxAttempts: 3, message: "fetch failed" });
+      events.emit({ type: "provider_retry", attempt: 1, maxAttempts: 5, message: "fetch failed" });
       events.emit({ type: "tool_call_start", toolName: "read_file", toolUseId: "1", input: { path: "apps/cli-direct/repl.ts" } });
       events.emit({ type: "tool_call_end", toolName: "read_file", toolUseId: "1", output: "ok", isError: false });
       events.emit({ type: "text_delta", text: "hello\n\nworld" });
@@ -60,9 +60,9 @@ describe("repl transcript rendering", () => {
     }
 
     const output = stripAnsi(writes.join(""));
-    expect(output).toContain("retry 1/3: fetch failed");
+    expect(output).toContain("retry 1/5: fetch failed");
     expect(output).toContain("reading repl.ts");
-    expect(output).toContain("  ✓ read_file\n\n");
+    expect(output).toContain("  ✓ read_file\n  ok\n\n");
     expect(output).toContain("  hello\n  \n  world");
     expect(output).not.toContain("  hello\n\nworld");
   });
@@ -116,7 +116,7 @@ describe("repl transcript rendering", () => {
     }
 
     const output = stripAnsi(writes.join(""));
-    expect(output).toContain("  scanning repo\n  ✓ scan_repo_dna\n\n  tests: \"npm test\"");
+    expect(output).toContain("  scanning repo\n  ✓ scan_repo_dna\n  ok\n\n  tests: \"npm test\"");
     expect(output).toContain("  ✗ run_tests\n  line one\n  line two\n\n");
   });
 
@@ -145,5 +145,37 @@ describe("repl transcript rendering", () => {
 
     const output = stripAnsi(writes.join(""));
     expect(output).toContain("  ```ts\n  const value = \"alpha beta\n  gamma delta\";\n  ```\n  Done");
+  });
+
+  it("renders file write diffs with green additions and red deletions", async () => {
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+
+      events.emit({ type: "tool_call_start", toolName: "write_file", toolUseId: "9", input: { path: "src/app.ts" } });
+      events.emit({
+        type: "tool_call_end",
+        toolName: "write_file",
+        toolUseId: "9",
+        output: "Updated: src/app.ts\n- const a = 1;\n+ const a = 2;\n+ const b = 3;",
+        isError: false,
+      });
+    } finally {
+      writeSpy.mockRestore();
+    }
+
+    const output = stripAnsi(writes.join(""));
+    expect(output).toContain("Updated: src/app.ts");
+    expect(output).toContain("- const a = 1;");
+    expect(output).toContain("+ const a = 2;");
+    expect(output).toContain("+ const b = 3;");
   });
 });

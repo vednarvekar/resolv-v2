@@ -42,7 +42,7 @@ export async function startRepl(resumeId?: string): Promise<void> {
   while (!closed) {
     let rawLine: string;
     try {
-      rawLine = await rl.question(chalk.cyan.bold("resolv > "));
+      rawLine = await rl.question(chalk.hex("#4a23ca").bold("resolv > "));
     } catch {
       break;
     }

@@ -9,7 +9,7 @@ const jsonResponse = (body: unknown, status = 200) =>
   });
 
 const mockFetchOk = (body: unknown) => vi.fn().mockResolvedValue(jsonResponse(body));
-const maxToolCallRounds = 24;
+const maxToolCallRounds = 32;
 
 describe("provider registration and health checks", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -27,7 +27,7 @@ describe("provider registration and health checks", () => {
       model: "gpt-4o",
       apiKeys: { openai: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -42,7 +42,7 @@ describe("provider registration and health checks", () => {
       model: "grok-3",
       apiKeys: { grok: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -57,7 +57,7 @@ describe("provider registration and health checks", () => {
       model: "google/gemma-4-31b-it",
       apiKeys: { nim: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -75,7 +75,7 @@ describe("provider registration and health checks", () => {
       model: "anthropic/claude-sonnet-4-6",
       apiKeys: { openrouter: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -89,7 +89,7 @@ describe("provider registration and health checks", () => {
       model: "claude-sonnet-4-6",
       apiKeys: { anthropic: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -103,7 +103,7 @@ describe("provider registration and health checks", () => {
       model: "gemini-2.5-flash",
       apiKeys: { google: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);
@@ -122,7 +122,7 @@ describe("provider registration and health checks", () => {
       provider: "google",
       apiKeys: { google: "test-key" },
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     });
 
@@ -137,7 +137,7 @@ describe("provider registration and health checks", () => {
       provider: "ollama",
       apiKeys: {},
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     });
 
@@ -149,7 +149,7 @@ describe("provider registration and health checks", () => {
       provider: "ollama",
       apiKeys: {},
       testCommand: "npm test",
-      maxHealAttempts: 4,
+      maxHealAttempts: 5,
       maxToolCallRounds,
     };
     const provider = createProviderFromConfig(config);

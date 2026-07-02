@@ -23,8 +23,8 @@ interface ResolvConfig {
   };
   githubToken?: string;
   testCommand: string;      // default: "npm test"
-  maxHealAttempts: number;  // default: 4
-  maxToolCallRounds: number; // default: 24
+  maxHealAttempts: number;  // default: 5
+  maxToolCallRounds: number; // default: 32
 }
 ```
 
@@ -53,4 +53,3 @@ This means CI can override via env vars without touching the user's config file.
 
 - The active provider and model can be overridden via environment variables.
 - Model lists are fetched from providers at runtime; config stores only the selected model.
-- Request timeouts are now reset while streaming progress is received, preventing slow model responses from being aborted prematurely.

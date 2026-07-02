@@ -11,7 +11,7 @@ import os from "node:os";
 import type { Message } from "../../core/types.js";
 
 const SESSIONS_DIR = path.join(os.homedir(), ".config", "resolv", "sessions");
-const MAX_SESSIONS = 50; // prune oldest sessions beyond this limit
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
 export interface SessionMeta {
   id: string;
@@ -81,7 +81,7 @@ export function saveSession(
   };
 
   fs.writeFileSync(sessionPath(id), JSON.stringify(session, null, 2), { mode: 0o600 });
-  pruneOldSessions();
+  pruneExpiredSessions();
 }
 
 export function loadSession(id: string): PersistedSession | null {
@@ -96,6 +96,7 @@ export function loadSession(id: string): PersistedSession | null {
 
 export function listSessions(): SessionMeta[] {
   ensureSessionsDir();
+  pruneExpiredSessions();
   const files = fs.readdirSync(SESSIONS_DIR).filter((f) => f.endsWith(".json"));
   const sessions: SessionMeta[] = [];
 
@@ -118,12 +119,20 @@ export function deleteSession(id: string): boolean {
   return true;
 }
 
-/** Keep only the most recent MAX_SESSIONS sessions. */
-function pruneOldSessions(): void {
-  const sessions = listSessions();
-  if (sessions.length <= MAX_SESSIONS) return;
-  for (const old of sessions.slice(MAX_SESSIONS)) {
-    deleteSession(old.id);
+function pruneExpiredSessions(now = Date.now()): void {
+  ensureSessionsDir();
+  const files = fs.readdirSync(SESSIONS_DIR).filter((f) => f.endsWith(".json"));
+  for (const file of files) {
+    const fullPath = path.join(SESSIONS_DIR, file);
+    try {
+      const raw = JSON.parse(fs.readFileSync(fullPath, "utf-8")) as PersistedSession;
+      const updatedAt = Date.parse(raw.meta.updatedAt);
+      if (Number.isFinite(updatedAt) && now - updatedAt > SESSION_TTL_MS) {
+        fs.rmSync(fullPath);
+      }
+    } catch {
+      // Skip corrupt files; listSessions will ignore them too.
+    }
   }
 }
 

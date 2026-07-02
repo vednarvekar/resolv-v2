@@ -29,13 +29,15 @@ export interface AppConfig {
 const CONFIG_DIR = path.join(os.homedir(), ".config", "resolv");
 const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 
+export const DEFAULT_MAX_HEAL_ATTEMPTS = 5;
+export const DEFAULT_MAX_TOOL_CALL_ROUNDS = 32;
+
 const DEFAULTS: ResolvConfig = {
   provider: "anthropic",
   apiKeys: {},
   testCommand: "npm test",
-  maxHealAttempts: 4,
-  // changed fallback
-  maxToolCallRounds: 20,
+  maxHealAttempts: DEFAULT_MAX_HEAL_ATTEMPTS,
+  maxToolCallRounds: DEFAULT_MAX_TOOL_CALL_ROUNDS,
 };
 
 export const PROVIDER_INFO: Record<ProviderName, {
@@ -122,11 +124,6 @@ export function loadConfig(): ResolvConfig {
   if (process.env.RESOLV_PROVIDER) merged.provider = process.env.RESOLV_PROVIDER as ProviderName;
   if (process.env.RESOLV_MODEL) merged.model = process.env.RESOLV_MODEL;
   if (process.env.GITHUB_TOKEN) merged.githubToken = process.env.GITHUB_TOKEN;
-  if (process.env.RESOLV_MAX_TOOL_CALL_ROUNDS) {
-    const rounds = Number.parseInt(process.env.RESOLV_MAX_TOOL_CALL_ROUNDS, 10);
-    if (Number.isFinite(rounds) && rounds > 0) merged.maxToolCallRounds = rounds;
-  }
-
   return merged;
 }
 
