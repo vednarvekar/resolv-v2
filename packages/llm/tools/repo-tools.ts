@@ -1,6 +1,7 @@
 import type { ToolDefinition } from "../../core/types.js";
 import { extractDNA } from "../../dna/extract.js";
 import { runTests } from "../../coding-agent/run-tests.js";
+import { execSync } from "node:child_process";
 
 export function createRepoTools(repoRoot: string): ToolDefinition[] {
   return [
@@ -38,6 +39,68 @@ export function createRepoTools(repoRoot: string): ToolDefinition[] {
         const command = String(input.command ?? "npm test");
         const result = runTests(repoRoot, command);
         return { output: `${result.passed ? "PASS" : "FAIL"}\n${result.output}`, isError: !result.passed };
+      },
+    },
+    {
+      name: "git_status",
+      description: "Show git working tree status (branch, staged/unstaged, untracked files).",
+      inputSchema: { type: "object", properties: {}, required: [] },
+      async execute() {
+        try {
+          const output = execSync("git status --short --branch", {
+            cwd: repoRoot,
+            encoding: "utf-8",
+            stdio: "pipe",
+          }).trim();
+          return { output: output || "Working tree clean", isError: false };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { output: `git status failed: ${message}`, isError: true };
+        }
+      },
+    },
+    {
+      name: "git_diff",
+      description: "Show git diff for working tree changes. Set staged=true to see staged diff.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          staged: { type: "boolean", description: "If true, show staged diff instead of unstaged diff" },
+        },
+      },
+      async execute(input) {
+        const staged = Boolean(input.staged);
+        try {
+          const cmd = staged ? "git diff --staged --" : "git diff --";
+          const output = execSync(cmd, {
+            cwd: repoRoot,
+            encoding: "utf-8",
+            stdio: "pipe",
+            maxBuffer: 1024 * 1024 * 4,
+          }).trim();
+          return { output: output || "No diff", isError: false };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { output: `git diff failed: ${message}`, isError: true };
+        }
+      },
+    },
+    {
+      name: "git_branches",
+      description: "List local branches and indicate current branch.",
+      inputSchema: { type: "object", properties: {}, required: [] },
+      async execute() {
+        try {
+          const output = execSync("git branch --list", {
+            cwd: repoRoot,
+            encoding: "utf-8",
+            stdio: "pipe",
+          }).trim();
+          return { output: output || "No branches found", isError: false };
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          return { output: `git branch failed: ${message}`, isError: true };
+        }
       },
     },
   ];

@@ -38,6 +38,7 @@ describe("repl transcript rendering", () => {
     expect(stripAnsi(describeToolCall("read_file", { path: "apps/cli-direct/repl.ts" }))).toBe("reading repl.ts");
     expect(stripAnsi(describeToolCall("search_web", { query: "how to build a production ready agent transcript with concise insights" }))).toBe("searching \"how to build a producti…\"");
     expect(stripAnsi(describeToolCall("fetch_github_issue", { url: "https://github.com/openai/resolv/issues/128" }))).toBe("fetching issue #128");
+    expect(stripAnsi(describeToolCall("git_status", {}))).toBe("checking git status");
 
     const writes: string[] = [];
     const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
@@ -177,5 +178,64 @@ describe("repl transcript rendering", () => {
     expect(output).toContain("- const a = 1;");
     expect(output).toContain("+ const a = 2;");
     expect(output).toContain("+ const b = 3;");
+  });
+
+  it("renders markdown-like assistant replies with styled headings and lists", async () => {
+    process.env.FORCE_COLOR = "1";
+    vi.resetModules();
+
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+
+      events.emit({ type: "model_start", providerName: "test-provider" });
+      events.emit({
+        type: "text_delta",
+        text: "### Modified Files:\n- `.env.example`\n- [README.md](./README.md)\n\n**Done** and _ready_.",
+      });
+      events.emit({ type: "turn_end", stopReason: "end_turn" });
+    } finally {
+      writeSpy.mockRestore();
+    }
+
+    const output = writes.join("");
+    expect(stripAnsi(output)).toContain("Modified Files:");
+    expect(output).toContain("\u001b["); // formatted output should include ANSI styling
+    expect(stripAnsi(output)).toContain("`.env.example`");
+    expect(stripAnsi(output)).toContain("README.md (./README.md)");
+    expect(stripAnsi(output)).toContain("Done and ready.");
+  });
+
+  it("does not split words when provider streams a word across multiple deltas", async () => {
+    const { attachReplTranscript } = await import("../apps/cli-direct/repl-transcript.js");
+
+    const writes: string[] = [];
+    const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+      writes.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as never);
+
+    try {
+      const events = new AgentEventBus();
+      attachReplTranscript(events);
+      events.emit({ type: "model_start", providerName: "test-provider" });
+      events.emit({ type: "text_delta", text: "G" });
+      events.emit({ type: "text_delta", text: "it repository" });
+      events.emit({ type: "turn_end", stopReason: "end_turn" });
+    } finally {
+      writeSpy.mockRestore();
+    }
+
+    const output = stripAnsi(writes.join(""));
+    expect(output).toContain("Git repository");
+    expect(output).not.toContain("G\n  it repository");
   });
 });

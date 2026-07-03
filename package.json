@@ -1,5 +1,5 @@
 {
-  "name": "resolv",
+  "name": "resolv-cli-agent",
   "version": "2.0.0",
   "description": "Style-matching GitHub issue resolver CLI",
   "type": "module",

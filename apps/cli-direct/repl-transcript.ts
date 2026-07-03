@@ -5,6 +5,7 @@ import { AgentEventBus } from "../../packages/core/events.js";
 const RESPONSE_INDENT = "  ";
 const THINKING_FRAMES = ["·", "⋅", "•", "⋅"];
 const MIN_RESPONSE_WIDTH = 24;
+const CODE_BLOCK_LANGUAGE_RE = /^```[a-zA-Z0-9_-]*$/;
 const PATH_TOKEN_RE =
   /(?<![A-Za-z0-9_])(?:\.{1,2}\/)?(?:[A-Za-z0-9_.-]+\/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9]+(?::\d+(?::\d+)?)?/g;
 
@@ -37,6 +38,49 @@ export function formatAssistantSegment(segment: string): string {
     .join("");
 }
 
+function formatMarkdownInline(text: string): string {
+  let output = text;
+  output = output.replace(/\*\*(.+?)\*\*/g, (_, value: string) => chalk.bold(value));
+  output = output.replace(/_(.+?)_/g, (_, value: string) => chalk.italic(value));
+  output = output.replace(/\[(.+?)\]\((.+?)\)/g, (_, label: string, url: string) => `${chalk.cyan(label)} ${chalk.dim(`(${url})`)}`);
+  output = formatAssistantSegment(output);
+  return output;
+}
+
+function renderMarkdownLine(line: string): string {
+  const trimmed = line.trim();
+  if (!trimmed) return "";
+
+  const heading = trimmed.match(/^(#{1,6})\s+(.*)$/);
+  if (heading) {
+    const [, hashes = "", rawTitle = ""] = heading;
+    const level = hashes.length;
+    const title = formatMarkdownInline(rawTitle);
+    if (level === 1) return chalk.hex("#9b7bff").bold(title);
+    if (level === 2) return chalk.hex("#b18cff").bold(title);
+    return chalk.whiteBright.bold(title);
+  }
+
+  const bullet = trimmed.match(/^[-*]\s+(.*)$/);
+  if (bullet) {
+    return `${chalk.hex("#9b7bff")("•")} ${formatMarkdownInline(bullet[1] ?? "")}`;
+  }
+
+  const ordered = trimmed.match(/^\d+\.\s+(.*)$/);
+  if (ordered) {
+    const [, content = ""] = ordered;
+    const number = trimmed.match(/^(\d+)\./)?.[1] ?? "1";
+    return `${chalk.hex("#9b7bff")(`${number}.`)} ${formatMarkdownInline(content)}`;
+  }
+
+  const quote = trimmed.match(/^>\s+(.*)$/);
+  if (quote) {
+    return chalk.dim(`│ ${formatMarkdownInline(quote[1] ?? "")}`);
+  }
+
+  return formatMarkdownInline(line);
+}
+
 export function describeToolCall(toolName: string, input: Record<string, unknown>): string {
   switch (toolName) {
     case "read_file":
@@ -51,6 +95,12 @@ export function describeToolCall(toolName: string, input: Record<string, unknown
       return "scanning repo";
     case "run_tests":
       return `tests${input.command ? `: ${shortQuoted(input.command)}` : ""}`;
+    case "git_status":
+      return "checking git status";
+    case "git_diff":
+      return `checking git diff${input.staged ? " (staged)" : ""}`;
+    case "git_branches":
+      return "listing git branches";
     case "fetch_github_issue":
       return `fetching ${chalk.cyan(extractIssueRef(String(input.url ?? "")))}`;
     case "search_web":
@@ -81,6 +131,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
   let thinkingFrame = 0;
   let thinkingVisible = false;
   let thinkingMessage = "thinking";
+  let pendingInlineText = "";
 
   const clearThinking = () => {
     if (thinkingTimer) {
@@ -168,14 +219,54 @@ export function attachReplTranscript(events: AgentEventBus): void {
         responseLineColumns = 0;
         continue;
       }
-      if (segment.trimStart().startsWith("```")) {
+      const trimmed = segment.trimStart();
+      if (CODE_BLOCK_LANGUAGE_RE.test(trimmed)) {
         writeResponseSegment(segment, chalk.magenta);
         responseInCodeBlock = !responseInCodeBlock;
       } else if (responseInCodeBlock) {
         writeResponseSegment(segment, chalk.cyan);
       } else {
-        writeResponseSegment(segment, formatAssistantSegment);
+        writeResponseSegment(segment, renderMarkdownLine);
       }
+    }
+  };
+
+  const flushPendingInlineText = (force = false) => {
+    if (!pendingInlineText) return;
+
+    const newlineIdx = pendingInlineText.lastIndexOf("\n");
+    if (newlineIdx >= 0) {
+      const completeLines = pendingInlineText.slice(0, newlineIdx + 1);
+      pendingInlineText = pendingInlineText.slice(newlineIdx + 1);
+      writeResponseText(completeLines);
+    }
+
+    if (!pendingInlineText) return;
+
+    if (force) {
+      writeResponseText(pendingInlineText);
+      pendingInlineText = "";
+      return;
+    }
+
+    let splitAt = -1;
+    for (let i = pendingInlineText.length - 1; i >= 0; i--) {
+      const ch = pendingInlineText[i];
+      if (ch === " " || ch === "\t") {
+        splitAt = i;
+        break;
+      }
+    }
+
+    if (splitAt > 0) {
+      writeResponseText(pendingInlineText.slice(0, splitAt + 1));
+      pendingInlineText = pendingInlineText.slice(splitAt + 1);
+      return;
+    }
+
+    if (pendingInlineText.length > 48) {
+      writeResponseText(pendingInlineText);
+      pendingInlineText = "";
     }
   };
 
@@ -215,15 +306,18 @@ export function attachReplTranscript(events: AgentEventBus): void {
         break;
       case "provider_retry":
         clearThinking();
+        flushPendingInlineText(true);
         writeInsight(`retry ${event.attempt}/${event.maxAttempts}: ${truncate(event.message, 20)}`);
         break;
       case "text_delta":
         beginResponse();
-        writeResponseText(event.text);
+        pendingInlineText += event.text;
+        flushPendingInlineText(false);
         responseEndsWithNewline = event.text.endsWith("\n");
         break;
       case "tool_call_start":
         clearThinking();
+        flushPendingInlineText(true);
         if (responseStarted && !responseEndsWithNewline) process.stdout.write("\n");
         responseStarted = false;
         responseEndsWithNewline = true;
@@ -249,6 +343,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
       }
       case "error":
         clearThinking();
+        flushPendingInlineText(true);
         responseStarted = false;
         responseEndsWithNewline = true;
         responseLineStart = true;
@@ -259,6 +354,7 @@ export function attachReplTranscript(events: AgentEventBus): void {
         break;
       case "turn_end":
         clearThinking();
+        flushPendingInlineText(true);
         if (responseStarted && !responseEndsWithNewline) {
           process.stdout.write("\n");
           responseEndsWithNewline = true;
