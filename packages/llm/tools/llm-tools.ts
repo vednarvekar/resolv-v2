@@ -8,11 +8,11 @@ import { createFilesystemTools } from "./filesystem-tools.js";
 import { createRepoTools } from "./repo-tools.js";
 import { createRemoteTools } from "./remote-tools.js";
 
-export function createLLMTools(repoRoot: string): ToolDefinition[] {
+export function createLLMTools(repoRoot: string, configuredTestCommand: string): ToolDefinition[] {
   const gitignorePatterns = readGitignorePatterns(repoRoot);
   return [
     ...createFilesystemTools(repoRoot, gitignorePatterns),
-    ...createRepoTools(repoRoot),
+    ...createRepoTools(repoRoot, configuredTestCommand),
     ...createRemoteTools(),
   ];
 }

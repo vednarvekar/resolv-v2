@@ -24,6 +24,24 @@ export function readGitignorePatterns(repoRoot: string): Set<string> {
   );
 }
 
+// GUARDRAIL: paths the model must never write to, independent of
+// .gitignore. Covers secrets (.env*), git internals, CI/CD config (a model
+// rewriting a workflow file is a supply-chain risk, not just a bad edit),
+// and lockfiles (hand-edited lockfiles silently desync from package.json).
+const PROTECTED_PATH_SEGMENTS = [".git", ".github/workflows", "node_modules"];
+const PROTECTED_EXACT_NAMES = [
+  ".env", ".env.local", ".env.production", ".env.development",
+  "package-lock.json", "yarn.lock", "pnpm-lock.yaml",
+];
+
+export function isProtectedPath(relativePath: string): boolean {
+  const normalized = relativePath.replace(/\\/g, "/").replace(/^\.\//, "");
+  const baseName = path.basename(normalized);
+  if (PROTECTED_EXACT_NAMES.includes(baseName)) return true;
+  if (baseName.startsWith(".env")) return true;
+  return PROTECTED_PATH_SEGMENTS.some((seg) => normalized === seg || normalized.startsWith(`${seg}/`) || normalized.includes(`/${seg}/`));
+}
+
 export function isIgnored(relativePath: string, gitignorePatterns: Set<string>): boolean {
   const parts = relativePath.split(path.sep);
   for (const pattern of gitignorePatterns) {

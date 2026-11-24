@@ -1,0 +1,19 @@
+# promptfooconfig.yaml
+description: 'Resolv CLI Agent Evaluation Suite'
+
+# 1. FIX: Define a top-level prompt template
+prompts:
+  - '{{issue}}'
+
+# 2. FIX: Point the provider to your executable without raw template tags
+providers:
+  - id: 'exec:node ./dist/bin/resolv.js'
+
+tests:
+  - vars:
+      issue: "Create a generic filter function in arrayUtils.ts"
+    assert:
+      - type: javascript
+        value: fileExists('./sandbox/arrayUtils.ts')
+      - type: icontains
+        value: "export const"

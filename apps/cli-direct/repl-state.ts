@@ -67,7 +67,7 @@ export async function createReplState(resumeId?: string): Promise<ReplState> {
   }
 
   const toolRegistry = new ToolRegistry();
-  toolRegistry.registerAll(createLLMTools(process.cwd()));
+  toolRegistry.registerAll(createLLMTools(process.cwd(), appConfig.testCommand));
 
   const events = new AgentEventBus();
 

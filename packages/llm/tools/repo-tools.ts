@@ -3,7 +3,7 @@ import { extractDNA } from "../../dna/extract.js";
 import { runTests } from "../../coding-agent/run-tests.js";
 import { execSync } from "node:child_process";
 
-export function createRepoTools(repoRoot: string): ToolDefinition[] {
+export function createRepoTools(repoRoot: string, configuredTestCommand: string): ToolDefinition[] {
   return [
     {
       name: "scan_repo_dna",
@@ -27,17 +27,18 @@ export function createRepoTools(repoRoot: string): ToolDefinition[] {
       },
     },
     {
+      // GUARDRAIL: the test command is fixed to what the user configured
+      // (config.testCommand), never to a string the model supplies. Issue
+      // bodies/comments are untrusted input that flows into the model's
+      // context — if the model could pick the shell command to run here,
+      // a poisoned GitHub issue could get arbitrary shell execution via
+      // execSync. The tool schema below intentionally exposes no
+      // "command" parameter to the model.
       name: "run_tests",
-      description: "Run the test suite. Returns PASS/FAIL and test output.",
-      inputSchema: {
-        type: "object",
-        properties: {
-          command: { type: "string", description: "Test command (default: npm test)" },
-        },
-      },
-      async execute(input) {
-        const command = String(input.command ?? "npm test");
-        const result = runTests(repoRoot, command);
+      description: "Run the repo's configured test suite. Returns PASS/FAIL and test output.",
+      inputSchema: { type: "object", properties: {}, required: [] },
+      async execute() {
+        const result = runTests(repoRoot, configuredTestCommand);
         return { output: `${result.passed ? "PASS" : "FAIL"}\n${result.output}`, isError: !result.passed };
       },
     },

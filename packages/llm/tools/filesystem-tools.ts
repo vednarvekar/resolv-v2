@@ -2,7 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 import type { ToolDefinition } from "../../core/types.js";
-import { ALWAYS_SKIP, isIgnored, safeResolvePath, searchCodebase } from "./tool-utils.js";
+import { ALWAYS_SKIP, isIgnored, isProtectedPath, safeResolvePath, searchCodebase } from "./tool-utils.js";
+
+// GUARDRAIL: hard cap on a single write, independent of .gitignore. This
+// bounds worst-case damage from a runaway/looping model turn and keeps a
+// single tool call from dumping something absurd (e.g. a base64 blob) into
+// the repo.
+const MAX_WRITE_BYTES = 200_000;
 
 export function createFilesystemTools(
   repoRoot: string,
@@ -54,9 +60,25 @@ export function createFilesystemTools(
       async execute(input) {
         const filePath = String(input.path ?? "");
         const content = String(input.content ?? "");
+
+        // GUARDRAIL: secrets, git internals, CI config, and lockfiles are
+        // off-limits regardless of what the model or the issue text asks
+        // for. This is checked before the .gitignore check on purpose —
+        // a repo without a .gitignore entry for .env would otherwise be
+        // writable.
+        if (isProtectedPath(filePath)) {
+          return { output: `Refusing to write to a protected path: ${filePath}`, isError: true };
+        }
         if (isIgnored(filePath, gitignorePatterns)) {
           return { output: `Refusing to write to a .gitignore path: ${filePath}`, isError: true };
         }
+        if (Buffer.byteLength(content, "utf-8") > MAX_WRITE_BYTES) {
+          return {
+            output: `Refusing write: content is ${Buffer.byteLength(content, "utf-8")} bytes, over the ${MAX_WRITE_BYTES}-byte limit for a single write_file call. Split the change into smaller edits.`,
+            isError: true,
+          };
+        }
+
         const absPath = safeResolvePath(repoRoot, filePath);
         const previous = fs.existsSync(absPath) ? fs.readFileSync(absPath, "utf-8") : "";
         fs.mkdirSync(path.dirname(absPath), { recursive: true });
